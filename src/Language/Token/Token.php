@@ -12,6 +12,7 @@ namespace Polygen\Language\Token;
  * @method static Token definition()
  * @method static Token dot()
  * @method static Token dotLabel(string $name)
+ * @method static Token endOfFile()
  * @method static Token folding()
  * @method static Token leftDeepUnfolding()
  * @method static Token leftBracket()

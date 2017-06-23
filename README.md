@@ -27,8 +27,7 @@ Currently just the Lexer is implemented. It takes a Stream object (I think a Cac
   $lexer = new \Polygen\Language\Lexing\Lexer($source);
   foreach ($lexer->getTokens() as $token) {
     print_r("$token\n");
-    // Prints <COMMENT, This is a comment in Polygen syntax>
-    // And actually another <WHITESPACE, > token that is not there, and I don't know yet where it comes from.
+    // Prints <COMMENT, This is a comment in Polygen syntax>, followed by an <END_OF_FILE, > token
   }
 ```
 

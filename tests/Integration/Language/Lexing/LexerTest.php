@@ -21,7 +21,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase
     {
         $SUT = new Lexer($this->given_a_source_stream($source));
         $this->assertEquals(
-            array_merge($expectedTokens, [Token::whitespace()]),
+            array_merge($expectedTokens, [Token::endOfFile()]),
             iterator_to_array($SUT->getTokens())
         );
     }
@@ -34,12 +34,13 @@ class LexerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 '(*just a comment*)',
-                [Token::comment('just a comment')]],
+                [Token::comment('just a comment')]
+            ],
             [
                 '(*a comment*)::=',
                 [
                     Token::comment('a comment'),
-                    Token::definition()
+                    Token::definition(),
                 ]
             ],
             [
@@ -69,7 +70,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase
                     Token::pipe(),
                     Token::underscore(),
                     Token::rightBracket(),
-                    Token::semicolon()
+                    Token::semicolon(),
                 ]
             ],
         ];

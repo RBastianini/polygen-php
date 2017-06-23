@@ -57,7 +57,8 @@ class TerminatingSymbolMatcherTest extends \PHPUnit_Framework_TestCase
         return [
             ['(*this is a comment*)'],
             ['NonTerminalSymbol'],
-            ['::=']
+            ['::='],
+            [';'],
         ];
     }
 }

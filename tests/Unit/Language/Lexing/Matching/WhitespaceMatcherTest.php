@@ -21,7 +21,6 @@ class WhitespaceMatcherTest extends \PHPUnit_Framework_TestCase
         $SUT = new WhitespaceMatcher($stream);
         $result = $SUT->next();
         $this->assertEquals(Token::whitespace(), $result);
-        $this->assertTrue($stream->eof());
     }
 
     /**
@@ -34,7 +33,6 @@ class WhitespaceMatcherTest extends \PHPUnit_Framework_TestCase
             ["\t"],
             ["\r"],
             ["\r\n"],
-            [''], // We also match this character, since we always find it at the end of the stream, just before the EOF
             ["\t\t  \r\n"], // Multiple whitespaces are matched together
         ];
     }
@@ -62,6 +60,7 @@ class WhitespaceMatcherTest extends \PHPUnit_Framework_TestCase
             ['::='],
             ['.'],
             [')'],
+            [''],
         ];
     }
 }

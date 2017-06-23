@@ -30,6 +30,6 @@ class WhitespaceMatcher extends BaseMatcher
      */
     private function isBlank($char)
     {
-        return $char === '' || strpos("\t\r\n ", $char) !== false;
+        return $char !== '' && strpos("\t\r\n ", $char) !== false;
     }
 }

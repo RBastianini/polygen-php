@@ -4,16 +4,18 @@ namespace Polygen\Language\Lexing;
 
 use GuzzleHttp\Stream\StreamInterface;
 use Polygen\Language\Exceptions\SyntaxErrorException;
+use Polygen\Language\Lexing\Matching\BaseMatcher;
 use Polygen\Language\Lexing\Matching\CommentMatcher;
 use Polygen\Language\Lexing\Matching\DefinitionSymbolMatcher;
 use Polygen\Language\Lexing\Matching\DotLabelMatcher;
+use Polygen\Language\Lexing\Matching\EndOfFileMatcher;
 use Polygen\Language\Lexing\Matching\LongSymbolMatcher;
-use Polygen\Language\Lexing\Matching\MatcherInterface;
 use Polygen\Language\Lexing\Matching\NonTerminatingSymbolMatcher;
 use Polygen\Language\Lexing\Matching\ShortSymbolMatcher;
 use Polygen\Language\Lexing\Matching\StringMatcher;
 use Polygen\Language\Lexing\Matching\TerminatingSymbolMatcher;
 use Polygen\Language\Lexing\Matching\WhitespaceMatcher;
+use Polygen\Language\Token\Token;
 
 /**
  * Lexer class.
@@ -37,7 +39,9 @@ class Lexer
     }
 
     /**
-     * {@inheritdoc}
+     * Reads and returns the next token.
+     *
+     * @return Token|\Generator
      */
     public function getTokens()
     {
@@ -62,7 +66,7 @@ class Lexer
     /**
      * Creates matchers for the stream that is being read.
      *
-     * @return MatcherInterface[]
+     * @return BaseMatcher[]
      */
     private function initMatchers()
     {
@@ -80,6 +84,7 @@ class Lexer
                 TerminatingSymbolMatcher::class,
                 NonTerminatingSymbolMatcher::class,
                 StringMatcher::class,
+                EndOfFileMatcher::class,
             ]
         );
     }

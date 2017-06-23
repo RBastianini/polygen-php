@@ -2,38 +2,72 @@
 
 namespace Polygen\Language\Token;
 
+/**
+ * @method static Type assignment()
+ * @method static Type backslash()
+ * @method static Type cap()
+ * @method static Type comma()
+ * @method static Type comment()
+ * @method static Type definition()
+ * @method static Type dot()
+ * @method static Type dotLabel()
+ * @method static Type endOfFile()
+ * @method static Type folding()
+ * @method static Type leftBracket()
+ * @method static Type leftCurlyBracket()
+ * @method static Type leftDeepUnfolding()
+ * @method static Type leftDotBracket()
+ * @method static Type leftSquareBracket()
+ * @method static Type minus()
+ * @method static Type nonTerminatingSymbol()
+ * @method static Type pipe()
+ * @method static Type plus()
+ * @method static Type quote()
+ * @method static Type rightBracket()
+ * @method static Type rightCurlyBracket()
+ * @method static Type rightDeepUnfolding()
+ * @method static Type rightDotBracket()
+ * @method static Type rightSquareBracket()
+ * @method static Type semicolon()
+ * @method static Type star()
+ * @method static Type terminatingSymbol()
+ * @method static Type underscore()
+ * @method static Type unfolding()
+ * @method static Type whitespace()
+  */
 final class Type
 {
-    const LEFT_BRACKET = 'LEFT_BRACKET';
-    const RIGHT_BRACKET = 'RIGHT_BRACKET';
-    const LEFT_SQUARE_BRACKET = 'LEFT_SQUARE_BRACKET';
-    const RIGHT_SQUARE_BRACKET = 'RIGHT_SQUARE_BRACKET';
-    const LEFT_CURLY_BRACKET = 'LEFT_CURLY_BRACKET';
-    const RIGHT_CURLY_BRACKET = 'RIGHT_CURLY_BRACKET';
-    const UNDERSCORE = 'UNDERSCORE';
-    const NON_TERMINATING_SYMBOL = 'NON_TERMINATING_SYMBOL';
-    const TERMINATING_SYMBOL = 'TERMINATING_SYMBOL';
-    const COMMENT = 'COMMENT';
-    const SEMICOLON = 'SEMICOLON';
-    const DEFINITION = 'DEFINITION';
     const ASSIGNMENT = 'ASSIGNMENT';
-    const PIPE = 'PIPE';
-    const UNFOLDING = 'UNFOLDING';
-    const FOLDING = 'FOLDING';
-    const LEFT_DEEP_UNFOLDING = 'LEFT_DEEP_UNFOLDING';
-    const RIGHT_DEEP_UNFOLDING = 'RIGHT_DEEP_UNFOLDING';
-    const STAR = 'STAR';
-    const PLUS = 'PLUS';
-    const MINUS = 'MINUS';
-    const CAP = 'CAP';
-    const DOT = 'DOT';
-    const COMMA = 'COMMA';
-    const LEFT_DOT_BRACKET = 'LEFT_DOT_BRACKET';
-    const RIGHT_DOT_BRACKET = 'RIGHT_DOT_BRACKET';
-    const QUOTE = 'QUOTE';
     const BACKSLASH = 'BACKSLASH';
-    const SLASH = 'SLASH';
+    const CAP = 'CAP';
+    const COMMA = 'COMMA';
+    const COMMENT = 'COMMENT';
+    const DEFINITION = 'DEFINITION';
+    const DOT = 'DOT';
     const DOT_LABEL = 'DOT_LABEL';
+    const END_OF_FILE = 'END_OF_FILE';
+    const FOLDING = 'FOLDING';
+    const LEFT_BRACKET = 'LEFT_BRACKET';
+    const LEFT_CURLY_BRACKET = 'LEFT_CURLY_BRACKET';
+    const LEFT_DEEP_UNFOLDING = 'LEFT_DEEP_UNFOLDING';
+    const LEFT_DOT_BRACKET = 'LEFT_DOT_BRACKET';
+    const LEFT_SQUARE_BRACKET = 'LEFT_SQUARE_BRACKET';
+    const MINUS = 'MINUS';
+    const NON_TERMINATING_SYMBOL = 'NON_TERMINATING_SYMBOL';
+    const PIPE = 'PIPE';
+    const PLUS = 'PLUS';
+    const QUOTE = 'QUOTE';
+    const RIGHT_BRACKET = 'RIGHT_BRACKET';
+    const RIGHT_CURLY_BRACKET = 'RIGHT_CURLY_BRACKET';
+    const RIGHT_DEEP_UNFOLDING = 'RIGHT_DEEP_UNFOLDING';
+    const RIGHT_DOT_BRACKET = 'RIGHT_DOT_BRACKET';
+    const RIGHT_SQUARE_BRACKET = 'RIGHT_SQUARE_BRACKET';
+    const SEMICOLON = 'SEMICOLON';
+    const SLASH = 'SLASH';
+    const STAR = 'STAR';
+    const TERMINATING_SYMBOL = 'TERMINATING_SYMBOL';
+    const UNDERSCORE = 'UNDERSCORE';
+    const UNFOLDING = 'UNFOLDING';
     const WHITESPACE = 'WHITESPACE';
 
     /**
@@ -70,7 +104,8 @@ final class Type
         self::BACKSLASH,
         self::SLASH,
         self::DOT_LABEL,
-        self::WHITESPACE
+        self::WHITESPACE,
+        self::END_OF_FILE,
     ];
 
     /**
