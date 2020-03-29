@@ -2,49 +2,50 @@
 
 namespace Tests\Integration\Language\Parsing;
 
-use GuzzleHttp\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 use Polygen\Document;
-use Polygen\Language\Lexing\Lexer;
-use Polygen\Language\Parsing\DocumentParser;
-use Polygen\Stream\CachingStream;
-use Polygen\Stream\SavePointStream;
-use Polygen\Stream\TokenStream;
+use Tests\DocumentUtils;
+use Tests\StreamUtils;
 
-/**
- *
- */
 class DocumentParserTest extends TestCase
 {
+    use DocumentUtils;
+    use StreamUtils;
+
     /**
      * @test
      */
     public function it_can_parse_a_valid_file_without_blowing_up()
     {
         $subject = $this->given_a_parser(
-            Stream::factory(
-                fopen(__DIR__ . '/../../../files/incredible-commit.grm', 'r')
-            )
+            $this->given_a_source_file(__DIR__ . '/../../../files/incredible-commit.grm')
         );
         $document = $subject->parse();
 
         $this->assertInstanceOf(Document::class, $document);
     }
 
-    // TODO: for every new parsing bug, remember to add a dedicated test.
 
-    private function given_a_parser(Stream $grammarStream)
+    /**
+     * @test
+     */
+    public function it_parses_differently_atoms_interlevead_by_a_space_and_interleaved_by_a_comma()
     {
-        return new DocumentParser(
-            new SavePointStream(
-                new CachingStream(
-                    new TokenStream(
-                        new Lexer(
-                            $grammarStream
-                        )
-                    )
-                )
+        $subject = $this->given_a_parser(
+            $this->given_a_source_stream(
+                <<< GRAMMAR
+                A ::= test1, test2 and 3, test4 and 5, test6;
+                B ::= test1 test2 and 3 test4 and 5 test6;
+GRAMMAR
             )
         );
+        $document = $subject->parse();
+
+        $this->assertNotEquals(
+            $document->getDefinition('A')->getProductions(),
+            $document->getDefinition('B')->getProductions()
+        );
     }
+
+    // TODO: for every new parsing bug, remember to add a dedicated test.
 }

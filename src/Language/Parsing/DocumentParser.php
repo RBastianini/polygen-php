@@ -5,6 +5,7 @@ namespace Polygen\Language\Parsing;
 use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
+use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
 use Polygen\Grammar\Interfaces\Labelable;
@@ -98,24 +99,24 @@ class DocumentParser extends Parser
             $label = null;
         }
         // Fixme there's something fishy here
-        $atomsArray = [];
+        $atomSequence = [];
         do {
-            $atoms = $this->matchAtoms();
+            $atoms = $this->matchAtomSequence();
             if ($atoms) {
-                $atomsArray = array_merge($atomsArray, $atoms);
+                $atomSequence[] = $atoms;
             }
         } while ($atoms);
 
-        Assert::greaterThan(count($atomsArray), 0, "Expected to match atoms, but no atom found. {$this->peek()} found instead.");
-        return new Sequence($atomsArray, $label);
+        Assert::greaterThan(count($atomSequence), 0, "Expected to match atom sequence, but no atom found. {$this->peek()} found instead.");
+        return new Sequence($atomSequence, $label);
     }
 
     /**
      * Matches atoms with (optional) implicit positional labels.
      *
-     * @return Labelable[]
+     * @return AtomSequence|null
      */
-    private function matchAtoms()
+    private function matchAtomSequence()
     {
         $atoms = [];
         do {
@@ -124,7 +125,9 @@ class DocumentParser extends Parser
                 $atoms[] = $atom;
             }
         } while ($atom && $this->readTokenIfType(Type::comma()));
-        return $atoms;
+        return $atoms
+            ? new AtomSequence($atoms)
+            : null;
     }
 
     /**
