@@ -6,6 +6,7 @@ namespace Polygen\Language\Token;
  * @method static Type assignment()
  * @method static Type backslash()
  * @method static Type cap()
+ * @method static Type colon()
  * @method static Type comma()
  * @method static Type comment()
  * @method static Type definition()
@@ -40,6 +41,7 @@ final class Type
     const ASSIGNMENT = 'ASSIGNMENT';
     const BACKSLASH = 'BACKSLASH';
     const CAP = 'CAP';
+    const COLON = 'COLON';
     const COMMA = 'COMMA';
     const COMMENT = 'COMMENT';
     const DEFINITION = 'DEFINITION';
@@ -106,6 +108,7 @@ final class Type
         self::DOT_LABEL,
         self::WHITESPACE,
         self::END_OF_FILE,
+        self::COLON,
     ];
 
     /**
