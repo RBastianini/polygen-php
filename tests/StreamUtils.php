@@ -20,4 +20,15 @@ trait StreamUtils
     {
         return Stream::factory($code);
     }
+
+    /**
+     * Returns a stream over the specified file.
+     *
+     * @param string $filename
+     * @return StreamInterface
+     */
+    private function given_a_source_file($filename)
+    {
+        return Stream::factory(fopen($filename, 'r'));
+    }
 }

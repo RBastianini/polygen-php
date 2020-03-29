@@ -3,14 +3,15 @@
 namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\Token\Token;
-use Polygen\Language\Token\Type;
+use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
 
 /**
- *
+ * Atom Polygen node.
  */
-class Atom implements Labelable
+class Atom implements Labelable, Node
 {
     /**
      * @var Token
@@ -21,11 +22,6 @@ class Atom implements Labelable
      * @var Label[]
      */
     private $labels = [];
-
-    /**
-     * @var null
-     */
-    private $foldingModifier;
 
     /**
      * Whe toggled to true, when resolving this atom, all previously selected labels will be unselected.
@@ -84,5 +80,15 @@ class Atom implements Labelable
     {
        $this->resetLabelSelection = true;
        return $this;
+    }
+
+    /**
+     * Allows a node to pass itself back to the walker using the method most appropriate to walk on it.
+     *
+     * @return mixed
+     */
+    public function traverse(AbstractSyntaxWalker $walker)
+    {
+        return $walker->walkAtom($this);
     }
 }

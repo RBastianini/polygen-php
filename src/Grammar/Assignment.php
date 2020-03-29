@@ -3,11 +3,13 @@
 namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Grammar\Interfaces\Node;
+use Polygen\Language\AbstractSyntaxWalker;
 
 /**
  * Represents a Polygen assignment.
  */
-class Assignment implements DeclarationInterface
+class Assignment implements DeclarationInterface, Node
 {
     /**
      * @var string
@@ -37,5 +39,23 @@ class Assignment implements DeclarationInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Allows a node to pass itself back to the walker using the method most appropriate to walk on it.
+     *
+     * @return mixed
+     */
+    public function traverse(AbstractSyntaxWalker $walker)
+    {
+        return $walker->walkAssignment($this);
+    }
+
+    /**
+     * @return Production[]
+     */
+    public function getProductions()
+    {
+        return $this->productions;
     }
 }

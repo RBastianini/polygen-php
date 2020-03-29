@@ -3,14 +3,16 @@
 namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Unfoldable\UnfoldableType;
 use Polygen\Language\Token\Token;
+use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
 
 /**
  * Represents a Polygen unfoldable.
  */
-class Unfoldable implements Labelable
+class Unfoldable implements Labelable, Node
 {
 
     /**
@@ -145,5 +147,31 @@ class Unfoldable implements Labelable
     {
         $this->resetLabelSelection = true;
         return $this;
+    }
+
+    /**
+     * Allows a node to pass itself back to the walker using the method most appropriate to walk on it.
+     *
+     * @return mixed
+     */
+    public function traverse(AbstractSyntaxWalker $walker)
+    {
+        return $walker->walkUnfoldable($this);
+    }
+
+    /**
+     * @return UnfoldableType
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return SubProduction
+     */
+    public function getSubProduction()
+    {
+        return $this->subProduction;
     }
 }

@@ -4,12 +4,14 @@ namespace Polygen;
 
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Definition;
+use Polygen\Grammar\Interfaces\Node;
+use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
 
 /**
  * Represents a Polygen document as read by the parser.
  */
-class Document
+class Document implements Node
 {
     const INFORMATION = 'I';
 
@@ -59,5 +61,31 @@ class Document
     public function getAssignment($name)
     {
         return $this->assignments[$name];
+    }
+
+    /**
+     * @return Definition[]
+     */
+    public function getDefinitions()
+    {
+        return array_values($this->definitions);
+    }
+
+    /**
+     * @return Assignment[]
+     */
+    public function getAssignments()
+    {
+        return array_values($this->assignments);
+    }
+
+    /**
+     * Allows a node to pass itself back to the walker using the method most appropriate to walk on it.
+     *
+     * @param \Polygen\Language\AbstractSyntaxWalker $walker
+     */
+    public function traverse(AbstractSyntaxWalker $walker)
+    {
+        return $walker->walkDocument($this);
     }
 }

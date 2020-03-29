@@ -6,6 +6,7 @@ use Polygen\Grammar\Label;
 
 /**
  * Interface for objects that can have labels attached to them.
+ * @todo Righit now this is the only common interface between Atoms and Unfoldables. If only I could find a better name!
  */
 interface Labelable
 {
