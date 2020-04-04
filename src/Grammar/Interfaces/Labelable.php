@@ -27,4 +27,21 @@ interface Labelable
      * @return self
      */
     public function withLabelSelectionResetToggle();
+
+    /**
+     * @return boolean
+     */
+    public function hasLabels();
+
+    /**
+     * @return Label[]
+     */
+    public function getLabels();
+
+    /**
+     * Returns a copy of the current node, with no labels.
+     *
+     * @return static
+     */
+    public function withoutLabels();
 }

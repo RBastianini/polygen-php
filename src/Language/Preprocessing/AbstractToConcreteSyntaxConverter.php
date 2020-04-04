@@ -13,17 +13,11 @@ use Polygen\Grammar\Sequence;
 use Polygen\Grammar\SubProduction;
 use Polygen\Grammar\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableType;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomDotLabelUnfoldingToProduction;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\DeepUnfoldingToSubProductionConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierToProductionConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationToDeclarationConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubProductionToEpsilonAtomConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationToSubProductionConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\SelectionLabelToDotLabelConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\SubProductionDotLabelUnfoldingToProduction;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IdentifierFactory;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Webmozart\Assert\Assert;
 
 /**
@@ -59,9 +53,10 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
      */
     public static function create()
     {
+        $identifierFactory = new IdentifierFactory();
         return new static([
             new AtomSequenceToLabelableConverter(),
-            // TODO add the rest
+            new FrequencyModifiedSelectionLabelToDotLabelConverter($identifierFactory),
         ]);
     }
 
@@ -80,6 +75,7 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
      */
     private function convertOne(Node $node)
     {
+
         foreach ($this->converters as $converter) {
             $node = $converter->canConvert($node)
                 ? $converter->convert($node)
@@ -146,8 +142,8 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
     public function walkProduction(Production $production)
     {
         return new Production(
-            $production->getFrequencyModifiers(),
-            $this->convertOne($production->getSequence())
+            $this->convertOne($production->getSequence()),
+            $production->getFrequencyModifier()
         );
     }
 
@@ -190,11 +186,12 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
                 return Unfoldable::simple(
                     $this->convertOne($unfoldable->getSubProduction())
                 );
+            case UnfoldableType::nonTerminating():
+                return $unfoldable;
             case UnfoldableType::permutation():
             case UnfoldableType::deepUnfold():
             case UnfoldableType::optional():
             case UnfoldableType::iteration():
-            case UnfoldableType::nonTerminating():
                 throw new \RuntimeException('Not implemented (but actually, I believe this should not be needed).');
             default:
                 throw new \LogicException('Well how did you get here in the first place?');

@@ -13,6 +13,11 @@ use Webmozart\Assert\Assert;
 
 /**
  * Converts an AtomSequence into a Labelable (unfoldable or atom).
+ *
+ * The idea is to go from
+ * Label: Something, SomethingElse, SomethingElseEntirely
+ * to
+ * Label: ( Something | SomethingElse | SomethingElseEntirely )
  */
 class AtomSequenceToLabelableConverter implements ConverterInterface
 {
@@ -61,7 +66,6 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
 
         foreach ($atomSequence->getAtoms() as $atom) {
             $productions[] = new Production(
-                [],
                 new Sequence(
                     [$atom]
                 )

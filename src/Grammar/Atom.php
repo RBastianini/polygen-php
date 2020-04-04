@@ -91,4 +91,30 @@ class Atom implements Labelable, Node
     {
         return $walker->walkAtom($this);
     }
+
+    /**
+     * @return boolean
+     */
+    public function hasLabels()
+    {
+        return !empty($this->labels);
+    }
+
+    /**
+     * @return Label[]
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * Returns a copy of the current node, with no labels.
+     *
+     * @return static
+     */
+    public function withoutLabels()
+    {
+        return new static($this->token);
+    }
 }

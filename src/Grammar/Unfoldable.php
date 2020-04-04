@@ -122,10 +122,10 @@ class Unfoldable implements Labelable, Node
      */
     public function withLabels(array $labels)
     {
-        Assert::isEmpty($this->labels);
         Assert::allIsInstanceOf($labels, Label::class);
-        $this->labels = $labels;
-        return $this;
+        $clone = clone $this;
+        $clone->labels = $labels;
+        return $clone;
     }
 
     /**
@@ -135,8 +135,9 @@ class Unfoldable implements Labelable, Node
     public function withFoldingModifier(FoldingModifier $foldingModifier)
     {
         Assert::null($this->foldingModifier);
-        $this->foldingModifier = $foldingModifier;
-        return $this;
+        $clone = clone $this;
+        $clone->foldingModifier = $foldingModifier;
+        return $clone;
     }
 
     /**
@@ -144,8 +145,9 @@ class Unfoldable implements Labelable, Node
      */
     public function withLabelSelectionResetToggle()
     {
-        $this->resetLabelSelection = true;
-        return $this;
+        $clone = clone $this;
+        $clone->resetLabelSelection = true;
+        return $clone;
     }
 
     /**
@@ -172,5 +174,33 @@ class Unfoldable implements Labelable, Node
     public function getSubProduction()
     {
         return $this->subProduction;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasLabels()
+    {
+        return !empty($this->labels);
+    }
+
+    /**
+     * @return Label[]
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * Returns a copy of the current node, with no labels.
+     *
+     * @return static
+     */
+    public function withoutLabels()
+    {
+        $clone = clone $this;
+        $clone->labels = [];
+        return $clone;
     }
 }
