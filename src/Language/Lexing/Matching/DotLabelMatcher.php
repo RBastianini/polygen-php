@@ -9,7 +9,7 @@ use Polygen\Language\Token\Token;
  */
 class DotLabelMatcher extends BaseMatcher
 {
-    const REGEX = '{^[A-Z][A-Za-z0-9]*$}D';
+    const REGEX = '{^[A-Za-z0-9]*$}D';
 
     /**
      * @return Token

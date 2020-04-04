@@ -30,7 +30,7 @@ class DotLabelMatcherMatcherTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['.Hey', Token::dotLabel('Hey')],
-            ['.L', Token::dotLabel('L')],
+            ['.l', Token::dotLabel('l')],
             ['.L123', Token::dotLabel('L123')],
             [".L123\n", Token::dotLabel('L123')],
         ];
@@ -55,7 +55,6 @@ class DotLabelMatcherMatcherTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['.('],
-            ['.nope'],
             ['...'],
         ];
     }
