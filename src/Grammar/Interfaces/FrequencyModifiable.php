@@ -10,7 +10,7 @@ use Polygen\Grammar\FrequencyModifier;
 interface FrequencyModifiable
 {
     /**
-     * @return FrequencyModifier[]
+     * @return FrequencyModifier
      */
-    public function getFrequencyModifiers();
+    public function getFrequencyModifier();
 }

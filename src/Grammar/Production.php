@@ -13,19 +13,18 @@ use Webmozart\Assert\Assert;
 class Production implements Node, FrequencyModifiable
 {
     /**
-     * @var FrequencyModifier[]
+     * @var FrequencyModifier
      */
-    private $frequencyModifiers;
+    private $frequencyModifier;
 
     /**
      * @var Sequence
      */
     private $sequence;
 
-    public function __construct(array $modifiers, Sequence $sequence)
+    public function __construct(Sequence $sequence, FrequencyModifier $frequencyModifier = null)
     {
-        Assert::allIsInstanceOf($modifiers, FrequencyModifier::class);
-        $this->frequencyModifiers = $modifiers;
+        $this->frequencyModifier = $frequencyModifier ?: new FrequencyModifier(0, 0);
         $this->sequence = $sequence;
     }
 
@@ -48,10 +47,11 @@ class Production implements Node, FrequencyModifiable
     }
 
     /**
-     * @return FrequencyModifier[]
+     * @return FrequencyModifier
      */
-    public function getFrequencyModifiers()
+    public function getFrequencyModifier()
     {
-        return $this->frequencyModifiers;
+        Assert::notNull($this->frequencyModifier);
+        return $this->frequencyModifier;
     }
 }

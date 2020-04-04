@@ -2,14 +2,33 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Utils\Enum;
+use Webmozart\Assert\Assert;
 
 /**
- * @method static FrequencyModifier plus()
- * @method static FrequencyModifier minus()
+ * Represents the number of plus or minus sign used to influence the ferquency of terms during generation.
  */
-class FrequencyModifier extends Enum
+class FrequencyModifier
 {
-    const PLUS = 'PLUS';
-    const MINUS = 'MINUS';
+    private $decreaseFrequencyIntensity = 0;
+
+    private $increaseFrequencyIntensity = 0;
+
+    public function __construct($increaseFrequencyIntensity, $decreaseFrequencyIntensity)
+    {
+        Assert::integer($increaseFrequencyIntensity);
+        Assert::integer($decreaseFrequencyIntensity);
+        Assert::greaterThanEq($increaseFrequencyIntensity, 0);
+        Assert::greaterThanEq($decreaseFrequencyIntensity, 0);
+        $this->increaseFrequencyIntensity = $increaseFrequencyIntensity;
+        $this->decreaseFrequencyIntensity = $decreaseFrequencyIntensity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNetFrequencyChange()
+    {
+        return $this->increaseFrequencyIntensity - $this->decreaseFrequencyIntensity;
+    }
+
 }

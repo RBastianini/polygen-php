@@ -91,7 +91,6 @@ class Unfoldable implements Labelable, Node
                 [],
                 [
                     new Production(
-                        [],
                         new Sequence(
                             [
                                 Atom::simple($nonTerminatingSymbol)

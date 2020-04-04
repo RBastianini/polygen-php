@@ -61,5 +61,4 @@ class SubProduction implements Node
     {
         return $this->productions;
     }
-
 }

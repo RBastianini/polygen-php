@@ -2,36 +2,48 @@
 
 namespace Polygen\Grammar;
 
+use Polygen\Grammar\Interfaces\FrequencyModifiable;
 use Polygen\Language\Token\Token;
-use Webmozart\Assert\Assert;
 
 /**
  * Represents a label with optional modifiers.
  */
-class Label
+class Label implements FrequencyModifiable
 {
-    /**
-     * @var FrequencyModifier[]
-     */
-    private $modifiers;
-
     /**
      * @var string
      */
     private $label;
 
     /**
-     * @param \Polygen\Grammar\FrequencyModifier $modifiers
+     * @var FrequencyModifier
      */
-    public function __construct(Token $label, array $modifiers = [])
+    private $frequencyModifier;
+
+    /**
+     * @param FrequencyModifier $modifiers
+     */
+    public function __construct(Token $label, FrequencyModifier $modifiers = null)
     {
-        $modifierType = null;
-        foreach ($modifiers as $modifier) {
-            Assert::isInstanceOf($modifiers, FrequencyModifier::class);
-            $modifierType = $modifierType ?: $modifier;
-            Assert::eq($modifier, $modifierType, 'Cannot associate mixed modifiers to a label.');
-        }
-        $this->modifiers = $modifiers;
+        $this->frequencyModifier = $modifiers ?: new FrequencyModifier(0, 0);
         $this->label = $label->getValue();
+    }
+
+    /**
+     * @return static
+     */
+    public function withoutFrequencyModifier()
+    {
+        $clone = clone $this;
+        $clone->frequencyModifier = new FrequencyModifier(0, 0);
+        return $clone;
+    }
+
+    /**
+     * @return FrequencyModifier
+     */
+    public function getFrequencyModifier()
+    {
+        return $this->frequencyModifier;
     }
 }

@@ -8,6 +8,7 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
+use Polygen\Grammar\FrequencyModifier;
 use Polygen\Grammar\Interfaces\Labelable;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\Production;
@@ -84,9 +85,9 @@ class DocumentParser extends Parser
 
     private function matchProduction()
     {
-        $modifiers = $this->tryMatchFrequencyModifiers();
+        $frequencyModifier = $this->tryMatchFrequencyModifiers();
         $sequence = $this->matchSequence();
-        return new Production($modifiers, $sequence);
+        return new Production($sequence, $frequencyModifier);
     }
 
     private function matchSequence()
@@ -98,7 +99,7 @@ class DocumentParser extends Parser
             $this->rollback();
             $label = null;
         }
-        // Fixme there's something fishy here
+
         $atomSequence = [];
         do {
             $atoms = $this->matchAtomSequence();
@@ -220,8 +221,8 @@ class DocumentParser extends Parser
     private function tryMatchLabelWithModifiers()
     {
         $this->createSavePoint();
-        $modifiers = $this->tryMatchFrequencyModifiers();
-        if ($modifiers) {
+        $modifier = $this->tryMatchFrequencyModifiers();
+        if ($modifier) {
             $label = $this->readToken(Type::nonTerminatingSymbol(), Type::terminatingSymbol());
         } else {
             $label = $this->readTokenIfType(Type::nonTerminatingSymbol(), Type::terminatingSymbol());
@@ -229,7 +230,7 @@ class DocumentParser extends Parser
         if (!$label) {
             $this->rollback();
         }
-        return $label ? new Label($label, $modifiers) : null;
+        return $label ? new Label($label, $modifier) : null;
     }
 
     private function matchMultipleLabels()
@@ -254,30 +255,26 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return \Polygen\Grammar\FrequencyModifier[]
+     * @return FrequencyModifier|null
      */
     private function tryMatchFrequencyModifiers()
     {
-        $modifierCount = 0;
-        $modifierType = null;
+        $modifiersByType = [
+            Type::plus()->__toString() => 0,
+            Type::minus()->__toString() => 0
+        ];
+
+        $found = false;
         while ($modifierToken = $this->readTokenIfType(Type::plus(), Type::minus())) {
-            if ($modifierType !== null) {
-                $modifierType = $modifierToken;
-            } else {
-                Assert::eq($modifierToken, $modifierType, "Can't mix plus and minus modifiers together.");
-            }
-            $modifierCount++;
+            $modifiersByType[$modifierToken->getType()->__toString()]++;
+            $found = true;
         }
-        $modifier = null;
-        if ($modifierType !== null) {
-            $modifier = $modifierType === Type::plus()
-                ? \Polygen\Grammar\FrequencyModifier::plus()
-                : \Polygen\Grammar\FrequencyModifier::minus();
-        }
-        return array_fill(
-            0,
-            $modifierCount,
-            $modifier
-        );
+
+        return $found
+            ? new FrequencyModifier(
+                $modifiersByType[Type::plus()->__toString()],
+                $modifiersByType[Type::minus()->__toString()]
+            )
+            : null;
     }
 }
