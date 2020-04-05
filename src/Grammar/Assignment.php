@@ -5,6 +5,7 @@ namespace Polygen\Grammar;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
+use Webmozart\Assert\Assert;
 
 /**
  * Represents a Polygen assignment.
@@ -57,5 +58,19 @@ class Assignment implements DeclarationInterface, Node
     public function getProductions()
     {
         return $this->productions;
+    }
+
+    /**
+     * Returns a new instance of this object with the same properties, but with the specified productions.
+     *
+     * @param Production[] $productions
+     * @return static
+     */
+    public function withProductions(array $productions)
+    {
+        Assert::allIsInstanceOf($productions, Production::class);
+        $clone = clone $this;
+        $clone->productions = $productions;
+        return $clone;
     }
 }

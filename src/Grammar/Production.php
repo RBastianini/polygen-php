@@ -54,4 +54,14 @@ class Production implements Node, FrequencyModifiable
         Assert::notNull($this->frequencyModifier);
         return $this->frequencyModifier;
     }
+
+    /**
+     * @return static
+     */
+    public function withoutFrequencyModifier()
+    {
+        $clone = clone $this;
+        $clone->frequencyModifier = New FrequencyModifier(0, 0);
+        return $clone;
+    }
 }

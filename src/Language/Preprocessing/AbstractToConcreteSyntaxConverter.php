@@ -13,11 +13,13 @@ use Polygen\Grammar\Sequence;
 use Polygen\Grammar\SubProduction;
 use Polygen\Grammar\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableType;
+use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
-use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IdentifierFactory;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Webmozart\Assert\Assert;
 
 /**
@@ -54,9 +56,14 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
     public static function create()
     {
         $identifierFactory = new IdentifierFactory();
+        $frequencyModificationWeightCalculator = new FrequencyModificationWeightCalculator();
         return new static([
             new AtomSequenceToLabelableConverter(),
-            new FrequencyModifiedSelectionLabelToDotLabelConverter($identifierFactory),
+            new FrequencyModifiedSelectionLabelToDotLabelConverter(
+                $identifierFactory,
+                $frequencyModificationWeightCalculator
+            ),
+            new FrequencyModifierProductionConverter($frequencyModificationWeightCalculator),
         ]);
     }
 

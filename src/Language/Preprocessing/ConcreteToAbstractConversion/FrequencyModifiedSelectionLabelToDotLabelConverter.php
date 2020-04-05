@@ -10,6 +10,8 @@ use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\SubProduction;
 use Polygen\Grammar\Unfoldable;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
 use Webmozart\Assert\Assert;
 
@@ -38,10 +40,17 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      * @var IdentifierFactory
      */
     private $identifierFactory;
+    /**
+     * @var \Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator
+     */
+    private $frequencyModificationWeightCalculator;
 
-    public function __construct(IdentifierFactory $identifierFactory)
-    {
+    public function __construct(
+        IdentifierFactory $identifierFactory,
+        FrequencyModificationWeightCalculator $frequencyModificationWeightCalculator
+    ) {
         $this->identifierFactory = $identifierFactory;
+        $this->frequencyModificationWeightCalculator = $frequencyModificationWeightCalculator;
     }
 
     /**
@@ -62,7 +71,9 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
     {
         Assert::isInstanceOf($node, Labelable::class);
 
-        $frequencyModificationWeightByLabelPosition = $this->calculateFrequencyModificationWeightByLabelPosition($node);
+        $frequencyModificationWeightByLabelPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
+            $node->getLabels()
+        );
 
         $definitionName = $this->identifierFactory->getId('Definition');
         $definitionUnfoldable = Unfoldable::nonTerminating(Token::nonTerminatingSymbol($definitionName));
@@ -107,26 +118,5 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
     private function filterLabels(Label $label) {
 
         return $label->getFrequencyModifier()->getNetFrequencyChange() !== 0;
-    }
-
-    /**
-     * @return int[]
-     */
-    private function calculateFrequencyModificationWeightByLabelPosition(Labelable $node)
-    {
-        $minimumFrequencyModificationWeight = PHP_INT_MAX;
-        foreach ($node->getLabels() as $label) {
-            $frequencyModificationWeight = $label->getFrequencyModifier()->getNetFrequencyChange();
-            $frequencyModificationWeightByLabelPosition[] = $frequencyModificationWeight;
-            if ($frequencyModificationWeight < $minimumFrequencyModificationWeight) {
-                $minimumFrequencyModificationWeight = $frequencyModificationWeight;
-            }
-        }
-        return array_map(
-            function ($frequencyModificationWeight) use ($minimumFrequencyModificationWeight) {
-                return 1 + $frequencyModificationWeight - $minimumFrequencyModificationWeight;
-            },
-            $frequencyModificationWeightByLabelPosition
-        );
     }
 }

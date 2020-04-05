@@ -19,7 +19,7 @@ class Sequence implements Node, Labeled
     private $label;
 
     /**
-     * @var AtomSequence[]
+     * @var AtomSequence[]|Labelable
      */
     private $atomSequences;
 

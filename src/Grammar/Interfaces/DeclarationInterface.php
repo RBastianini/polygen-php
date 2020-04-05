@@ -5,7 +5,7 @@ namespace Polygen\Grammar\Interfaces;
 /**
  * Common interface for Polygen declarations.
  */
-interface DeclarationInterface
+interface DeclarationInterface extends HasProductions
 {
     /**
      * @return string

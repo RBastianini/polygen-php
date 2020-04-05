@@ -7,7 +7,8 @@ use PHPUnit\Framework\TestCase;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IdentifierFactory;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
 
@@ -33,7 +34,10 @@ class FrequencyModifiedSelectionLabelToDotLabelConverterTest extends TestCase
         $this->identifierFactory = \Mockery::mock(IdentifierFactory::class);
         $this->subject = $this->given_a_converter_with(
             new AtomSequenceToLabelableConverter(),
-            new FrequencyModifiedSelectionLabelToDotLabelConverter($this->identifierFactory)
+            new FrequencyModifiedSelectionLabelToDotLabelConverter(
+                $this->identifierFactory,
+                new FrequencyModificationWeightCalculator()
+            )
         );
     }
 
