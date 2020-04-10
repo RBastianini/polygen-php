@@ -49,7 +49,6 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
      */
     public function canConvert(Node $node)
     {
-        // Checking for the only possible parent node for "AtomSequence", which is "Sequence".
         return $node instanceof AtomSequence;
     }
 

@@ -14,10 +14,12 @@ use Polygen\Grammar\SubProduction;
 use Polygen\Grammar\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableType;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomDotLabelUnfoldingToProduction;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubProductionToEpsilonAtomConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Webmozart\Assert\Assert;
@@ -64,6 +66,7 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
                 $frequencyModificationWeightCalculator
             ),
             new FrequencyModifierProductionConverter($frequencyModificationWeightCalculator),
+            new OptionalSubProductionToEpsilonAtomConverter(),
         ]);
     }
 
@@ -195,11 +198,14 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
                 );
             case UnfoldableType::nonTerminating():
                 return $unfoldable;
+            case UnfoldableType::optional():
+                return Unfoldable::optional(
+                    $this->convertOne($unfoldable->getSubProduction())
+                );
             case UnfoldableType::permutation():
             case UnfoldableType::deepUnfold():
-            case UnfoldableType::optional():
             case UnfoldableType::iteration():
-                throw new \RuntimeException('Not implemented (but actually, I believe this should not be needed).');
+                throw new \RuntimeException("Walking on unfoldable of type{$unfoldable->getType()} has not been implemented yet.");
             default:
                 throw new \LogicException('Well how did you get here in the first place?');
         }

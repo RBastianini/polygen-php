@@ -26,7 +26,7 @@ class Sequence implements Node, Labeled
     /**
      * Sequence constructor.
      *
-     * @param \Polygen\Grammar\AtomSequence[] $atoms
+     * @param \Polygen\Grammar\AtomSequence[]|Labelable $atoms
      */
     public function __construct(array $atoms, Label $label = null)
     {
