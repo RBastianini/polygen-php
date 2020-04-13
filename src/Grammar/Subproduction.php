@@ -11,7 +11,7 @@ use Webmozart\Assert\Assert;
 /**
  * Represents a Polygen subproduction.
  */
-class SubProduction implements HasProductions, Node
+class Subproduction implements HasProductions, Node
 {
     /**
      * @var DeclarationInterface[]
@@ -24,7 +24,7 @@ class SubProduction implements HasProductions, Node
     private $productions;
 
     /**
-     * SubProduction constructor.
+     * Subproduction constructor.
      *
      * @param DeclarationInterface[] $declarationsOrAssignments
      * @param Production[] $productions
@@ -44,7 +44,7 @@ class SubProduction implements HasProductions, Node
      */
     public function traverse(AbstractSyntaxWalker $walker)
     {
-        return $walker->walkSubProduction($this);
+        return $walker->walkSubproduction($this);
     }
 
     /**

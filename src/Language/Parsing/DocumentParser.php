@@ -9,25 +9,26 @@ use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
 use Polygen\Grammar\FrequencyModifier;
-use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Label;
+use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Grammar\Unfoldable\AbstractUnfoldable;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
 use Webmozart\Assert\Assert;
 
 /**
  * Parser for a Polygen document in abstract syntax.
- *
- * @todo Yes this is a monstruosity of a class parsing the entire document and practically untestable.
  */
 class DocumentParser extends Parser
 {
     /**
-     * @return \Polygen\Document
+     * @return Document
      */
     public function parse()
     {
@@ -46,7 +47,7 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return \Polygen\Grammar\Assignment|\Polygen\Grammar\Definition|null
+     * @return DeclarationInterface|null
      */
     private function tryMatchDeclaration()
     {
@@ -57,6 +58,9 @@ class DocumentParser extends Parser
         return $declarationOrAssignmentSymbol ? $this->matchDeclaration() : null;
     }
 
+    /**
+     * @return DeclarationInterface
+     */
     private function matchDeclaration()
     {
         $name = $this->readToken(Type::nonTerminatingSymbol());
@@ -74,6 +78,9 @@ class DocumentParser extends Parser
         throw new \LogicException('How did you get here?');
     }
 
+    /**
+     * @return Production[]
+     */
     private function matchProductions()
     {
         $productions = [];
@@ -83,6 +90,9 @@ class DocumentParser extends Parser
         return $productions;
     }
 
+    /**
+     * @return Production
+     */
     private function matchProduction()
     {
         $frequencyModifier = $this->tryMatchFrequencyModifiers();
@@ -90,6 +100,9 @@ class DocumentParser extends Parser
         return new Production($sequence, $frequencyModifier);
     }
 
+    /**
+     * @return Sequence
+     */
     private function matchSequence()
     {
         $this->createSavePoint();
@@ -132,7 +145,7 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return Labelable
+     * @return HasLabelSelection
      */
     private function tryMatchAtom()
     {
@@ -145,7 +158,7 @@ class DocumentParser extends Parser
         )) {
             $atomToReturn = Atom::simple($easyMatch);
         } elseif ($foldingModifier = $this->readTokenIfType(Type::folding(), Type::unfolding())) {
-            $atomToReturn = $this->tryMatchUnfoldable()->withFoldingModifier(FoldingModifier::fromToken($foldingModifier));
+            $atomToReturn = UnfoldableBuilder::like($this->tryMatchUnfoldable())->withFoldingModifier(FoldingModifier::fromToken($foldingModifier))->build();
         } else {
             $atomToReturn = $this->tryMatchUnfoldable();
         }
@@ -155,13 +168,13 @@ class DocumentParser extends Parser
         }
 
         if ($dotLabel = $this->readTokenIfType(Type::dotLabel())) {
-            $atomToReturn = $atomToReturn->withLabel(new Label($dotLabel));
+            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel)));
         } elseif ($this->readTokenIfType(Type::leftDotBracket())) {
             $labels = $this->matchMultipleLabels();
             $this->readToken(Type::rightBracket());
-            $atomToReturn = $atomToReturn->withLabels($labels);
+            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::forLabels($labels));
         } elseif ($this->readTokenIfType(Type::dot())) {
-            $atomToReturn = $atomToReturn->withLabelSelectionResetToggle();
+            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::reset());
         }
         return $atomToReturn;
     }
@@ -170,12 +183,12 @@ class DocumentParser extends Parser
      * The reason why we "try" to match an unfoldable, instead of failing if we can't match one, is because
      * the only method that calls it is a "try" method.
      *
-     * @return Unfoldable|null
+     * @return AbstractUnfoldable|null
      */
     private function tryMatchUnfoldable()
     {
         if ($nonTerminatingSymbol = $this->readTokenIfType(Type::nonTerminatingSymbol())) {
-            return Unfoldable::nonTerminating($nonTerminatingSymbol);
+            return UnfoldableBuilder::get()->withNonTerminatingToken($nonTerminatingSymbol)->build();
         }
         $leftBracket = $this->readTokenIfType(
             Type::leftBracket(),
@@ -186,28 +199,31 @@ class DocumentParser extends Parser
         if ($leftBracket === null) {
             return null;
         }
-        $mid = $this->matchSubProduction();
-        $leftBracketType = (string)$leftBracket->getType();
+        $mid = $this->matchSubproduction();
+        $unfoldableBuilder = UnfoldableBuilder::get()->withSubproduction($mid);
+        $leftBracketType = (string) $leftBracket->getType();
         $rightBracketType = str_replace('LEFT', 'RIGHT', $leftBracketType);
         $this->readToken(Type::ofKind($rightBracketType));
         switch($leftBracketType) {
             case Type::leftBracket():
                 if ($this->readTokenIfType(Type::plus())) {
-                    return Unfoldable::iterate($mid);
+                    return $unfoldableBuilder->iteration()->build();
                 }
-                return Unfoldable::simple($mid);
+                return $unfoldableBuilder->simple()->build();
             case Type::leftSquareBracket():
-                return Unfoldable::optional($mid);
+                return $unfoldableBuilder->optional()->build();
             case Type::leftCurlyBracket():
-                return Unfoldable::permutate($mid);
+                return $unfoldableBuilder->permutation()->build();
             case Type::leftDeepUnfolding():
-                return Unfoldable::deepUnfold($mid);
+                return $unfoldableBuilder->deepUnfold()->build();
         }
         throw new \LogicException('How did you get here?');
     }
 
-
-    private function matchSubProduction()
+    /**
+     * @return Subproduction
+     */
+    private function matchSubproduction()
     {
         $declarationOrAssignments = [];
         // Match declarations, if there are
@@ -215,9 +231,12 @@ class DocumentParser extends Parser
             $declarationOrAssignments[] = $declaration;
         }
         $productions = $this->matchProductions();
-        return new SubProduction($declarationOrAssignments, $productions);
+        return new Subproduction($declarationOrAssignments, $productions);
     }
 
+    /**
+     * @return Label|null
+     */
     private function tryMatchLabelWithModifiers()
     {
         $this->createSavePoint();
@@ -233,6 +252,9 @@ class DocumentParser extends Parser
         return $label ? new Label($label, $modifier) : null;
     }
 
+    /**
+     * @return Label[]
+     */
     private function matchMultipleLabels()
     {
         $labels = [];
@@ -242,6 +264,9 @@ class DocumentParser extends Parser
         return $labels;
     }
 
+    /**
+     * @return Label
+     */
     private function matchLabelWithModifiers()
     {
         $label = $this->tryMatchLabelWithModifiers();

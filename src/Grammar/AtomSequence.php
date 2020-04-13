@@ -2,7 +2,7 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -13,13 +13,13 @@ use Webmozart\Assert\Assert;
 class AtomSequence implements Node
 {
     /**
-     * @var Labelable[]
+     * @var HasLabelSelection[]
      */
     private $atoms;
 
     public function __construct(array $atoms)
     {
-        Assert::allImplementsInterface($atoms, Labelable::class);
+        Assert::allImplementsInterface($atoms, HasLabelSelection::class);
         $this->atoms = $atoms;
     }
 
@@ -34,7 +34,7 @@ class AtomSequence implements Node
     }
 
     /***
-     * @return Labelable[]
+     * @return HasLabelSelection[]
      */
     public function getAtoms()
     {

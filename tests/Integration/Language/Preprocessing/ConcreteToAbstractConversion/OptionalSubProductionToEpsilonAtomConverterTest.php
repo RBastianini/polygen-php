@@ -5,12 +5,11 @@ namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 use PHPUnit\Framework\TestCase;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubProductionToEpsilonAtomConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
 
-class OptionalSubProductionToEpsilonAtomConverterTest extends TestCase
+class OptionalSubproductionToEpsilonAtomConverterTest extends TestCase
 {
     use ConverterUtils;
     use DocumentUtils;
@@ -24,17 +23,16 @@ class OptionalSubProductionToEpsilonAtomConverterTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->identifierFactory = \Mockery::mock(IdentifierFactory::class);
         $this->subject = $this->given_a_converter_with(
             new AtomSequenceToLabelableConverter(),
-            new OptionalSubProductionToEpsilonAtomConverter()
+            new OptionalSubproductionToEpsilonAtomConverter()
         );
     }
 
     /**
      * @test
      */
-    public function it_converts_productions_removing_frequency_modifiers()
+    public function it_converts_option_subproductions_to_simple_subproductions_with_an_epsilon()
     {
         $document = $this->given_a_document(
             $this->given_a_source_stream(

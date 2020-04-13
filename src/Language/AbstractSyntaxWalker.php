@@ -9,8 +9,9 @@ use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\SubproductionUnfoldable;
+use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 
 /**
  * Interface for objects that need to traverse the abstract syntax tree.
@@ -48,10 +49,10 @@ interface AbstractSyntaxWalker
     public function walkProduction(Production $production);
 
     /**
-     * @param SubProduction $subProduction
+     * @param Subproduction $subproduction
      * @return mixed
      */
-    public function walkSubProduction(SubProduction $subProduction);
+    public function walkSubproduction(Subproduction $subproduction);
 
     /**
      * @param \Polygen\Grammar\Atom $atom
@@ -60,10 +61,16 @@ interface AbstractSyntaxWalker
     public function walkAtom(Atom $atom);
 
     /**
-     * @param \Polygen\Grammar\Unfoldable $unfoldable
+     * @param \Polygen\Grammar\Unfoldable\NonTerminatingSymbol $nonTerminatingSymbol
      * @return mixed
      */
-    public function walkUnfoldable(Unfoldable $unfoldable);
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol);
+
+    /**
+     * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
+     * @return mixed
+     */
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable);
 
     /**
      * @param \Polygen\Grammar\AtomSequence $atoms

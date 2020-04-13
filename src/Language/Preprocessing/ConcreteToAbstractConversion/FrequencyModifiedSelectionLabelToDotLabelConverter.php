@@ -3,13 +3,14 @@
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Definition;
-use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Label;
+use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
@@ -41,7 +42,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      */
     private $identifierFactory;
     /**
-     * @var \Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator
+     * @var FrequencyModificationWeightCalculator
      */
     private $frequencyModificationWeightCalculator;
 
@@ -64,22 +65,23 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
     }
 
     /**
-     * @param Labelable $node
-     * @return SubProduction
+     * @param HasLabelSelection $node
+     * @return Subproduction
      */
     public function convert(Node $node)
     {
-        Assert::isInstanceOf($node, Labelable::class);
+        Assert::isInstanceOf($node, HasLabelSelection::class);
 
         $frequencyModificationWeightByLabelPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
-            $node->getLabels()
+            $node->getLabelSelection()->getLabels()
         );
 
         $definitionName = $this->identifierFactory->getId('Definition');
-        $definitionUnfoldable = Unfoldable::nonTerminating(Token::nonTerminatingSymbol($definitionName));
+        $definitionBuilder = UnfoldableBuilder::get()
+            ->withNonTerminatingToken(Token::nonTerminatingSymbol($definitionName));
 
         $productions = [];
-        foreach ($node->getLabels() as $labelIndex => $label) {
+        foreach ($node->getLabelSelection()->getLabels() as $labelIndex => $label) {
             $productions = array_merge(
                 $productions,
                 array_fill(
@@ -88,7 +90,9 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
                     new Production(
                         new Sequence(
                             [
-                                $definitionUnfoldable->withLabel($label->withoutFrequencyModifier())
+                                $definitionBuilder->withLabelSelection(
+                                    LabelSelection::forLabel($label->withoutFrequencyModifier())
+                                )->build()
                             ]
                         )
                     )
@@ -96,13 +100,15 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
             );
         }
 
-        $definition = new Definition($definitionName, [new Production(new Sequence([$node->withoutLabels()]))]);
-        return Unfoldable::simple(
-            new SubProduction(
+        $definition = new Definition($definitionName, [new Production(new Sequence([$node->withLabelSelection(LabelSelection::none())]))]);
+        return UnfoldableBuilder::get()
+            ->simple()
+            ->withSubproduction(
+            new Subproduction(
                 [$definition],
                 $productions
             )
-        );
+        )->build();
     }
 
     /**
@@ -111,8 +117,8 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof Labelable
-            && count(array_filter($node->getLabels(), [$this, 'filterLabels'])) > 0;
+        return $node instanceof HasLabelSelection
+            && count(array_filter($node->getLabelSelection()->getLabels(), [$this, 'filterLabels'])) > 0;
     }
 
     private function filterLabels(Label $label) {

@@ -10,16 +10,17 @@ use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
-use Polygen\Grammar\Unfoldable\UnfoldableType;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Grammar\SubproductionUnfoldable;
+use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
+use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomDotLabelUnfoldingToProduction;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubProductionToEpsilonAtomConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Webmozart\Assert\Assert;
@@ -66,7 +67,7 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
                 $frequencyModificationWeightCalculator
             ),
             new FrequencyModifierProductionConverter($frequencyModificationWeightCalculator),
-            new OptionalSubProductionToEpsilonAtomConverter(),
+            new OptionalSubproductionToEpsilonAtomConverter(),
         ]);
     }
 
@@ -136,12 +137,9 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
      */
     public function walkSequence(Sequence $sequence)
     {
-        $sequence->getSelectedLabels();
         return new Sequence(
-            $this->convertAll($sequence->getLabelables()),
-            ($labels = $sequence->getSelectedLabels())
-                ? reset($labels)
-                : null
+            $this->convertAll($sequence->getSequenceContents()),
+            $sequence->getLabel()
         );
     }
 
@@ -158,14 +156,14 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
     }
 
     /**
-     * @param SubProduction $subProduction
-     * @return SubProduction
+     * @param Subproduction $subproduction
+     * @return Subproduction
      */
-    public function walkSubProduction(SubProduction $subProduction)
+    public function walkSubproduction(Subproduction $subproduction)
     {
-        return new SubProduction(
-            $this->convertAll($subProduction->getDeclarationsOrAssignemnts()),
-            $this->convertAll($subProduction->getProductions())
+        return new Subproduction(
+            $this->convertAll($subproduction->getDeclarationsOrAssignemnts()),
+            $this->convertAll($subproduction->getProductions())
         );
     }
 
@@ -186,29 +184,36 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
     }
 
     /**
-     * @param \Polygen\Grammar\Unfoldable $unfoldable
-     * @return \Polygen\Grammar\Unfoldable
+     * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
+     * @return \Polygen\Grammar\SubproductionUnfoldable
      */
-    public function walkUnfoldable(Unfoldable $unfoldable)
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable)
     {
         switch ($unfoldable->getType()) {
-            case UnfoldableType::simple():
-                return Unfoldable::simple(
-                    $this->convertOne($unfoldable->getSubProduction())
-                );
-            case UnfoldableType::nonTerminating():
-                return $unfoldable;
-            case UnfoldableType::optional():
-                return Unfoldable::optional(
-                    $this->convertOne($unfoldable->getSubProduction())
-                );
-            case UnfoldableType::permutation():
-            case UnfoldableType::deepUnfold():
-            case UnfoldableType::iteration():
+            case SubproductionUnfoldableType::simple():
+                return UnfoldableBuilder::like($unfoldable)->withSubproduction(
+                    $this->convertOne($unfoldable->getSubproduction())
+                )->build();
+            case SubproductionUnfoldableType::optional():
+                return UnfoldableBuilder::like($unfoldable)->withSubproduction(
+                    $this->convertOne($unfoldable->getSubproduction())
+                )->build();
+            case SubproductionUnfoldableType::permutation():
+            case SubproductionUnfoldableType::deepUnfold():
+            case SubproductionUnfoldableType::iteration():
                 throw new \RuntimeException("Walking on unfoldable of type{$unfoldable->getType()} has not been implemented yet.");
             default:
                 throw new \LogicException('Well how did you get here in the first place?');
         }
+    }
+
+    /**
+     * @param NonTerminatingSymbol $nonTerminatingSymbol
+     * @return NonTerminatingSymbol
+     */
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol)
+    {
+        return $nonTerminatingSymbol;
     }
 
     /**

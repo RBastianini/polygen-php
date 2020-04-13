@@ -3,16 +3,16 @@
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\AtomSequence;
-use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Webmozart\Assert\Assert;
 
 /**
- * Converts an AtomSequence into a Labelable (unfoldable or atom).
+ * Converts an AtomSequence into a HasLabelSelection (unfoldable or atom).
  *
  * The idea is to go from
  * Label: Something, SomethingElse, SomethingElseEntirely
@@ -34,7 +34,7 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
 
     /**
      * @param AtomSequence $sequence
-     * @return Labelable
+     * @return HasLabelSelection
      */
     public function convert(Node $sequence)
     {
@@ -53,7 +53,7 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
     }
 
     /**
-     * @return Labelable
+     * @return HasLabelSelection
      */
     private function convertAtomSequenceToUnfoldable(AtomSequence $atomSequence)
     {
@@ -71,11 +71,13 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
             );
         }
 
-        return Unfoldable::simple(
-                new SubProduction(
+        return UnfoldableBuilder::get()
+            ->simple()
+            ->withSubproduction(
+                new Subproduction(
                     [],
                     $productions
                 )
-            );
+            )->build();
     }
 }

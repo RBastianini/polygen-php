@@ -8,10 +8,10 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\FrequencyModifier;
 use Polygen\Grammar\Label;
+use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Token\Token;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
@@ -78,15 +78,15 @@ GRAMMAR
                 [
                     new AtomSequence(
                         [
-                            Unfoldable::nonTerminating(
-                               Token::nonTerminatingSymbol('C')
-                            )->withLabels(
-                                [
+                            UnfoldableBuilder::get()
+                                ->withNonTerminatingToken(Token::nonTerminatingSymbol('C'))
+                                ->withLabelSelection(
+                                    LabelSelection::forLabels([
                                     new Label(Token::terminatingSymbol('label1'), new FrequencyModifier(1,1)),
                                     new Label(Token::terminatingSymbol('label2'), new FrequencyModifier(0,1)),
                                     new Label(Token::terminatingSymbol('label3'), new FrequencyModifier(1,0)),
-                                ]
-                            )
+                                ])
+                            )->build()
                         ]
                     )
                 ]

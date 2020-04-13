@@ -6,9 +6,10 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
-use Polygen\Grammar\SubProduction;
-use Polygen\Grammar\Unfoldable;
-use Polygen\Grammar\Unfoldable\UnfoldableType;
+use Polygen\Grammar\Subproduction;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Grammar\SubproductionUnfoldable;
+use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Language\Token\Token;
 
 /**
@@ -17,7 +18,7 @@ use Polygen\Language\Token\Token;
  * to
  * (_ | (Declarations; Production))
  */
-class OptionalSubProductionToEpsilonAtomConverter implements ConverterInterface
+class OptionalSubproductionToEpsilonAtomConverter implements ConverterInterface
 {
 
     /**
@@ -31,13 +32,15 @@ class OptionalSubProductionToEpsilonAtomConverter implements ConverterInterface
     }
 
     /**
-     * @param Unfoldable $node
+     * @param SubproductionUnfoldable $node
      * @return Node
      */
     public function convert(Node $node)
     {
-        return Unfoldable::simple(
-            new SubProduction(
+        return UnfoldableBuilder::get()
+            ->simple()
+            ->withSubproduction(
+            new Subproduction(
                 [],
                 [
                     new Production(
@@ -50,15 +53,16 @@ class OptionalSubProductionToEpsilonAtomConverter implements ConverterInterface
                     new Production(
                         new Sequence(
                             [
-                                Unfoldable::simple(
-                                    $node->getSubProduction()
-                                )
+                                UnfoldableBuilder::get()
+                                    ->simple()
+                                    ->withSubproduction($node->getSubproduction()
+                                )->build()
                             ]
                         )
                     )
                 ]
             )
-        );
+        )->build();
     }
 
     /**
@@ -67,7 +71,7 @@ class OptionalSubProductionToEpsilonAtomConverter implements ConverterInterface
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof Unfoldable
-            && $node->getType() === UnfoldableType::optional();
+        return $node instanceof SubproductionUnfoldable
+            && $node->getType() === SubproductionUnfoldableType::optional();
     }
 }

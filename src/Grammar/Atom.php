@@ -2,16 +2,15 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\Labelable;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\Token\Token;
 use Polygen\Language\AbstractSyntaxWalker;
-use Webmozart\Assert\Assert;
 
 /**
  * Atom Polygen node.
  */
-class Atom implements Labelable, Node
+class Atom implements HasLabelSelection, Node
 {
     /**
      * @var Token
@@ -19,16 +18,9 @@ class Atom implements Labelable, Node
     private $token;
 
     /**
-     * @var Label[]
+     * @var LabelSelection
      */
-    private $labels = [];
-
-    /**
-     * Whe toggled to true, when resolving this atom, all previously selected labels will be unselected.
-     *
-     * @var bool
-     */
-    private $resetLabelSelection = false;
+    private $labelSelection;
 
     /**
      * Atom constructor.
@@ -37,9 +29,10 @@ class Atom implements Labelable, Node
      * @param Label[] $labels
      * @param null $foldingModifier
      */
-    private function __construct(Token $token)
+    private function __construct(Token $token, LabelSelection $labelSelection)
     {
         $this->token = $token;
+        $this->labelSelection = $labelSelection;
     }
 
     /**
@@ -48,38 +41,7 @@ class Atom implements Labelable, Node
      */
     public static function simple(Token $token)
     {
-        return new static($token);
-    }
-
-    /**
-     * @param $token
-     * @param $label
-     * @return static
-     */
-    public function withLabel(Label $label)
-    {
-        return $this->withLabels([$label]);
-    }
-
-    /**
-     * @param Label[] $labels
-     * @return static
-     */
-    public function withLabels(array $labels)
-    {
-        Assert::isEmpty($this->labels);
-        Assert::allIsInstanceOf($labels, Label::class);
-        $this->labels = $labels;
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function withLabelSelectionResetToggle()
-    {
-       $this->resetLabelSelection = true;
-       return $this;
+        return new static($token, LabelSelection::none());
     }
 
     /**
@@ -93,28 +55,20 @@ class Atom implements Labelable, Node
     }
 
     /**
-     * @return boolean
-     */
-    public function hasLabels()
-    {
-        return !empty($this->labels);
-    }
-
-    /**
-     * @return Label[]
-     */
-    public function getLabels()
-    {
-        return $this->labels;
-    }
-
-    /**
-     * Returns a copy of the current node, with no labels.
-     *
      * @return static
      */
-    public function withoutLabels()
+    public function withLabelSelection(LabelSelection $labelSelection)
     {
-        return new static($this->token);
+        $clone = clone $this;
+        $clone->labelSelection = $labelSelection;
+        return $clone;
+    }
+
+    /**
+     * @return \Polygen\Grammar\LabelSelection
+     */
+    public function getLabelSelection()
+    {
+        return $this->labelSelection;
     }
 }

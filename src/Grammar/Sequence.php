@@ -2,8 +2,7 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\Labelable;
-use Polygen\Grammar\Interfaces\Labeled;
+use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -11,28 +10,28 @@ use Webmozart\Assert\Assert;
 /**
  * Represents a Polygen Sequence.
  */
-class Sequence implements Node, Labeled
+class Sequence implements Node
 {
     /**
-     * @var Label
+     * @var Label|null
      */
     private $label;
 
     /**
-     * @var AtomSequence[]|Labelable
+     * @var AtomSequence[]|HasLabelSelection[]
      */
     private $atomSequences;
 
     /**
      * Sequence constructor.
      *
-     * @param \Polygen\Grammar\AtomSequence[]|Labelable $atoms
+     * @param \Polygen\Grammar\AtomSequence[]|HasLabelSelection[] $atoms
      */
     public function __construct(array $atoms, Label $label = null)
     {
         foreach ($atoms as $atom) {
             Assert::true(
-                $atom instanceof AtomSequence || $atom instanceof Labelable,
+                $atom instanceof AtomSequence || $atom instanceof HasLabelSelection,
                 'Bad input to Sequence constructor: '
                 . ((is_object($atom) ? get_class($atom) : gettype($atom)))
             );
@@ -52,22 +51,17 @@ class Sequence implements Node, Labeled
     }
 
     /**
-     * @return Label[]
+     * @return Label|null
      */
-    public function getSelectedLabels()
+    public function getLabel()
     {
-        return [$this->label];
+        return $this->label;
     }
 
     /**
-     * @return bool
+     * @return AtomSequence[]|HasLabelSelection[]
      */
-    public function isResetLabel()
-    {
-        return false;
-    }
-
-    public function getLabelables()
+    public function getSequenceContents()
     {
         return $this->atomSequences;
     }
