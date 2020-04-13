@@ -20,6 +20,7 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLa
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
@@ -68,6 +69,7 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
             ),
             new FrequencyModifierProductionConverter($frequencyModificationWeightCalculator),
             new OptionalSubproductionToEpsilonAtomConverter(),
+            new IterationUnfoldableConverter($identifierFactory),
         ]);
     }
 
