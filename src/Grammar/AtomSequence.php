@@ -13,13 +13,13 @@ use Webmozart\Assert\Assert;
 class AtomSequence implements Node
 {
     /**
-     * @var HasLabelSelection[]
+     * @var Atom[]
      */
     private $atoms;
 
     public function __construct(array $atoms)
     {
-        Assert::allImplementsInterface($atoms, HasLabelSelection::class);
+        Assert::allIsInstanceOf($atoms, Atom::class);
         $this->atoms = $atoms;
     }
 
@@ -34,7 +34,7 @@ class AtomSequence implements Node
     }
 
     /***
-     * @return HasLabelSelection[]
+     * @return Atom[]
      */
     public function getAtoms()
     {

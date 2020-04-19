@@ -32,7 +32,7 @@ class OptionalSubproductionToEpsilonAtomConverterTest extends TestCase
     /**
      * @test
      */
-    public function it_converts_option_subproductions_to_simple_subproductions_with_an_epsilon()
+    public function it_converts_optional_subproductions_to_simple_subproductions_with_an_epsilon()
     {
         $document = $this->given_a_document(
             $this->given_a_source_stream(

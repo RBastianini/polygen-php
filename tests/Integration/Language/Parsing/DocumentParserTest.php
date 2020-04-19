@@ -78,10 +78,12 @@ GRAMMAR
                 [
                     new AtomSequence(
                         [
-                            UnfoldableBuilder::get()
-                                ->withNonTerminatingToken(Token::nonTerminatingSymbol('C'))
-                                ->withLabelSelection(
-                                    LabelSelection::forLabels([
+                            Atom\AtomBuilder::get()->withUnfoldable(
+                                UnfoldableBuilder::get()
+                                    ->withNonTerminatingToken(Token::nonTerminatingSymbol('C'))
+                                    ->build()
+                            )->withLabelSelection(
+                                LabelSelection::forLabels([
                                     new Label(Token::terminatingSymbol('label1'), new FrequencyModifier(1,1)),
                                     new Label(Token::terminatingSymbol('label2'), new FrequencyModifier(0,1)),
                                     new Label(Token::terminatingSymbol('label3'), new FrequencyModifier(1,0)),
@@ -101,7 +103,7 @@ GRAMMAR
                     [
                         new AtomSequence(
                             [
-                                Atom::simple(Token::terminatingSymbol('term1'))
+                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term1'))->build(),
                             ]
                         ),
                     ]
@@ -113,7 +115,7 @@ GRAMMAR
                     [
                         new AtomSequence(
                             [
-                                Atom::simple(Token::terminatingSymbol('term2'))
+                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term2'))->build(),
                             ]
                         ),
                     ]
@@ -125,7 +127,7 @@ GRAMMAR
                     [
                         new AtomSequence(
                             [
-                                Atom::simple(Token::terminatingSymbol('term3'))
+                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term3'))->build(),
                             ]
                         ),
                     ]

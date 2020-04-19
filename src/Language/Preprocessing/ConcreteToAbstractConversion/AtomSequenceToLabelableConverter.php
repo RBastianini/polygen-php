@@ -2,6 +2,8 @@
 
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
+use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\AtomBuilder;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
@@ -34,7 +36,7 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
 
     /**
      * @param AtomSequence $sequence
-     * @return HasLabelSelection
+     * @return Atom
      */
     public function convert(Node $sequence)
     {
@@ -53,7 +55,7 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
     }
 
     /**
-     * @return HasLabelSelection
+     * @return Atom
      */
     private function convertAtomSequenceToUnfoldable(AtomSequence $atomSequence)
     {
@@ -71,13 +73,15 @@ class AtomSequenceToLabelableConverter implements ConverterInterface
             );
         }
 
-        return UnfoldableBuilder::get()
+        return AtomBuilder::get()->withUnfoldable(
+            UnfoldableBuilder::get()
             ->simple()
             ->withSubproduction(
                 new Subproduction(
                     [],
                     $productions
                 )
-            )->build();
+            )->build()
+        )->build();
     }
 }

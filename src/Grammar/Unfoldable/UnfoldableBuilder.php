@@ -39,23 +39,16 @@ class UnfoldableBuilder
      */
     private $foldingModifier;
 
-    /**
-     * @var LabelSelection|null
-     */
-    private $labelSelection;
-
     private function __construct(
         Token $nonTerminatingToken = null,
         SubproductionUnfoldableType $unfoldableType = null,
         Subproduction $subproduction = null,
-        FoldingModifier $foldingModifier = null,
-        LabelSelection $labelSelection = null
+        FoldingModifier $foldingModifier = null
     ) {
         $this->nonTerminatingToken = $nonTerminatingToken;
         $this->subproduction = $subproduction;
         $this->type = $unfoldableType;
         $this->foldingModifier = $foldingModifier;
-        $this->labelSelection = $labelSelection;
     }
 
     /**
@@ -72,7 +65,7 @@ class UnfoldableBuilder
      *
      * @return static
      */
-    public static function like(AbstractUnfoldable $unfoldable)
+    public static function like(Unfoldable $unfoldable)
     {
         return new static(
             $unfoldable instanceof NonTerminatingSymbol
@@ -84,100 +77,92 @@ class UnfoldableBuilder
             $unfoldable instanceof SubproductionUnfoldable
                 ? $unfoldable->getSubproduction()
                 : null,
-            $unfoldable->getFoldingModifier(),
-            $unfoldable->getLabelSelection()
+            $unfoldable->getFoldingModifier()
         );
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function withNonTerminatingToken(Token $nonTerminatingToken)
     {
         Assert::eq($nonTerminatingToken->getType(), Type::nonTerminatingSymbol());
-        $clone = clone $this;
-        $clone->nonTerminatingToken = $nonTerminatingToken;
-        return $clone;
+        $this->nonTerminatingToken = $nonTerminatingToken;
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function simple()
     {
-        $clone = clone $this;
-        $clone->type = SubproductionUnfoldableType::simple();
-        return $clone;
+        $this->type = SubproductionUnfoldableType::simple();
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function iteration()
     {
-        $clone = clone $this;
-        $clone->type = SubproductionUnfoldableType::iteration();
-        return $clone;
+        $this->type = SubproductionUnfoldableType::iteration();
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function permutation()
     {
-        $clone = clone $this;
-        $clone->type = SubproductionUnfoldableType::permutation();
-        return $clone;
+        $this->type = SubproductionUnfoldableType::permutation();
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function optional()
     {
-        $clone = clone $this;
-        $clone->type = SubproductionUnfoldableType::optional();
-        return $clone;
+        $this->type = SubproductionUnfoldableType::optional();
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function deepUnfold()
     {
-        $clone = clone $this;
-        $clone->type = SubproductionUnfoldableType::deepUnfold();
-        return $clone;
+        $this->type = SubproductionUnfoldableType::deepUnfold();
+        return $this;
     }
 
     /**
+     * @deprecated
      * @return self
      */
     public function withLabelSelection(LabelSelection $labelSelection)
     {
-        $clone = clone $this;
-        $clone->labelSelection = $labelSelection;
-        return $clone;
+        throw new \RuntimeException();
+        $this->labelSelection = $labelSelection;
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function withFoldingModifier(FoldingModifier $modifier = null)
     {
-        $clone = clone $this;
-        $clone->foldingModifier = $modifier;
-        return $clone;
+        $this->foldingModifier = $modifier;
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function withSubproduction(Subproduction $subproduction)
     {
-        $clone = clone $this;
-        $clone->subproduction = $subproduction;
-        return $clone;
+        $this->subproduction = $subproduction;
+        return $this;
     }
 
     /**
@@ -189,11 +174,9 @@ class UnfoldableBuilder
             $this->nonTerminatingToken !== null xor $this->subproduction !== null,
             'Cannot build an unfoldable with both a non terminating token and a subproduction.'
         );
-        $labelSelection = $this->labelSelection ?: LabelSelection::none();
         if ($this->nonTerminatingToken) {
             return new NonTerminatingSymbol(
                 $this->nonTerminatingToken,
-                $labelSelection,
                 $this->foldingModifier
             );
         }
@@ -206,7 +189,6 @@ class UnfoldableBuilder
                 return new SubproductionUnfoldable(
                     $this->subproduction,
                     $this->type,
-                    $labelSelection,
                     $this->foldingModifier
                 );
         }

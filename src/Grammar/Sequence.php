@@ -2,7 +2,6 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -18,20 +17,20 @@ class Sequence implements Node
     private $label;
 
     /**
-     * @var AtomSequence[]|HasLabelSelection[]
+     * @var AtomSequence[]|Atom[]
      */
     private $atomSequences;
 
     /**
      * Sequence constructor.
      *
-     * @param \Polygen\Grammar\AtomSequence[]|HasLabelSelection[] $atoms
+     * @param \Polygen\Grammar\AtomSequence[]|Atom[] $atoms
      */
     public function __construct(array $atoms, Label $label = null)
     {
         foreach ($atoms as $atom) {
             Assert::true(
-                $atom instanceof AtomSequence || $atom instanceof HasLabelSelection,
+                $atom instanceof AtomSequence || $atom instanceof Atom,
                 'Bad input to Sequence constructor: '
                 . ((is_object($atom) ? get_class($atom) : gettype($atom)))
             );
@@ -59,7 +58,7 @@ class Sequence implements Node
     }
 
     /**
-     * @return AtomSequence[]|HasLabelSelection[]
+     * @return AtomSequence[]|Atom[]
      */
     public function getSequenceContents()
     {

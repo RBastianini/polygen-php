@@ -175,7 +175,11 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
      */
     public function walkAtom(Atom $atom)
     {
-        return $atom;
+        return $atom instanceof Atom\SimpleAtom
+            ? $atom
+            : Atom\AtomBuilder::like($atom)->withUnfoldable(
+                $this->convertOne($atom->getUnfoldable())
+            )->build();
     }
 
     public function walkAtomSequence(AtomSequence $atomSequence)

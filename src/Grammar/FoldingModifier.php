@@ -12,7 +12,7 @@ use Polygen\Utils\Enum;
  */
 class FoldingModifier extends Enum
 {
-    const FOLDING = 'FOLDING';
+    const FOLD = 'FOLDING';
     const UNFOLD = 'UNFOLDING';
 
     public static function fromToken(Token $token)

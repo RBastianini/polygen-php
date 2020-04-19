@@ -5,6 +5,7 @@ namespace Polygen\Language\Parsing;
 use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\AtomBuilder;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
@@ -17,7 +18,7 @@ use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
-use Polygen\Grammar\Unfoldable\AbstractUnfoldable;
+use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
 use Webmozart\Assert\Assert;
@@ -145,45 +146,47 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return HasLabelSelection
+     * @return Atom
      */
     private function tryMatchAtom()
     {
-        $atomToReturn = null;
+        $atomBuilder = AtomBuilder::get();
         if ($easyMatch = $this->readTokenIfType(
             Type::terminatingSymbol(),
             Type::cap(),
             Type::underscore(),
             Type::backslash()
         )) {
-            $atomToReturn = Atom::simple($easyMatch);
+            $atomBuilder->withToken($easyMatch);
         } elseif ($foldingModifier = $this->readTokenIfType(Type::folding(), Type::unfolding())) {
-            $atomToReturn = UnfoldableBuilder::like($this->tryMatchUnfoldable())->withFoldingModifier(FoldingModifier::fromToken($foldingModifier))->build();
+            $atomBuilder->withUnfoldable(
+                UnfoldableBuilder::like($this->tryMatchUnfoldable())
+                    ->withFoldingModifier(FoldingModifier::fromToken($foldingModifier))
+                    ->build()
+            );
+        } elseif ($unfoldable = $this->tryMatchUnfoldable()) {
+            $atomBuilder->withUnfoldable($unfoldable);
         } else {
-            $atomToReturn = $this->tryMatchUnfoldable();
-        }
-
-        if ($atomToReturn === null) {
             return null;
         }
 
         if ($dotLabel = $this->readTokenIfType(Type::dotLabel())) {
-            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel)));
+            $atomBuilder->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel)));
         } elseif ($this->readTokenIfType(Type::leftDotBracket())) {
             $labels = $this->matchMultipleLabels();
             $this->readToken(Type::rightBracket());
-            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::forLabels($labels));
+            $atomBuilder->withLabelSelection(LabelSelection::forLabels($labels));
         } elseif ($this->readTokenIfType(Type::dot())) {
-            $atomToReturn = $atomToReturn->withLabelSelection(LabelSelection::reset());
+            $atomBuilder->withLabelSelection(LabelSelection::reset());
         }
-        return $atomToReturn;
+        return $atomBuilder->build();
     }
 
     /**
      * The reason why we "try" to match an unfoldable, instead of failing if we can't match one, is because
      * the only method that calls it is a "try" method.
      *
-     * @return AbstractUnfoldable|null
+     * @return Unfoldable|null
      */
     private function tryMatchUnfoldable()
     {

@@ -2,6 +2,7 @@
 
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
+use Polygen\Grammar\Atom;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
@@ -65,20 +66,18 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
     }
 
     /**
-     * @param HasLabelSelection $node
-     * @return Subproduction
+     * @param Atom $node
+     * @return Atom
      */
     public function convert(Node $node)
     {
-        Assert::isInstanceOf($node, HasLabelSelection::class);
+        Assert::isInstanceOf($node, Atom::class);
 
         $frequencyModificationWeightByLabelPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
             $node->getLabelSelection()->getLabels()
         );
 
         $definitionName = $this->identifierFactory->getId('Definition');
-        $definitionBuilder = UnfoldableBuilder::get()
-            ->withNonTerminatingToken(Token::nonTerminatingSymbol($definitionName));
 
         $productions = [];
         foreach ($node->getLabelSelection()->getLabels() as $labelIndex => $label) {
@@ -90,9 +89,16 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
                     new Production(
                         new Sequence(
                             [
-                                $definitionBuilder->withLabelSelection(
-                                    LabelSelection::forLabel($label->withoutFrequencyModifier())
-                                )->build()
+                                Atom\AtomBuilder::get()
+                                    ->withUnfoldable(
+                                        UnfoldableBuilder::get()
+                                            ->withNonTerminatingToken(Token::nonTerminatingSymbol($definitionName))
+                                            ->build()
+                                        )
+                                    ->withLabelSelection(
+                                        LabelSelection::forLabel($label->withoutFrequencyModifier())
+                                    )
+                                ->build()
                             ]
                         )
                     )
@@ -100,15 +106,31 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
             );
         }
 
-        $definition = new Definition($definitionName, [new Production(new Sequence([$node->withLabelSelection(LabelSelection::none())]))]);
-        return UnfoldableBuilder::get()
-            ->simple()
-            ->withSubproduction(
-            new Subproduction(
-                [$definition],
-                $productions
-            )
-        )->build();
+        $definition = new Definition(
+            $definitionName,
+            [
+                new Production(
+                    new Sequence([
+                        Atom\AtomBuilder::like($node)
+                            ->withLabelSelection(LabelSelection::none())
+                            ->build()
+                    ])
+                )
+            ]
+        );
+        return Atom\AtomBuilder::get()
+            ->withUnfoldable(
+                UnfoldableBuilder::get()
+                ->simple()
+                ->withSubproduction(
+                    new Subproduction(
+                        [$definition],
+                        $productions
+                    )
+                )
+            ->build()
+        )
+        ->build();
     }
 
     /**
@@ -117,7 +139,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof HasLabelSelection
+        return $node instanceof Atom
             && count(array_filter($node->getLabelSelection()->getLabels(), [$this, 'filterLabels'])) > 0;
     }
 

@@ -2,15 +2,14 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Unfoldable\AbstractUnfoldable;
-use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Language\AbstractSyntaxWalker;
 
 /**
  * Represents a Polygen subproduction unfoldable.
  */
-class SubproductionUnfoldable extends AbstractUnfoldable
+class SubproductionUnfoldable extends Unfoldable
 {
     /**
      * @var Subproduction
@@ -28,10 +27,9 @@ class SubproductionUnfoldable extends AbstractUnfoldable
     public function __construct(
         Subproduction $subproduction,
         SubproductionUnfoldableType $type,
-        LabelSelection $labelSelection,
         FoldingModifier $foldingModifier = null
     ) {
-        parent::__construct($labelSelection, $foldingModifier);
+        parent::__construct($foldingModifier);
         $this->type = $type;
         $this->subproduction = $subproduction;
     }
@@ -44,14 +42,6 @@ class SubproductionUnfoldable extends AbstractUnfoldable
     public function traverse(AbstractSyntaxWalker $walker)
     {
         return $walker->walkSubproductionUnfoldable($this);
-    }
-
-    /**
-     * @return self
-     */
-    public function withLabelSelection(LabelSelection $labelSelection)
-    {
-        return UnfoldableBuilder::like($this)->withLabelSelection($labelSelection)->build();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
+use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
@@ -45,73 +46,94 @@ class IterationUnfoldableConverter implements ConverterInterface
     }
 
     /**
-     * @param SubproductionUnfoldable $node
+     * @param \Polygen\Grammar\Atom\UnfoldableAtom $node
      * @return Node
      */
     public function convert(Node $node)
     {
-        Assert::isInstanceOf($node, SubproductionUnfoldable::class);
+        $unfoldable = $node->getUnfoldable();
+        Assert::isInstanceOf($unfoldable, SubproductionUnfoldable::class);
         $definitionName = $this->identifierFactory->getId('IterationUnfoldableConverter');
 
-        return UnfoldableBuilder::get()
-            ->simple()
-            ->withSubproduction(
-                new Subproduction(
-                [
-                    new Definition(
-                        $definitionName,
+        return Atom\AtomBuilder::get()
+            ->withUnfoldable(
+                UnfoldableBuilder::get()
+                ->simple()
+                ->withSubproduction(
+                    new Subproduction(
+                    [
+                        new Definition(
+                            $definitionName,
+                            [
+                                new Production(
+                                    new Sequence([
+                                        Atom\AtomBuilder::like($node) // Carry over labels and folding modifiers
+                                            ->withUnfoldable(
+                                                UnfoldableBuilder::get()
+                                                    ->simple()
+                                                    ->withSubproduction($unfoldable->getSubproduction())
+                                                    ->withFoldingModifier($unfoldable->getFoldingModifier())
+                                                    ->build()
+                                            )
+                                        ->build(),
+                                        Atom\AtomBuilder::get()
+                                            ->withUnfoldable(
+                                                UnfoldableBuilder::get()
+                                                    ->simple()
+                                                    ->withSubproduction(
+                                                        new Subproduction(
+                                                            [],
+                                                            [
+                                                                new Production(
+                                                                    new Sequence(
+                                                                        [
+                                                                            new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
+                                                                        ]
+                                                                    )
+                                                                ),
+                                                                new Production(
+                                                                    new Sequence(
+                                                                        [
+                                                                            Atom\AtomBuilder::get()
+                                                                                ->withUnfoldable(
+                                                                                    UnfoldableBuilder::get()
+                                                                                        ->withNonTerminatingToken(
+                                                                                            Token::nonTerminatingSymbol($definitionName)
+                                                                                        )
+                                                                                    ->build()
+                                                                                )
+                                                                            ->build()
+                                                                        ]
+                                                                    )
+                                                                )
+                                                            ]
+                                                        )
+                                                    )
+                                                ->build()
+                                            )
+                                        ->build()
+                                    ])
+                                )
+                            ]
+                        )
+                    ],
                         [
                             new Production(
-                                new Sequence([
-                                    UnfoldableBuilder::get()
-                                        ->simple()
-                                        ->withSubproduction($node->getSubproduction())
-                                        ->withFoldingModifier($node->getFoldingModifier())
-                                        ->withLabelSelection($node->getLabelSelection())
-                                        ->build(),
-                                    UnfoldableBuilder::get()
-                                    ->simple()
-                                    ->withSubproduction(
-                                        new Subproduction(
-                                            [],
-                                            [
-                                                new Production(
-                                                    new Sequence(
-                                                        [
-                                                            Atom::simple(Token::underscore()),
-                                                        ]
-                                                    )
-                                                ),
-                                                new Production(
-                                                    new Sequence(
-                                                        [
-                                                            UnfoldableBuilder::get()
-                                                                ->withNonTerminatingToken(
-                                                                    Token::nonTerminatingSymbol($definitionName)
-                                                                )->build()
-                                                        ]
-                                                    )
-                                                )
-                                            ]
-                                        )
-                                    )->build()
-                                ])
+                                new Sequence(
+                                    [
+                                        Atom\AtomBuilder::get()
+                                            ->withUnfoldable(
+                                                UnfoldableBuilder::get()
+                                                    ->withNonTerminatingToken(Token::nonTerminatingSymbol($definitionName))
+                                                    ->build()
+                                            )
+                                        ->build()
+                                    ]
+                                )
                             )
                         ]
-                    )
-                ],
-                    [
-                        new Production(
-                            new Sequence(
-                                [
-                                    UnfoldableBuilder::get()
-                                        ->withNonTerminatingToken(Token::nonTerminatingSymbol($definitionName))
-                                        ->build()
-                                ]
-                            )
-                        )
-                    ]
-            )
+                )
+            )->build()
         )->build();
     }
 
@@ -121,7 +143,8 @@ class IterationUnfoldableConverter implements ConverterInterface
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof SubproductionUnfoldable
-            && $node->getType() === SubproductionUnfoldableType::iteration();
+        return $node instanceof Atom\UnfoldableAtom
+            && $node->getUnfoldable() instanceof SubproductionUnfoldable
+            && $node->getUnfoldable()->getType() === SubproductionUnfoldableType::iteration();
     }
 }

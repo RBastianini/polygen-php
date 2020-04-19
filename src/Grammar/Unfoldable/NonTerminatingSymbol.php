@@ -4,7 +4,6 @@ namespace Polygen\Grammar\Unfoldable;
 
 use Polygen\Grammar\FoldingModifier;
 use Polygen\Grammar\Interfaces\Node;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Token\Token;
 use Polygen\Language\Token\Type;
@@ -16,7 +15,7 @@ use Webmozart\Assert\Assert;
  * "getSubproduction" method also did not made sense. Although this last claim might be disproved when we get to the
  * actual production phase, since we still have to go through validation, I will reconsider it if necessary,
  */
-class NonTerminatingSymbol extends AbstractUnfoldable implements Node
+class NonTerminatingSymbol extends Unfoldable implements Node
 {
     /**
      * @var Token
@@ -25,12 +24,11 @@ class NonTerminatingSymbol extends AbstractUnfoldable implements Node
 
     public function __construct(
         Token $nonTerminatingSymbol,
-        LabelSelection $labelSelection,
         FoldingModifier $foldingModifier = null
     ) {
         Assert::eq($nonTerminatingSymbol->getType(), Type::nonTerminatingSymbol());
         $this->nonTerminatingSymbol = $nonTerminatingSymbol;
-        parent::__construct($labelSelection, $foldingModifier);
+        parent::__construct($foldingModifier);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Interfaces\Node;
+use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
@@ -46,17 +47,21 @@ class OptionalSubproductionToEpsilonAtomConverter implements ConverterInterface
                     new Production(
                         new Sequence(
                             [
-                                Atom::simple(Token::underscore()),
+                                new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
                             ]
                         )
                     ),
                     new Production(
                         new Sequence(
                             [
-                                UnfoldableBuilder::get()
-                                    ->simple()
-                                    ->withSubproduction($node->getSubproduction()
-                                )->build()
+                                Atom\AtomBuilder::get()
+                                    ->withUnfoldable(
+                                        UnfoldableBuilder::get()
+                                            ->simple()
+                                            ->withSubproduction($node->getSubproduction())
+                                            ->build()
+                                    )
+                                ->build()
                             ]
                         )
                     )
