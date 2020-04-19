@@ -18,6 +18,7 @@ use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\DeepUnfoldingConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
@@ -70,6 +71,7 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
             new FrequencyModifierProductionConverter($frequencyModificationWeightCalculator),
             new OptionalSubproductionToEpsilonAtomConverter(),
             new IterationUnfoldableConverter($identifierFactory),
+            new DeepUnfoldingConverter(),
         ]);
     }
 
@@ -207,7 +209,11 @@ class AbstractToConcreteSyntaxConverter implements AbstractSyntaxWalker
             case SubproductionUnfoldableType::permutation():
             case SubproductionUnfoldableType::deepUnfold():
             case SubproductionUnfoldableType::iteration():
-                throw new \RuntimeException("Walking on unfoldable of type{$unfoldable->getType()} has not been implemented yet.");
+                return UnfoldableBuilder::like($unfoldable)
+                    ->withSubproduction(
+                        $this->convertOne($unfoldable->getSubproduction())
+                    )
+                    ->build();
             default:
                 throw new \LogicException('Well how did you get here in the first place?');
         }
