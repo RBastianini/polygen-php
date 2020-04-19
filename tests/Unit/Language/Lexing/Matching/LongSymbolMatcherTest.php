@@ -5,8 +5,9 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 use Polygen\Language\Lexing\Matching\LongSymbolMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class LongSymbolMatcherTest extends \PHPUnit_Framework_TestCase
+class LongSymbolMatcherTest extends TestCase
 {
     use StreamUtils;
 

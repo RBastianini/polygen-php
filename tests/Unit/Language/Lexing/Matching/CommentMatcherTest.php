@@ -6,8 +6,9 @@ use Polygen\Language\Exceptions\UnterminatedCommentException;
 use Polygen\Language\Lexing\Matching\CommentMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class CommentMatcherTest extends \PHPUnit_Framework_TestCase
+class CommentMatcherTest extends TestCase
 {
     use StreamUtils;
 

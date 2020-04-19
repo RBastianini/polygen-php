@@ -2,15 +2,12 @@
 
 namespace Tests\Polygen\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
-use PHPUnit\Framework\TestCase;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Tests\DocumentUtils;
 use Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion\ConverterUtils;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-/**
- *
- */
 class AtomSequenceToProductionConverterTest extends TestCase
 {
     use ConverterUtils;

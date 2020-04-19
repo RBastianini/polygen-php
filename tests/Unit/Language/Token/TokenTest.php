@@ -4,8 +4,9 @@ namespace Tests\Unit\Language\Token;
 
 use Polygen\Language\Token\Token;
 use Polygen\Language\Token\Type;
+use Tests\TestCase;
 
-class TokenTest extends \PHPUnit_Framework_TestCase
+class TokenTest extends TestCase
 {
     /**
      * @test

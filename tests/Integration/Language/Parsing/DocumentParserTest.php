@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Language\Parsing;
 
-use PHPUnit\Framework\TestCase;
 use Polygen\Document;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\AtomSequence;
@@ -15,6 +14,7 @@ use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Token\Token;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
 class DocumentParserTest extends TestCase
 {

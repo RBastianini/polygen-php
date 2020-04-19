@@ -3,10 +3,10 @@
 namespace Tests\Unit\Language\Preprocessing\ConcreteToAbstractConversion\Services;
 
 use Mockery;
-use PHPUnit\Framework\TestCase;
 use Polygen\Grammar\FrequencyModifier;
 use Polygen\Grammar\Interfaces\FrequencyModifiable;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
+use Tests\TestCase;
 
 class FrequencyModificationWeightCalculatorTest extends TestCase
 {
@@ -92,7 +92,6 @@ class FrequencyModificationWeightCalculatorTest extends TestCase
     private function given_a_weight_modifiable($plusCount, $minusCount)
     {
         return Mockery::mock(FrequencyModifiable::class)->shouldReceive('getFrequencyModifier')
-            ->once()
             ->andReturn(
                 new FrequencyModifier($plusCount, $minusCount)
             )->getMock();

@@ -3,13 +3,13 @@
 namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
 class IterationUnfoldableConverterTest extends TestCase
 {

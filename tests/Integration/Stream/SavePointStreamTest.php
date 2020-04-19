@@ -8,8 +8,9 @@ use Polygen\Language\Token\Token;
 use Polygen\Stream\CachingStream;
 use Polygen\Stream\SavePointStream;
 use Polygen\Stream\TokenStream;
+use Tests\TestCase;
 
-class SavePointStreamTest extends \PHPUnit_Framework_TestCase
+class SavePointStreamTest extends TestCase
 {
     /**
      * @test

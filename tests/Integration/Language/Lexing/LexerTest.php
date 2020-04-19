@@ -6,8 +6,9 @@ use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Lexing\Lexer;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class LexerTest extends \PHPUnit_Framework_TestCase
+class LexerTest extends TestCase
 {
     use StreamUtils;
 

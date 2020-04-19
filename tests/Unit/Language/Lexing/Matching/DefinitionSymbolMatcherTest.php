@@ -5,8 +5,9 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 use Polygen\Language\Lexing\Matching\DefinitionSymbolMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class DefinitionSymbolMatcherTest extends \PHPUnit_Framework_TestCase
+class DefinitionSymbolMatcherTest extends TestCase
 {
     use StreamUtils;
 

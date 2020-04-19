@@ -7,8 +7,9 @@ use Polygen\Language\Exceptions\UnterminatedStringException;
 use Polygen\Language\Lexing\Matching\StringMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class StringMatcherMatcherTest extends \PHPUnit_Framework_TestCase
+class StringMatcherTest extends TestCase
 {
     use StreamUtils;
 

@@ -2,12 +2,12 @@
 
 namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
-use PHPUnit\Framework\TestCase;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
 class OptionalSubproductionToEpsilonAtomConverterTest extends TestCase
 {

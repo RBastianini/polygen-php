@@ -5,8 +5,9 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 use Polygen\Language\Lexing\Matching\WhitespaceMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class WhitespaceMatcherTest extends \PHPUnit_Framework_TestCase
+class WhitespaceMatcherTest extends TestCase
 {
     use StreamUtils;
 

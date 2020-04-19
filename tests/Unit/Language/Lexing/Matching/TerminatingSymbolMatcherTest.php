@@ -5,8 +5,9 @@ namespace Tests\Unit\Language\Lexing\Matching;
 use Polygen\Language\Lexing\Matching\TerminatingSymbolMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class TerminatingSymbolMatcherTest extends \PHPUnit_Framework_TestCase
+class TerminatingSymbolMatcherTest extends TestCase
 {
     use StreamUtils;
     /**

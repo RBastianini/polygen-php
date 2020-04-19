@@ -6,8 +6,9 @@ use GuzzleHttp\Stream\StreamInterface;
 use Mockery;
 use Mockery\MockInterface;
 use Polygen\Language\Lexing\Matching\BaseMatcher;
+use Tests\TestCase;
 
-class BaseMatcherTest extends \PHPUnit_Framework_TestCase
+class BaseMatcherTest extends TestCase
 {
     /**
      * @var StreamInterface|MockInterface

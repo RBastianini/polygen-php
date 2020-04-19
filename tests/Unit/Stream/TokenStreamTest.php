@@ -6,8 +6,9 @@ use Mockery;
 use Polygen\Language\Lexing\Lexer;
 use Polygen\Language\Token\Token;
 use Polygen\Stream\TokenStream;
+use Tests\TestCase;
 
-class TokenStreamTest extends \PHPUnit_Framework_TestCase
+class TokenStreamTest extends TestCase
 {
     /**
      * @test

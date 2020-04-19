@@ -5,8 +5,9 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 use Polygen\Language\Lexing\Matching\DotLabelMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
+use Tests\TestCase;
 
-class DotLabelMatcherMatcherTest extends \PHPUnit_Framework_TestCase
+class DotLabelMatcherMatcherTest extends TestCase
 {
     use StreamUtils;
 
