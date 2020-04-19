@@ -9,13 +9,11 @@ use Polygen\Utils\Enum;
 /**
  * @method static FoldingModifier fold()
  * @method static FoldingModifier unfold()
- * @method static FoldingModifier deepUnfold()
  */
 class FoldingModifier extends Enum
 {
     const FOLDING = 'FOLDING';
     const UNFOLD = 'UNFOLDING';
-    const DEEP_UNFOLD = 'DEEP_UNFOLDING';
 
     public static function fromToken(Token $token)
     {
