@@ -33,6 +33,7 @@ class TerminatingSymbolMatcherTest extends TestCase
             ['a0', Token::terminatingSymbol('a0')],
             ['a0bo', Token::terminatingSymbol('a0bo')],
             ['aBO', Token::terminatingSymbol('aBO')],
+            ["'aBO'", Token::terminatingSymbol("'aBO'")],
             ['thisIsATerminalSymbol', Token::terminatingSymbol('thisIsATerminalSymbol')],
             ["thisIsATerminalSymbol\n", Token::terminatingSymbol("thisIsATerminalSymbol")]
         ];

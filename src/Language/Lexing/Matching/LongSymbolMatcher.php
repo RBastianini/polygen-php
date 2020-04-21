@@ -15,7 +15,6 @@ class LongSymbolMatcher extends BaseMatcher
         Type::LEFT_DEEP_UNFOLDING => '{>>}',
         Type::RIGHT_DEEP_UNFOLDING => '{<<}',
         Type::LEFT_DOT_BRACKET => '{\.\(}',
-        Type::RIGHT_DOT_BRACKET => '{\)\.}',
     ];
 
     /**

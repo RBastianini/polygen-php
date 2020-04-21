@@ -34,7 +34,6 @@ class LongSymbolMatcherTest extends TestCase
             ['>>', Token::leftDeepUnfolding()],
             ['<<', Token::rightDeepUnfolding()],
             ['.(', Token::leftDotBracket()],
-            [').', Token::rightDotBracket()],
         ];
     }
 

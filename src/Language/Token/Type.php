@@ -27,7 +27,6 @@ namespace Polygen\Language\Token;
  * @method static Type rightBracket()
  * @method static Type rightCurlyBracket()
  * @method static Type rightDeepUnfolding()
- * @method static Type rightDotBracket()
  * @method static Type rightSquareBracket()
  * @method static Type semicolon()
  * @method static Type star()
@@ -62,7 +61,6 @@ final class Type
     const RIGHT_BRACKET = 'RIGHT_BRACKET';
     const RIGHT_CURLY_BRACKET = 'RIGHT_CURLY_BRACKET';
     const RIGHT_DEEP_UNFOLDING = 'RIGHT_DEEP_UNFOLDING';
-    const RIGHT_DOT_BRACKET = 'RIGHT_DOT_BRACKET';
     const RIGHT_SQUARE_BRACKET = 'RIGHT_SQUARE_BRACKET';
     const SEMICOLON = 'SEMICOLON';
     const SLASH = 'SLASH';
@@ -101,7 +99,6 @@ final class Type
         self::DOT,
         self::COMMA,
         self::LEFT_DOT_BRACKET,
-        self::RIGHT_DOT_BRACKET,
         self::QUOTE,
         self::BACKSLASH,
         self::SLASH,

@@ -9,7 +9,7 @@ use Polygen\Language\Token\Token;
  */
 class TerminatingSymbolMatcher extends BaseMatcher
 {
-    const REGEX = "{^[a-z0-9][a-zA-Z0-9]*$}D";
+    const REGEX = "{^[a-z0-9'][a-zA-Z0-9']*$}D";
 
     /**
      * @return Token

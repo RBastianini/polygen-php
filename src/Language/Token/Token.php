@@ -25,7 +25,6 @@ namespace Polygen\Language\Token;
  * @method static Token rightBracket()
  * @method static Token rightCurlyBracket()
  * @method static Token rightDeepUnfolding()
- * @method static Token rightDotBracket()
  * @method static Token rightSquareBracket()
  * @method static Token semicolon()
  * @method static Token slash()
