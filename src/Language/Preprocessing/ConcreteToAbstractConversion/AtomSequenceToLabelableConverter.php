@@ -5,7 +5,6 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\AtomBuilder;
 use Polygen\Grammar\AtomSequence;
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;

@@ -10,6 +10,7 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifie
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\ConverterTreeWalker;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
@@ -60,6 +61,7 @@ class AbstractToConcreteSyntaxConverter
             new OptionalSubproductionToEpsilonAtomConverter(),
             new IterationUnfoldableConverter($identifierFactory),
             new DeepUnfoldingConverter(),
+            new PermutationConverter(),
         ]);
     }
 
