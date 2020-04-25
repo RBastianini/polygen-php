@@ -137,17 +137,6 @@ class UnfoldableBuilder
     }
 
     /**
-     * @deprecated
-     * @return self
-     */
-    public function withLabelSelection(LabelSelection $labelSelection)
-    {
-        throw new \RuntimeException();
-        $this->labelSelection = $labelSelection;
-        return $this;
-    }
-
-    /**
      * @return $this
      */
     public function withFoldingModifier(FoldingModifier $modifier = null)

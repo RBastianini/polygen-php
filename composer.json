@@ -29,7 +29,6 @@
   "scripts": {
     "run-tests": "phpunit",
     "run-unit-tests": "phpunit --testsuite Unit",
-    "run-integration-tests": "phpunit --testsuite Integration",
-    "fiddle": "php test.php"
+    "run-integration-tests": "phpunit --testsuite Integration"
   }
 }

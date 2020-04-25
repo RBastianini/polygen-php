@@ -14,6 +14,7 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationConve
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\ConverterTreeWalker;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldingSubproductionConverter;
 use Webmozart\Assert\Assert;
 
 /**
@@ -62,6 +63,7 @@ class AbstractToConcreteSyntaxConverter
             new IterationUnfoldableConverter($identifierFactory),
             new DeepUnfoldingConverter(),
             new PermutationConverter(),
+            new UnfoldingSubproductionConverter()
         ]);
     }
 
