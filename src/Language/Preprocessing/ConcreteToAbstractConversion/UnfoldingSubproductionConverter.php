@@ -51,7 +51,7 @@ class UnfoldingSubproductionConverter implements ConverterInterface
                     $unfoldable = $atom->getUnfoldable();
                     /** @var SubproductionUnfoldable $unfoldable */
                     $declarationsToSurface = $unfoldable->getSubproduction()
-                            ->getDeclarationsOrAssignemnts();
+                            ->getDeclarations();
                     break(2);
                 }
             }

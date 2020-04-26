@@ -65,7 +65,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return mixed
      */
-    public function walkDocument(Document $document)
+    public function walkDocument(Document $document, $_ = null)
     {
         throw new \RuntimeException('It should not be possible to reach a document from an unfoldable.');
     }
@@ -73,7 +73,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Definition
      */
-    public function walkDefinition(Definition $definition)
+    public function walkDefinition(Definition $definition, $_ = null)
     {
         return new Definition($definition->getName(), $this->convertMany($definition->getProductions()));
     }
@@ -81,7 +81,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Assignment
      */
-    public function walkAssignment(Assignment $assignment)
+    public function walkAssignment(Assignment $assignment, $_ = null)
     {
         return new Assignment($assignment->getName(), $this->convertMany($assignment->getProductions()));
     }
@@ -89,7 +89,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Sequence
      */
-    public function walkSequence(Sequence $sequence)
+    public function walkSequence(Sequence $sequence, $_ = null)
     {
         return new Sequence($this->convertMany($sequence->getSequenceContents()), $sequence->getLabel());
     }
@@ -97,7 +97,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Production
      */
-    public function walkProduction(Production $production)
+    public function walkProduction(Production $production, $_ = null)
     {
         return new Production($this->convertOne($production->getSequence()), $production->getFrequencyModifier());
     }
@@ -105,10 +105,10 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Subproduction
      */
-    public function walkSubproduction(Subproduction $subproduction)
+    public function walkSubproduction(Subproduction $subproduction, $_ = null)
     {
         return new Subproduction(
-            $this->convertMany($subproduction->getDeclarationsOrAssignemnts()),
+            $this->convertMany($subproduction->getDeclarations()),
             $this->convertMany($subproduction->getProductions())
         );
     }
@@ -116,7 +116,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return Atom
      */
-    public function walkAtom(Atom $atom)
+    public function walkAtom(Atom $atom, $_ = null)
     {
         return $atom instanceof Atom\SimpleAtom
             ? $atom
@@ -129,7 +129,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return NonTerminatingSymbol
      */
-    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol)
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $_ = null)
     {
         return $this->convertUnfoldables($nonTerminatingSymbol);
     }
@@ -137,7 +137,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return SubproductionUnfoldable
      */
-    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable)
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $_ = null)
     {
         return $this->convertUnfoldables($unfoldable);
     }
@@ -145,7 +145,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     /**
      * @return AtomSequence
      */
-    public function walkAtomSequence(AtomSequence $atoms)
+    public function walkAtomSequence(AtomSequence $atoms, $_ = null)
     {
         return new AtomSequence($this->convertMany($atoms->getAtoms()));
     }

@@ -20,61 +20,71 @@ interface AbstractSyntaxWalker
 {
     /**
      * @param Document $document
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkDocument(Document $document);
+    public function walkDocument(Document $document, $context = null);
 
     /**
      * @param Definition $definition
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkDefinition(Definition $definition);
+    public function walkDefinition(Definition $definition, $context = null);
 
     /**
      * @param Assignment $assignment
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkAssignment(Assignment $assignment);
+    public function walkAssignment(Assignment $assignment, $context = null);
 
     /**
      * @param Sequence $sequence
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkSequence(Sequence $sequence);
+    public function walkSequence(Sequence $sequence, $context = null);
 
     /**
      * @param Production $production
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkProduction(Production $production);
+    public function walkProduction(Production $production, $context = null);
 
     /**
      * @param Subproduction $subproduction
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkSubproduction(Subproduction $subproduction);
+    public function walkSubproduction(Subproduction $subproduction, $context = null);
 
     /**
      * @param \Polygen\Grammar\Atom $atom
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkAtom(Atom $atom);
+    public function walkAtom(Atom $atom, $context = null);
 
     /**
      * @param \Polygen\Grammar\Unfoldable\NonTerminatingSymbol $nonTerminatingSymbol
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol);
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null);
 
     /**
      * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable);
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null);
 
     /**
      * @param \Polygen\Grammar\AtomSequence $atoms
+     * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkAtomSequence(AtomSequence $atoms);
+    public function walkAtomSequence(AtomSequence $atoms, $context = null);
 }

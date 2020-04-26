@@ -37,11 +37,11 @@ class DocumentParser extends Parser
         $assignments = [];
 
         while (!$this->isEndOfDocument()) {
-            $definitionOrAssignment = $this->matchDeclaration();
-            if ($definitionOrAssignment instanceof Definition) {
-                $definitions[] = $definitionOrAssignment;
+            $declaration = $this->matchDeclaration();
+            if ($declaration instanceof Definition) {
+                $definitions[] = $declaration;
             } else {
-                $assignments[] = $definitionOrAssignment;
+                $assignments[] = $declaration;
             }
         }
         return new Document($definitions, $assignments);
@@ -54,9 +54,9 @@ class DocumentParser extends Parser
     {
         $this->createSavePoint();
         $this->readTokenIfType(Type::nonTerminatingSymbol());
-        $declarationOrAssignmentSymbol = $this->readTokenIfType(Type::definition(), Type::assignment());
+        $declaration = $this->readTokenIfType(Type::definition(), Type::assignment());
         $this->rollback();
-        return $declarationOrAssignmentSymbol ? $this->matchDeclaration() : null;
+        return $declaration ? $this->matchDeclaration() : null;
     }
 
     /**
@@ -65,10 +65,10 @@ class DocumentParser extends Parser
     private function matchDeclaration()
     {
         $name = $this->readToken(Type::nonTerminatingSymbol());
-        $declarationOrAssignmentSymbol = $this->readToken(Type::definition(), Type::assignment());
+        $declaration = $this->readToken(Type::definition(), Type::assignment());
         $productions = $this->matchProductions();
         $this->readToken(Type::semicolon());
-        switch ($declarationOrAssignmentSymbol->getType()) {
+        switch ($declaration->getType()) {
             case Type::definition():
                 return new Definition($name->getValue(), $productions);
                 break;
@@ -228,13 +228,13 @@ class DocumentParser extends Parser
      */
     private function matchSubproduction()
     {
-        $declarationOrAssignments = [];
+        $declarations = [];
         // Match declarations, if there are
         while ($declaration = $this->tryMatchDeclaration()) {
-            $declarationOrAssignments[] = $declaration;
+            $declarations[] = $declaration;
         }
         $productions = $this->matchProductions();
-        return new Subproduction($declarationOrAssignments, $productions);
+        return new Subproduction($declarations, $productions);
     }
 
     /**

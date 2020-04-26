@@ -60,7 +60,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Document $document
      * @return Document
      */
-    public function walkDocument(Document $document)
+    public function walkDocument(Document $document, $_ = null)
     {
         return new Document(
             $this->convertAll($document->getDefinitions()),
@@ -73,7 +73,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Definition $definition
      * @return Definition
      */
-    public function walkDefinition(Definition $definition)
+    public function walkDefinition(Definition $definition, $_ = null)
     {
         return new Definition(
             $definition->getName(),
@@ -86,7 +86,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Assignment $assignment
      * @return Assignment
      */
-    public function walkAssignment(Assignment $assignment)
+    public function walkAssignment(Assignment $assignment, $_ = null)
     {
         return new Assignment(
             $assignment->getName(),
@@ -99,7 +99,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Sequence $sequence
      * @return Sequence
      */
-    public function walkSequence(Sequence $sequence)
+    public function walkSequence(Sequence $sequence, $_ = null)
     {
         return new Sequence(
             $this->convertAll($sequence->getSequenceContents()),
@@ -112,7 +112,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Production $production
      * @return Production
      */
-    public function walkProduction(Production $production)
+    public function walkProduction(Production $production, $_ = null)
     {
         return new Production(
             $this->convertOne($production->getSequence()),
@@ -125,10 +125,10 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Subproduction $subproduction
      * @return Subproduction
      */
-    public function walkSubproduction(Subproduction $subproduction)
+    public function walkSubproduction(Subproduction $subproduction, $_ = null)
     {
         return new Subproduction(
-            $this->convertAll($subproduction->getDeclarationsOrAssignemnts()),
+            $this->convertAll($subproduction->getDeclarations()),
             $this->convertAll($subproduction->getProductions())
         );
     }
@@ -138,7 +138,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param \Polygen\Grammar\Atom $atom
      * @return \Polygen\Grammar\Atom
      */
-    public function walkAtom(Atom $atom)
+    public function walkAtom(Atom $atom, $_ = null)
     {
         return $atom instanceof Atom\SimpleAtom
             ? $atom
@@ -152,7 +152,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param \Polygen\Grammar\AtomSequence $atomSequence
      * @return mixed|\Polygen\Grammar\AtomSequence
      */
-    public function walkAtomSequence(AtomSequence $atomSequence)
+    public function walkAtomSequence(AtomSequence $atomSequence, $_ = null)
     {
         return new AtomSequence(
             $this->convertAll($atomSequence->getAtoms())
@@ -164,7 +164,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
      * @return \Polygen\Grammar\SubproductionUnfoldable
      */
-    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable)
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $_ = null)
     {
         switch ($unfoldable->getType()) {
             case SubproductionUnfoldableType::simple():
@@ -193,7 +193,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param NonTerminatingSymbol $nonTerminatingSymbol
      * @return NonTerminatingSymbol
      */
-    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol)
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $_ = null)
     {
         return $nonTerminatingSymbol;
     }

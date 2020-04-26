@@ -14,9 +14,14 @@ use Webmozart\Assert\Assert;
 class Subproduction implements HasProductions, Node
 {
     /**
-     * @var DeclarationInterface[]
+     * @var \Polygen\Grammar\Definition[]
      */
-    private $declarationsOrAssignments;
+    private $definitions = [];
+
+    /**
+     * @var \Polygen\Grammar\Assignment[]
+     */
+    private $assignments = [];
 
     /**
      * @var Production[]
@@ -26,33 +31,44 @@ class Subproduction implements HasProductions, Node
     /**
      * Subproduction constructor.
      *
-     * @param DeclarationInterface[] $declarationsOrAssignments
+     * @param DeclarationInterface[] $declarations
      * @param Production[] $productions
      */
-    public function __construct(array $declarationsOrAssignments, array $productions)
+    public function __construct(array $declarations, array $productions)
     {
-        Assert::allImplementsInterface($declarationsOrAssignments, DeclarationInterface::class);
+        foreach ($declarations as $declaration) {
+            Assert::implementsInterface($declaration, DeclarationInterface::class);
+            if ($declaration instanceof Definition) {
+                $this->definitions[] = $declaration;
+            } else if ($declaration instanceof Assignment) {
+                $this->assignments[] = $declaration;
+            } else {
+                throw new \LogicException(
+                    sprintf("Unexpected object of class %s: it's neither a definition nor an assignment!", get_class($declaration))
+                );
+            }
+        }
         Assert::allIsInstanceOf($productions, Production::class);
-        $this->declarationsOrAssignments = $declarationsOrAssignments;
         $this->productions = $productions;
     }
 
     /**
      * Allows a node to pass itself back to the walker using the method most appropriate to walk on it.
      *
-     * @return mixed
+     * @param mixed|null $context Data that you want to be passed back to the walker.
+     * @return mixed|null
      */
-    public function traverse(AbstractSyntaxWalker $walker)
+    public function traverse(AbstractSyntaxWalker $walker, $context = null)
     {
-        return $walker->walkSubproduction($this);
+        return $walker->walkSubproduction($this, $context);
     }
 
     /**
      * @return DeclarationInterface[]
      */
-    public function getDeclarationsOrAssignemnts()
+    public function getDeclarations()
     {
-        return $this->declarationsOrAssignments;
+        return array_merge($this->assignments, $this->definitions);
     }
 
     /**
@@ -63,6 +79,21 @@ class Subproduction implements HasProductions, Node
         return $this->productions;
     }
 
+    /**
+     * @return \Polygen\Grammar\Definition[]
+     */
+    public function getDefinitions()
+    {
+        return $this->definitions;
+    }
+
+    /**
+     * @return \Polygen\Grammar\Assignment[]
+     */
+    public function getAssignments()
+    {
+        return $this->assignments;
+    }
 
     /**
      * Returns a new instance of this object with the same properties, but with the specified productions.
