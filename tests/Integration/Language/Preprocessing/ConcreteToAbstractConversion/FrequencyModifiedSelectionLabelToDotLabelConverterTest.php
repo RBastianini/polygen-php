@@ -4,7 +4,7 @@ namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Mockery\MockInterface;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
@@ -33,7 +33,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverterTest extends TestCase
         parent::setUp();
         $this->identifierFactory = \Mockery::mock(IdentifierFactory::class);
         $this->subject = $this->given_a_converter_with(
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new FrequencyModifiedSelectionLabelToDotLabelConverter(
                 $this->identifierFactory,
                 new FrequencyModificationWeightCalculator()

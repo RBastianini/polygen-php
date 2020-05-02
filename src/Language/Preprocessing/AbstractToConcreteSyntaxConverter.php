@@ -3,7 +3,7 @@
 namespace Polygen\Language\Preprocessing;
 
 use Polygen\Document;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\DeepUnfoldingConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
@@ -53,7 +53,7 @@ class AbstractToConcreteSyntaxConverter
         $identifierFactory = new IdentifierFactory();
         $frequencyModificationWeightCalculator = new FrequencyModificationWeightCalculator();
         return new static([
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new FrequencyModifiedSelectionLabelToDotLabelConverter(
                 $identifierFactory,
                 $frequencyModificationWeightCalculator

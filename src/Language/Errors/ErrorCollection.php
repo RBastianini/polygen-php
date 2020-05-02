@@ -10,7 +10,7 @@ use Webmozart\Assert\Assert;
 class ErrorCollection
 {
     /**
-     * @var \Polygen\Language\Errors\Error[]
+     * @var Error[]
      */
     private $errors;
 
@@ -21,7 +21,7 @@ class ErrorCollection
     }
 
     /**
-     * @return \Polygen\Language\Errors\Error[]
+     * @return Error[]
      */
     public function getErrors()
     {
@@ -31,8 +31,8 @@ class ErrorCollection
     /**
      * Merges in the passed error collection, returning a new one.
      *
-     * @param \Polygen\Language\Errors\ErrorCollection $errorCollection
-     * @return $this
+     * @param ErrorCollection $errorCollection
+     * @return static
      */
     public function merge(ErrorCollection $errorCollection)
     {

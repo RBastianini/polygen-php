@@ -2,7 +2,7 @@
 
 namespace Tests\Polygen\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationConverter;
 use Tests\DocumentUtils;
 use Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion\ConverterUtils;
@@ -38,7 +38,7 @@ GRAMMAR
         );
 
         $converter = $this->given_a_converter_with(
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new PermutationConverter()
         );
 
@@ -73,7 +73,7 @@ GRAMMAR
         );
 
         $converter = $this->given_a_converter_with(
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new PermutationConverter()
         );
 

@@ -13,16 +13,15 @@ use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Webmozart\Assert\Assert;
 
 /**
- * Converts an AtomSequence into a HasLabelSelection (unfoldable or atom).
+ * Converts an AtomSequence into a production.
  *
  * The idea is to go from
  * Label: Something, SomethingElse, SomethingElseEntirely
  * to
  * Label: ( Something | SomethingElse | SomethingElseEntirely )
  */
-class AtomSequenceToLabelableConverter implements ConverterInterface
+class AtomSequenceToProductionConverter implements ConverterInterface
 {
-
     /**
      * The lowest the number, the highest the priority.
      *

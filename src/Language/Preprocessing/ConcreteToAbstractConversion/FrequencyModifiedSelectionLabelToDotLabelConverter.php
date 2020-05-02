@@ -4,7 +4,6 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Definition;
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\LabelSelection;

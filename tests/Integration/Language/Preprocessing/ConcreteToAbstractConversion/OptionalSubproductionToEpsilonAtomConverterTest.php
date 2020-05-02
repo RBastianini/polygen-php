@@ -3,7 +3,7 @@
 namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
@@ -24,7 +24,7 @@ class OptionalSubproductionToEpsilonAtomConverterTest extends TestCase
     {
         parent::setUp();
         $this->subject = $this->given_a_converter_with(
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new OptionalSubproductionToEpsilonAtomConverter()
         );
     }

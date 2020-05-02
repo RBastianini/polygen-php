@@ -5,6 +5,7 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services;
 use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
@@ -135,16 +136,11 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Atom $atom
-     * @return \Polygen\Grammar\Atom
+     * @return Atom\SimpleAtom
      */
-    public function walkAtom(Atom $atom, $_ = null)
+    public function walkSimpleAtom(Atom\SimpleAtom $atom, $_ = null)
     {
-        return $atom instanceof Atom\SimpleAtom
-            ? $atom
-            : Atom\AtomBuilder::like($atom)->withUnfoldable(
-                $this->convertOne($atom->getUnfoldable())
-            )->build();
+        return $atom;
     }
 
     /**
@@ -196,6 +192,17 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $_ = null)
     {
         return $nonTerminatingSymbol;
+    }
+
+    /**
+     * @internal
+     * @return UnfoldableAtom
+     */
+    public function walkUnfoldableAtom(Atom\UnfoldableAtom $atom, $_ = null)
+    {
+        return Atom\AtomBuilder::like($atom)->withUnfoldable(
+            $this->convertOne($atom->getUnfoldable())
+        )->build();
     }
 
     /**

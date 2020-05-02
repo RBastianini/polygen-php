@@ -4,7 +4,7 @@ namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Mockery\MockInterface;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToLabelableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Tests\DocumentUtils;
@@ -31,7 +31,7 @@ class IterationUnfoldableConverterTest extends TestCase
         parent::setUp();
         $this->identifierFactory = \Mockery::mock(IdentifierFactory::class);
         $this->subject = $this->given_a_converter_with(
-            new AtomSequenceToLabelableConverter(),
+            new AtomSequenceToProductionConverter(),
             new IterationUnfoldableConverter($this->identifierFactory)
         );
     }

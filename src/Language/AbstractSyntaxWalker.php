@@ -5,6 +5,8 @@ namespace Polygen\Language;
 use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\SimpleAtom;
+use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Production;
@@ -61,11 +63,18 @@ interface AbstractSyntaxWalker
     public function walkSubproduction(Subproduction $subproduction, $context = null);
 
     /**
-     * @param \Polygen\Grammar\Atom $atom
+     * @param SimpleAtom $atom
      * @param mixed $context Any context that should be passed ito the wal function.
      * @return mixed
      */
-    public function walkAtom(Atom $atom, $context = null);
+    public function walkSimpleAtom(SimpleAtom $atom, $context = null);
+
+    /**
+     * @param UnfoldableAtom $atom
+     * @param mixed $context Any context that should be passed ito the wal function.
+     * @return mixed
+     */
+    public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null);
 
     /**
      * @param \Polygen\Grammar\Unfoldable\NonTerminatingSymbol $nonTerminatingSymbol

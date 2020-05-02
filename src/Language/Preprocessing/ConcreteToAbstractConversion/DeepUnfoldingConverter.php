@@ -63,6 +63,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return mixed
      */
     public function walkDocument(Document $document, $_ = null)
@@ -71,6 +72,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return Definition
      */
     public function walkDefinition(Definition $definition, $_ = null)
@@ -79,6 +81,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return Assignment
      */
     public function walkAssignment(Assignment $assignment, $_ = null)
@@ -87,6 +90,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return Sequence
      */
     public function walkSequence(Sequence $sequence, $_ = null)
@@ -95,6 +99,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return Production
      */
     public function walkProduction(Production $production, $_ = null)
@@ -103,6 +108,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return Subproduction
      */
     public function walkSubproduction(Subproduction $subproduction, $_ = null)
@@ -114,19 +120,16 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
-     * @return Atom
+     * @internal
+     * @return Atom\SimpleAtom
      */
-    public function walkAtom(Atom $atom, $_ = null)
+    public function walkSimpleAtom(Atom\SimpleAtom $atom, $_ = null)
     {
-        return $atom instanceof Atom\SimpleAtom
-            ? $atom
-            : Atom\AtomBuilder::like($atom)
-                ->withUnfoldable(
-                    $this->convertOne($atom->getUnfoldable())
-                )->build();
+        return $atom;
     }
 
     /**
+     * @internal
      * @return NonTerminatingSymbol
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $_ = null)
@@ -135,6 +138,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return SubproductionUnfoldable
      */
     public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $_ = null)
@@ -143,11 +147,25 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     }
 
     /**
+     * @internal
      * @return AtomSequence
      */
     public function walkAtomSequence(AtomSequence $atoms, $_ = null)
     {
+        throw new \RuntimeException('There should be no atom sequences at this point.');
         return new AtomSequence($this->convertMany($atoms->getAtoms()));
+    }
+
+    /**
+     * @internal
+     * @return Atom\UnfoldableAtom
+     */
+    public function walkUnfoldableAtom(Atom\UnfoldableAtom $atom, $_ = null)
+    {
+        return Atom\AtomBuilder::like($atom)
+            ->withUnfoldable(
+                $this->convertOne($atom->getUnfoldable())
+            )->build();
     }
 
     /**

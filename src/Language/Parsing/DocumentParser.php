@@ -11,7 +11,6 @@ use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
 use Polygen\Grammar\FrequencyModifier;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
