@@ -13,8 +13,8 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubprodu
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\ConverterTreeWalker;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldingSubproductionConverter;
+use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Webmozart\Assert\Assert;
 
 /**

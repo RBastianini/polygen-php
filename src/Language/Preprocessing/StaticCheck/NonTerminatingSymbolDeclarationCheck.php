@@ -1,10 +1,11 @@
 <?php
 
-namespace Polygen\Language\StaticChecking;
+namespace Polygen\Language\Preprocessing\StaticCheck;
 
 use Polygen\Document;
 use Polygen\Grammar\Assignment;
-use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\SimpleAtom;
+use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
@@ -16,15 +17,12 @@ use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Context;
 use Polygen\Language\Errors\ErrorCollection;
-use Polygen\Language\Errors\NoStartSymbol;
-use Polygen\Language\Errors\UndefinedNonTerminatingSymbol;
-use Polygen\Language\Token\Type;
+use Polygen\Language\Errors\UndeclaredNonTerminatingSymbol;
 
 /**
- * Walks down the document and checks that at any time an Non Terminating Symbol is reached, a definition or an
- * assignment are available to resolve it.
+ * Walks the tree in search of non terminating symbols, to verify that they have all been declared.
  */
-class StaticChecker implements AbstractSyntaxWalker
+class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, AbstractSyntaxWalker
 {
     /**
      * @param \Polygen\Document $document
@@ -32,14 +30,7 @@ class StaticChecker implements AbstractSyntaxWalker
      */
     public function check(Document $document)
     {
-        $errors = [];
-        if (!$document->isDeclared(Document::START)) {
-            $errors[] = new NoStartSymbol();
-        }
-
-        return (new ErrorCollection($errors))->merge(
-            $this->walkDocument($document, new Context())
-        );
+        return $this->walkDocument($document, new Context());
     }
 
     /**
@@ -50,18 +41,13 @@ class StaticChecker implements AbstractSyntaxWalker
      */
     public function walkDocument(Document $document, $context = null)
     {
-        $context = $context->mergeAssignments($document->getAssignments())
-            ->mergeDefinitions($document->getDefinitions());
+        $context = $context->mergeDeclarations($document->getDeclarations());
 
-        $errors = $this->checkMany($document->getDefinitions(), $context)
-            ->merge($this->checkMany($document->getAssignments(), $context));
-
-        return $errors;
+        return $this->checkMany($document->getDeclarations(), $context);
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Definition $definition
      * @param Context $context
      * @return ErrorCollection
      */
@@ -72,7 +58,6 @@ class StaticChecker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Assignment $assignment
      * @param Context $context
      * @return ErrorCollection
      */
@@ -83,7 +68,6 @@ class StaticChecker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Sequence $sequence
      * @param Context $context
      * @return ErrorCollection
      */
@@ -94,7 +78,6 @@ class StaticChecker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Production $production
      * @param Context $context
      * @return ErrorCollection
      */
@@ -105,53 +88,42 @@ class StaticChecker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Subproduction $subproduction
      * @param Context $context
      * @return ErrorCollection
      */
     public function walkSubproduction(Subproduction $subproduction, $context = null)
     {
-        $context = $context->mergeDefinitions($subproduction->getDefinitions())
-            ->mergeAssignments($subproduction->getAssignments());
+        $context = $context->mergeDeclarations($subproduction->getDeclarations());
 
         return $this->checkMany($subproduction->getProductions(), $context);
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Atom $atom
      * @param Context $context
      * @return ErrorCollection
      */
-    public function walkAtom(Atom $atom, $context = null)
+    public function walkSimpleAtom(SimpleAtom $atom, $context = null)
     {
-        if ($atom instanceof Atom\UnfoldableAtom) {
-            return $this->doCheck($atom->getUnfoldable(), $context);
-        }
-
         return new ErrorCollection();
-
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\Unfoldable\NonTerminatingSymbol $nonTerminatingSymbol
      * @param Context $context
      * @return ErrorCollection
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
-        $token = $nonTerminatingSymbol->getToken();
         $errors = [];
-        if ($token->getType() === Type::nonTerminatingSymbol() && !$context->isDeclared($token->getValue())) {
-            $errors[] = new UndefinedNonTerminatingSymbol($token);
+        if (!$context->isDeclared($nonTerminatingSymbol->getToken()->getValue())) {
+            $errors[] = new UndeclaredNonTerminatingSymbol($nonTerminatingSymbol->getToken());
         }
         return new ErrorCollection($errors);
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
      * @param Context $context
      * @return ErrorCollection
      */
@@ -162,7 +134,6 @@ class StaticChecker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param \Polygen\Grammar\AtomSequence $atoms
      * @param Context $context
      * @return ErrorCollection
      */
@@ -172,11 +143,21 @@ class StaticChecker implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Node[] $nodes
+     * @internal
      * @param Context $context
      * @return ErrorCollection
      */
-    private function checkMany(array $nodes, Context $context)
+    public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
+    {
+        return $this->doCheck($atom->getUnfoldable(), $context);
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param mixed $context
+     * @return ErrorCollection
+     */
+    protected function checkMany(array $nodes, $context)
     {
         return array_reduce(
             array_map([$this, 'doCheck'], $nodes, array_fill(0, count($nodes), $context)),
@@ -190,7 +171,7 @@ class StaticChecker implements AbstractSyntaxWalker
     /**
      * @return ErrorCollection
      */
-    private function doCheck(Node $node, $context)
+    protected function doCheck(Node $node, $context)
     {
         return $node->traverse($this, $context);
     }

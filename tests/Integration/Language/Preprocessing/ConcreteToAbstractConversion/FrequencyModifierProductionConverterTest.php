@@ -5,7 +5,7 @@ namespace Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
 use Tests\TestCase;

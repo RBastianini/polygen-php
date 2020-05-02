@@ -6,7 +6,7 @@ use Mockery\MockInterface;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;
 use Tests\TestCase;

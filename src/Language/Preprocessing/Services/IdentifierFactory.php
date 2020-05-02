@@ -1,6 +1,6 @@
 <?php
 
-namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services;
+namespace Polygen\Language\Preprocessing\Services;
 
 /**
  * Generates an unique identifier with the specified prefix.

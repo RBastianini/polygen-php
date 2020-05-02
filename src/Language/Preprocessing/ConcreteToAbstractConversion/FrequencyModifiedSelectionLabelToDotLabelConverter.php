@@ -12,7 +12,7 @@ use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
 use Webmozart\Assert\Assert;
 

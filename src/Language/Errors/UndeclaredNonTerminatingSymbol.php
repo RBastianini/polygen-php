@@ -9,10 +9,10 @@ use Webmozart\Assert\Assert;
 /**
  * Error raised when attempting to use a non terminating symbol for which a declaration is not available.
  */
-class UndefinedNonTerminatingSymbol implements Error
+class UndeclaredNonTerminatingSymbol implements Error
 {
     /**
-     * @var \Polygen\Language\Token\Token
+     * @var Token
      */
     private $token;
 
@@ -27,6 +27,6 @@ class UndefinedNonTerminatingSymbol implements Error
      */
     public function getMessage()
     {
-        return "Undefined non terminating symbol '{$this->token->getValue()}'.";
+        return "Undeclared non terminating symbol '{$this->token->getValue()}'.";
     }
 }

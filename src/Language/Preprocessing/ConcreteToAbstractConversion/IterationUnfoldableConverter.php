@@ -3,16 +3,17 @@
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Atom;
+use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
-use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\IdentifierFactory;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
 use Webmozart\Assert\Assert;
 
@@ -46,7 +47,7 @@ class IterationUnfoldableConverter implements ConverterInterface
     }
 
     /**
-     * @param \Polygen\Grammar\Atom\UnfoldableAtom $node
+     * @param UnfoldableAtom $node
      * @return Node
      */
     public function convert(Node $node)
@@ -143,7 +144,7 @@ class IterationUnfoldableConverter implements ConverterInterface
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof Atom\UnfoldableAtom
+        return $node instanceof UnfoldableAtom
             && $node->getUnfoldable() instanceof SubproductionUnfoldable
             && $node->getUnfoldable()->getType() === SubproductionUnfoldableType::iteration();
     }
