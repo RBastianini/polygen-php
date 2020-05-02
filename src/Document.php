@@ -2,8 +2,7 @@
 
 namespace Polygen;
 
-use Polygen\Grammar\Assignment;
-use Polygen\Grammar\Definition;
+use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -18,65 +17,43 @@ class Document implements Node
     const START = 'S';
 
     /**
-     * @var Assignment[]
+     * @var DeclarationInterface[]
      */
-    private $assignments = [];
-
-    /**
-     * @var Definition[]
-     */
-    private $definitions = [];
+    private $declarations;
 
     /**
      * Document constructor.
      *
-     * @param Definition[] $definitions
-     * @param Assignment[] $assignments
+     * @param DeclarationInterface $declarations
      */
-    public function __construct(array $definitions, array $assignments)
+    public function __construct(array $declarations)
     {
-        foreach ($definitions as $definition) {
-            Assert::keyNotExists($this->definitions, $definition->getName(), "Multiple definitions named {$definition->getName()} found.");
-            $this->definitions[$definition->getName()] = $definition;
+        // Declarations appearing before other declarations are take precedence on those appearing later, so we flip the
+        // declarations that we got and process them one by one and in the and we will have set only those that have not
+        // been shadowed.
+        $validDeclarations = [];
+        foreach (array_reverse($declarations) as $declaration) {
+            Assert::isInstanceOf($declaration, DeclarationInterface::class);
+            $validDeclarations[$declaration->getName()] = $declaration;
         }
-        foreach ($assignments as $assignment) {
-            Assert::keyNotExists($this->assignments, $assignment->getName(), "Multiple assignments named {$assignment->getName()} found.");
-            $this->assignments[$assignment->getName()] = $assignment;
-        }
+        $this->declarations = array_reverse($validDeclarations);
     }
 
     /**
      * @param string $name
-     * @return \Polygen\Grammar\Definition
+     * @return DeclarationInterface
      */
-    public function getDefinition($name)
+    public function getDeclaration($name)
     {
-        return $this->definitions[$name];
+        return $this->declarations[$name];
     }
 
     /**
-     * @param string $name
-     * @return \Polygen\Grammar\Assignment
+     * @return DeclarationInterface[]
      */
-    public function getAssignment($name)
+    public function getDeclarations()
     {
-        return $this->assignments[$name];
-    }
-
-    /**
-     * @return Definition[]
-     */
-    public function getDefinitions()
-    {
-        return array_values($this->definitions);
-    }
-
-    /**
-     * @return Assignment[]
-     */
-    public function getAssignments()
-    {
-        return array_values($this->assignments);
+        return array_values($this->declarations);
     }
 
     /**
@@ -96,7 +73,6 @@ class Document implements Node
      */
     public function isDeclared($name)
     {
-        return array_key_exists($name, $this->definitions)
-            || array_key_exists($name, $this->assignments);
+        return array_key_exists($name, $this->declarations);
     }
 }

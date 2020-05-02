@@ -29,13 +29,13 @@ GRAMMAR
             )
         );
 
-        $converter = $this->given_a_converter_with(new AtomSequenceToLabelableConverter());
+        $converter = $this->given_a_converter_with(new AtomSequenceToProductionConverter());
 
         $convertedDocument = $converter->convert($document);
 
         $this->assertEquals(
-            $convertedDocument->getDefinition('Expected')->getProductions(),
-            $convertedDocument->getDefinition('Source')->getProductions()
+            $convertedDocument->getDeclaration('Expected')->getProductions(),
+            $convertedDocument->getDeclaration('Source')->getProductions()
         );
     }
 }

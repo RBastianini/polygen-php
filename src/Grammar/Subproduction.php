@@ -14,14 +14,9 @@ use Webmozart\Assert\Assert;
 class Subproduction implements HasProductions, Node
 {
     /**
-     * @var \Polygen\Grammar\Definition[]
+     * @var DeclarationInterface[]
      */
-    private $definitions = [];
-
-    /**
-     * @var \Polygen\Grammar\Assignment[]
-     */
-    private $assignments = [];
+    private $declarations = [];
 
     /**
      * @var Production[]
@@ -36,18 +31,12 @@ class Subproduction implements HasProductions, Node
      */
     public function __construct(array $declarations, array $productions)
     {
-        foreach ($declarations as $declaration) {
+        $validDeclarations = [];
+        foreach (array_reverse($declarations) as $declaration) {
             Assert::implementsInterface($declaration, DeclarationInterface::class);
-            if ($declaration instanceof Definition) {
-                $this->definitions[] = $declaration;
-            } else if ($declaration instanceof Assignment) {
-                $this->assignments[] = $declaration;
-            } else {
-                throw new \LogicException(
-                    sprintf("Unexpected object of class %s: it's neither a definition nor an assignment!", get_class($declaration))
-                );
-            }
+            $validDeclarations[$declaration->getName()] = $declaration;
         }
+        $this->declarations = array_reverse($validDeclarations);
         Assert::allIsInstanceOf($productions, Production::class);
         $this->productions = $productions;
     }
@@ -68,7 +57,7 @@ class Subproduction implements HasProductions, Node
      */
     public function getDeclarations()
     {
-        return array_merge($this->assignments, $this->definitions);
+        return array_values($this->declarations);
     }
 
     /**
@@ -77,22 +66,6 @@ class Subproduction implements HasProductions, Node
     public function getProductions()
     {
         return $this->productions;
-    }
-
-    /**
-     * @return \Polygen\Grammar\Definition[]
-     */
-    public function getDefinitions()
-    {
-        return $this->definitions;
-    }
-
-    /**
-     * @return \Polygen\Grammar\Assignment[]
-     */
-    public function getAssignments()
-    {
-        return $this->assignments;
     }
 
     /**

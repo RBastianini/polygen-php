@@ -51,8 +51,8 @@ GRAMMAR
         $document = $subject->parse();
 
         $this->assertNotEquals(
-            $document->getDefinition('A')->getProductions(),
-            $document->getDefinition('B')->getProductions()
+            $document->getDeclaration('A')->getProductions(),
+            $document->getDeclaration('B')->getProductions()
         );
     }
 
@@ -95,7 +95,7 @@ GRAMMAR
             )
         );
 
-        $this->assertEquals($expectedProductionA, $document->getDefinition('A')->getProductions()[0]);
+        $this->assertEquals($expectedProductionA, $document->getDeclaration('A')->getProductions()[0]);
 
         $expectedProductionB = [
             new Production(
@@ -135,7 +135,7 @@ GRAMMAR
                 new FrequencyModifier(1, 0)
             ),
         ];
-        $this->assertEquals($expectedProductionB, $document->getDefinition('B')->getProductions());
+        $this->assertEquals($expectedProductionB, $document->getDeclaration('B')->getProductions());
     }
 
     // TODO: for every new parsing bug, remember to add a dedicated test.

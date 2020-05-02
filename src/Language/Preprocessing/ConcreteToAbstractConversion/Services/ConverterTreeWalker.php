@@ -64,8 +64,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
     public function walkDocument(Document $document, $_ = null)
     {
         return new Document(
-            $this->convertAll($document->getDefinitions()),
-            $this->convertAll($document->getAssignments())
+            $this->convertAll($document->getDeclarations())
         );
     }
 

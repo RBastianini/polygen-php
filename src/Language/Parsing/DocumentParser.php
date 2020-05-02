@@ -32,18 +32,12 @@ class DocumentParser extends Parser
      */
     public function parse()
     {
-        $definitions = [];
-        $assignments = [];
+        $declarations = [];
 
         while (!$this->isEndOfDocument()) {
-            $declaration = $this->matchDeclaration();
-            if ($declaration instanceof Definition) {
-                $definitions[] = $declaration;
-            } else {
-                $assignments[] = $declaration;
-            }
+            $declarations[] = $this->matchDeclaration();
         }
-        return new Document($definitions, $assignments);
+        return new Document($declarations);
     }
 
     /**

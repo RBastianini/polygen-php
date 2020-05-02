@@ -2,8 +2,6 @@
 
 namespace Polygen\Language;
 
-use Polygen\Grammar\Assignment;
-use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Webmozart\Assert\Assert;
 
@@ -16,26 +14,20 @@ class Context
     /**
      * @var \Polygen\Grammar\Definition[]
      */
-    private $definitions;
-
-    /**
-     * @var \Polygen\Grammar\Assignment[]
-     */
-    private $assignments;
+    private $declarations = [];
 
     /**
      * Context constructor.
      *
-     * @param \Polygen\Grammar\Definition[] $definitions
-     * @param \Polygen\Grammar\Assignment[] $assignments
+     * @param DeclarationInterface[] $declarations
      */
-    public function __construct(array $definitions = [], array $assignments = [])
+    public function __construct(array $declarations = [])
     {
-        Assert::allIsInstanceOf($definitions, Definition::class);
-        Assert::allIsInstanceOf($assignments, Assignment::class);
+        Assert::allIsInstanceOf($declarations, DeclarationInterface::class);
 
-        $this->definitions = $this->indexDeclarations($definitions);
-        $this->assignments = $this->indexDeclarations($assignments);
+        foreach ($declarations as $declaration) {
+            $this->declarations[$declaration->getName()] = $declaration;
+        }
     }
 
     /**
@@ -44,44 +36,30 @@ class Context
      */
     public function isDeclared($declaration)
     {
-        return array_key_exists($declaration, $this->assignments)
-            || array_key_exists($declaration, $this->definitions);
-    }
-
-    /**
-     * @param \Polygen\Grammar\Definition[] $definitions
-     */
-    public function mergeDefinitions(array $definitions)
-    {
-        Assert::allIsInstanceOf($definitions, Definition::class);
-        $clone = clone $this;
-        $clone->definitions = $this->mergeDeclarations($this->definitions, $definitions);
-        return $clone;
-    }
-
-    public function mergeAssignments(array $assignments)
-    {
-        Assert::allIsInstanceOf($assignments, Assignment::class);
-        $clone = clone $this;
-        $clone->assignments = $this->mergeDeclarations($this->assignments, $assignments);
-        return $clone;
+        return array_key_exists($declaration, $this->declarations);
     }
 
     /**
      * @param DeclarationInterface[] $declarations
-     * @return DeclarationInterface[] An array of declarations indexed by their name.
+     * @return static
      */
-    private function indexDeclarations(array $declarations)
+    public function mergeDeclarations(array $declarations)
     {
-        $result = [];
-        foreach ($declarations as $declaration) {
-            $result[$declaration->getName()] = $declaration;
-        }
-        return $result;
+        return new static(array_merge($this->declarations, $declarations));
     }
 
-    private function mergeDeclarations(array $original, array $new)
+    /**
+     * @param string $declarationName
+     * @return DeclarationInterface
+     */
+    public function getDeclaration($declarationName)
     {
-        return array_merge($original, $this->indexDeclarations($new));
+        Assert::true($this->isDeclared($declarationName));
+        return $this->declarations[$declarationName];
+    }
+
+    public function isEmpty()
+    {
+        return empty($this->declarations);
     }
 }
