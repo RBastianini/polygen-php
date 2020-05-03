@@ -3,6 +3,7 @@
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Interfaces\Node;
+use Polygen\Language\Context;
 
 /**
  * Interface for converters to use for the concrete to abstract syntax conversion.
@@ -19,15 +20,13 @@ interface ConverterInterface
     /**
      * Converts the node (and just it) and returns the converted node.
      *
-     * @param Node $node
      * @return Node
      */
-    public function convert(Node $node);
+    public function convert(Node $node, Context $context);
 
     /**
      * Returns true if the converter can operate on the passed node.
      *
-     * @param Node $node
      * @return bool
      */
     public function canConvert(Node $node);

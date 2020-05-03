@@ -8,6 +8,7 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Definition;
+use Polygen\Grammar\Interfaces\HasDeclarations;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
@@ -17,6 +18,7 @@ use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 
 /**
@@ -41,141 +43,130 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      */
     public function convert(Document $document)
     {
-        return $this->convertOne($document);
-    }
-
-    /**
-     * @param Node $node
-     * @return Node
-     */
-    private function convertOne(Node $node)
-    {
-        $node = $this->converter->canConvert($node)
-            ? $this->converter->convert($node)
-            : $node;
-        return $node->traverse($this);
+        return $this->convertOne($document, new Context());
     }
 
     /**
      * @internal
-     * @param Document $document
+     * @param Context $context
      * @return Document
      */
-    public function walkDocument(Document $document, $_ = null)
+    public function walkDocument(Document $document, $context = null)
     {
         return new Document(
-            $this->convertAll($document->getDeclarations())
+            $this->convertAll($document->getDeclarations(), $context)
         );
     }
 
     /**
      * @internal
-     * @param Definition $definition
+     * @param Context $context
      * @return Definition
      */
-    public function walkDefinition(Definition $definition, $_ = null)
+    public function walkDefinition(Definition $definition, $context = null)
     {
         return new Definition(
             $definition->getName(),
-            $this->convertAll($definition->getProductions())
+            $this->convertAll($definition->getProductions(), $context)
         );
     }
 
     /**
      * @internal
-     * @param Assignment $assignment
+     * @param Context $context
      * @return Assignment
      */
-    public function walkAssignment(Assignment $assignment, $_ = null)
+    public function walkAssignment(Assignment $assignment, $context = null)
     {
         return new Assignment(
             $assignment->getName(),
-            $this->convertAll($assignment->getProductions())
+            $this->convertAll($assignment->getProductions(), $context)
         );
     }
 
     /**
      * @internal
-     * @param Sequence $sequence
+     * @param Context $context
      * @return Sequence
      */
-    public function walkSequence(Sequence $sequence, $_ = null)
+    public function walkSequence(Sequence $sequence, $context = null)
     {
         return new Sequence(
-            $this->convertAll($sequence->getSequenceContents()),
+            $this->convertAll($sequence->getSequenceContents(), $context),
             $sequence->getLabel()
         );
     }
 
     /**
      * @internal
-     * @param Production $production
+     * @param Context $context
      * @return Production
      */
-    public function walkProduction(Production $production, $_ = null)
+    public function walkProduction(Production $production, $context = null)
     {
         return new Production(
-            $this->convertOne($production->getSequence()),
+            $this->convertOne($production->getSequence(), $context),
             $production->getFrequencyModifier()
         );
     }
 
     /**
      * @internal
-     * @param Subproduction $subproduction
+     * @param Context $context
      * @return Subproduction
      */
-    public function walkSubproduction(Subproduction $subproduction, $_ = null)
+    public function walkSubproduction(Subproduction $subproduction, $context = null)
     {
         return new Subproduction(
-            $this->convertAll($subproduction->getDeclarations()),
-            $this->convertAll($subproduction->getProductions())
+            $this->convertAll($subproduction->getDeclarations(), $context),
+            $this->convertAll($subproduction->getProductions(), $context)
         );
     }
 
     /**
      * @internal
+     * @param Context $context
      * @return Atom\SimpleAtom
      */
-    public function walkSimpleAtom(Atom\SimpleAtom $atom, $_ = null)
+    public function walkSimpleAtom(Atom\SimpleAtom $atom, $context = null)
     {
         return $atom;
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\AtomSequence $atomSequence
+     * @param Context $context
      * @return mixed|\Polygen\Grammar\AtomSequence
      */
-    public function walkAtomSequence(AtomSequence $atomSequence, $_ = null)
+    public function walkAtomSequence(AtomSequence $atomSequence, $context = null)
     {
         return new AtomSequence(
-            $this->convertAll($atomSequence->getAtoms())
+            $this->convertAll($atomSequence->getAtoms(), $context)
         );
     }
 
     /**
      * @internal
-     * @param \Polygen\Grammar\SubproductionUnfoldable $unfoldable
+     * @param Context $context
      * @return \Polygen\Grammar\SubproductionUnfoldable
      */
-    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $_ = null)
+    public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null)
     {
         switch ($unfoldable->getType()) {
             case SubproductionUnfoldableType::simple():
                 return UnfoldableBuilder::like($unfoldable)->withSubproduction(
-                    $this->convertOne($unfoldable->getSubproduction())
+                    $this->convertOne($unfoldable->getSubproduction(), $context)
                 )->build();
             case SubproductionUnfoldableType::optional():
                 return UnfoldableBuilder::like($unfoldable)->withSubproduction(
-                    $this->convertOne($unfoldable->getSubproduction())
+                    $this->convertOne($unfoldable->getSubproduction(), $context)
                 )->build();
             case SubproductionUnfoldableType::permutation():
             case SubproductionUnfoldableType::deepUnfold():
             case SubproductionUnfoldableType::iteration():
                 return UnfoldableBuilder::like($unfoldable)
                     ->withSubproduction(
-                        $this->convertOne($unfoldable->getSubproduction())
+                        $this->convertOne($unfoldable->getSubproduction(), $context)
                     )
                     ->build();
             default:
@@ -185,22 +176,23 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
 
     /**
      * @internal
-     * @param NonTerminatingSymbol $nonTerminatingSymbol
+     * @param Context $context
      * @return NonTerminatingSymbol
      */
-    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $_ = null)
+    public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
         return $nonTerminatingSymbol;
     }
 
     /**
      * @internal
+     * @param Context $context
      * @return UnfoldableAtom
      */
-    public function walkUnfoldableAtom(Atom\UnfoldableAtom $atom, $_ = null)
+    public function walkUnfoldableAtom(Atom\UnfoldableAtom $atom, $context = null)
     {
         return Atom\AtomBuilder::like($atom)->withUnfoldable(
-            $this->convertOne($atom->getUnfoldable())
+            $this->convertOne($atom->getUnfoldable(), $context)
         )->build();
     }
 
@@ -209,11 +201,26 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
      * @param Node[] $nodes
      * @return Node[]
      */
-    private function convertAll(array $nodes)
+    private function convertAll(array $nodes, Context $context)
     {
         return array_map(
             [$this, 'convertOne'],
-            $nodes
+            $nodes,
+            array_fill(0, count($nodes), $context)
         );
+    }
+
+    /**
+     * @return Node
+     */
+    private function convertOne(Node $node, Context $context)
+    {
+        if ($node instanceof HasDeclarations) {
+            $context = $context->mergeDeclarations($node->getDeclarations());
+        }
+        $node = $this->converter->canConvert($node)
+            ? $this->converter->convert($node, $context)
+            : $node;
+        return $node->traverse($this, $context);
     }
 }

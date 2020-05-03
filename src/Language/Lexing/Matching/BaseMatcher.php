@@ -3,6 +3,7 @@
 namespace Polygen\Language\Lexing\Matching;
 
 use GuzzleHttp\Stream\StreamInterface;
+use Polygen\Language\Token\Token;
 
 /**
  * Base class for matchers.
@@ -42,7 +43,7 @@ abstract class BaseMatcher
     /**
      * Actually does the matching.
      *
-     * @return mixed
+     * @return Token
      */
     protected abstract function doMatch();
 
@@ -82,17 +83,6 @@ abstract class BaseMatcher
     protected function tell()
     {
         return $this->stream->tell();
-    }
-
-    /**
-     * Utility method to move around in the stream.
-     *
-     * @param int $position
-     * @return bool
-     */
-    protected function seek($position)
-    {
-        return $this->stream->seek($position, SEEK_CUR);
     }
 
     /**

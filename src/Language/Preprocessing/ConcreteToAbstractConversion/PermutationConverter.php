@@ -12,6 +12,7 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Context;
 
 /**
  * Converts sequences containing permutation unfoldables into plain sequences, by exploding the permutation unfoldables
@@ -46,7 +47,7 @@ class PermutationConverter implements ConverterInterface
      * @param Sequence $node
      * @return Node
      */
-    public function convert(Node $node)
+    public function convert(Node $node, Context $_)
     {
         $permutationSequence = [];
         $permutationPositions = [];

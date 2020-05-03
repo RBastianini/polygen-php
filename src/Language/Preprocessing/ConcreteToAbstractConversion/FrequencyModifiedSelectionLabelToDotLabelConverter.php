@@ -11,6 +11,7 @@ use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
@@ -68,7 +69,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      * @param Atom $node
      * @return Atom
      */
-    public function convert(Node $node)
+    public function convert(Node $node, Context $_)
     {
         Assert::isInstanceOf($node, Atom::class);
 

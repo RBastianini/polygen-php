@@ -3,6 +3,7 @@
 namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Grammar\Interfaces\HasDeclarations;
 use Polygen\Grammar\Interfaces\HasProductions;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
@@ -11,7 +12,7 @@ use Webmozart\Assert\Assert;
 /**
  * Represents a Polygen subproduction.
  */
-class Subproduction implements HasProductions, Node
+class Subproduction implements HasDeclarations, HasProductions, Node
 {
     /**
      * @var DeclarationInterface[]

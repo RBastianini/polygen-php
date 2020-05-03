@@ -11,6 +11,7 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
+use Polygen\Language\Context;
 use Polygen\Language\Token\Token;
 
 /**
@@ -36,7 +37,7 @@ class OptionalSubproductionToEpsilonAtomConverter implements ConverterInterface
      * @param SubproductionUnfoldable $node
      * @return Node
      */
-    public function convert(Node $node)
+    public function convert(Node $node, Context $_)
     {
         return UnfoldableBuilder::get()
             ->simple()

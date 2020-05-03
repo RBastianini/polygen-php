@@ -18,6 +18,7 @@ use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Language\Context;
 
 /**
  * Converts unfoldable sub productions having a deep unfolding modifier to simple subproductions where every folded
@@ -42,7 +43,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      * @param SubproductionUnfoldable $subproductionUnfoldable
      * @return SubproductionUnfoldable
      */
-    public function convert(Node $subproductionUnfoldable)
+    public function convert(Node $subproductionUnfoldable, Context $_)
     {
         // Convert this non deep unfolding unfoldable into a simple unfoldable, and recursively walk down this
         // unfoldable to

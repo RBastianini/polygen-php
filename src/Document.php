@@ -3,6 +3,7 @@
 namespace Polygen;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Grammar\Interfaces\HasDeclarations;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -10,7 +11,7 @@ use Webmozart\Assert\Assert;
 /**
  * Represents a Polygen document as read by the parser.
  */
-class Document implements Node
+class Document implements Node, HasDeclarations
 {
     const INFORMATION = 'I';
 
@@ -64,7 +65,7 @@ class Document implements Node
      */
     public function traverse(AbstractSyntaxWalker $walker, $context = null)
     {
-        return $walker->walkDocument($this);
+        return $walker->walkDocument($this, $context);
     }
 
     /**

@@ -10,6 +10,7 @@ use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Context;
 use Webmozart\Assert\Assert;
 
 /**
@@ -36,7 +37,7 @@ class AtomSequenceToProductionConverter implements ConverterInterface
      * @param AtomSequence $sequence
      * @return Atom
      */
-    public function convert(Node $sequence)
+    public function convert(Node $sequence, Context $_)
     {
         Assert::isInstanceOf($sequence, AtomSequence::class);
 

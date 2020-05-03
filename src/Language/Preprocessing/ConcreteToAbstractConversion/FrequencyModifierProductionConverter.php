@@ -5,6 +5,7 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 use Polygen\Grammar\Interfaces\HasProductions;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
+use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 
 /**
@@ -38,7 +39,7 @@ class FrequencyModifierProductionConverter implements ConverterInterface
      * @param HasProductions $node
      * @return Node
      */
-    public function convert(Node $node)
+    public function convert(Node $node, Context $_)
     {
         $frequencyWeightByPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
             $node->getProductions()

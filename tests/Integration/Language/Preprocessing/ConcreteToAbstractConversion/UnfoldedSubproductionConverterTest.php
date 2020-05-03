@@ -3,13 +3,13 @@
 namespace Tests\Polygen\Integration\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
-use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldingSubproductionConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldedSubproductionConverter;
 use Tests\DocumentUtils;
 use Tests\Integration\Language\Preprocessing\ConcreteToAbstractConversion\ConverterUtils;
 use Tests\StreamUtils;
 use Tests\TestCase;
 
-class UnfoldingSubproductionConverterTest extends TestCase
+class UnfoldedSubproductionConverterTest extends TestCase
 {
     use ConverterUtils;
     use DocumentUtils;
@@ -40,7 +40,7 @@ GRAMMAR
 
         $converter = $this->given_a_converter_with(
             new AtomSequenceToProductionConverter(),
-            new UnfoldingSubproductionConverter()
+            new UnfoldedSubproductionConverter()
         );
 
         $convertedDocument = $converter->convert($document);
@@ -80,7 +80,7 @@ GRAMMAR
 
         $converter = $this->given_a_converter_with(
             new AtomSequenceToProductionConverter(),
-            new UnfoldingSubproductionConverter()
+            new UnfoldedSubproductionConverter()
         );
 
         $convertedDocument = $converter->convert($document);
@@ -120,7 +120,7 @@ GRAMMAR
 
         $converter = $this->given_a_converter_with(
             new AtomSequenceToProductionConverter(),
-            new UnfoldingSubproductionConverter()
+            new UnfoldedSubproductionConverter()
         );
 
         $convertedDocument = $converter->convert($document);
