@@ -3,6 +3,7 @@
 namespace Polygen\Language;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Grammar\Interfaces\Node;
 use Webmozart\Assert\Assert;
 
 /**
@@ -12,7 +13,7 @@ use Webmozart\Assert\Assert;
 class Context
 {
     /**
-     * @var \Polygen\Grammar\Definition[]
+     * @var DeclarationInterface[]|Node[]
      */
     private $declarations = [];
 

@@ -6,6 +6,8 @@ use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\HasDeclarations;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Language\Interpretation\Context;
+use Polygen\Language\Interpretation\Interpreter;
 use Webmozart\Assert\Assert;
 
 /**
@@ -42,7 +44,7 @@ class Document implements Node, HasDeclarations
 
     /**
      * @param string $name
-     * @return DeclarationInterface
+     * @return DeclarationInterface|Node
      */
     public function getDeclaration($name)
     {

@@ -2,8 +2,8 @@
 
 namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\InvalidEscapeSequenceException;
-use Polygen\Language\Exceptions\UnterminatedStringException;
+use Polygen\Language\Exceptions\Lexing\InvalidEscapeSequenceException;
+use Polygen\Language\Exceptions\Lexing\UnterminatedStringException;
 use Polygen\Language\Lexing\Matching\StringMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;

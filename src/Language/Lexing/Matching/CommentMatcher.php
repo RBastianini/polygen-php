@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\UnterminatedCommentException;
+use Polygen\Language\Exceptions\Lexing\UnterminatedCommentException;
 use Polygen\Language\Token\Token;
 
 /**

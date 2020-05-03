@@ -115,7 +115,7 @@ class DeclarationsContext
      */
     public function getUniqueName($declarationName)
     {
-        Assert::true($this->isDeclared($declarationName));
+        Assert::true($this->isDeclared($declarationName), "Undeclared $declarationName");
         return $this->ownsDeclaration($declarationName)
             ? "{$this->contextName}>{$declarationName}"
             : $this->parentContext->getUniqueName($declarationName);

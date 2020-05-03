@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\UnterminatedCommentException;
+use Polygen\Language\Exceptions\Lexing\UnterminatedCommentException;
 use Polygen\Language\Lexing\Matching\CommentMatcher;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;

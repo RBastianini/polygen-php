@@ -38,4 +38,12 @@ class ErrorCollection
     {
         return new static(array_merge($this->errors, $errorCollection->getErrors()));
     }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->errors);
+    }
 }

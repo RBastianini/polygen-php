@@ -1,6 +1,6 @@
 <?php
 
-namespace Polygen\Language\Exceptions;
+namespace Polygen\Language\Exceptions\Lexing;
 
 class InvalidEscapeSequenceException extends \RuntimeException
 {
