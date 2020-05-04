@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\AtomSequence;
@@ -19,6 +18,7 @@ use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Context;
+use Polygen\Language\Document;
 
 /**
  * Converts unfoldable sub productions having a deep unfolding modifier to simple subproductions where every folded

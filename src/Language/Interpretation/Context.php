@@ -2,16 +2,18 @@
 
 namespace Polygen\Language\Interpretation;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Language\ContextInterface;
+use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
+use Savvot\Random\MtRand;
 use Webmozart\Assert\Assert;
 
 /**
  * Object representing the current status during Polygen sentence generation.
  */
-class Context extends \Polygen\Language\Context
+class Context implements ContextInterface
 {
     /**
      * The symbol from which generation should start.
@@ -26,12 +28,22 @@ class Context extends \Polygen\Language\Context
     private $assignedAssignments;
 
     /**
-     * @param DeclarationInterface[] $declarations
-     * @param string $startSymbol
+     * @var MtRand
      */
-    public function __construct(array $declarations = [], $startSymbol = Document::START)
+    private $randomNumberGenerator;
+    /**
+     * @var \Polygen\Grammar\Interfaces\DeclarationInterface[]
+     */
+    private $declarationsContext;
+
+    /**
+     * @param \Polygen\Language\Context $declarations
+     * @param string $startSymbol The declaration from which the production should start.
+     */
+    public function __construct($startSymbol = Document::START, $seed = null)
     {
-        parent::__construct($declarations);
+        $this->declarationsContext = new \Polygen\Language\Context();
+        $this->randomNumberGenerator = new MtRand($seed);
         $this->startSymbol = $startSymbol;
     }
 
@@ -77,10 +89,7 @@ class Context extends \Polygen\Language\Context
      */
     public function getRandomNumber($min, $max)
     {
-        // Currently an alias of rand(), but thought as a method to allow for seedable and swappable random number
-        // generators, as seeding the built-in RNG would result in seeding it for the whole execution time (request, if
-        // ran from web) which is clearly not a good idea.
-        return rand($min, $max);
+        return $this->randomNumberGenerator->random($min, $max);
     }
 
     /**
@@ -91,5 +100,42 @@ class Context extends \Polygen\Language\Context
     public function getStartSymbol()
     {
         return $this->startSymbol;
+    }
+
+    /**
+     * @param string $declaration
+     * @return bool
+     */
+    public function isDeclared($declaration)
+    {
+        return $this->declarationsContext->isDeclared($declaration);
+    }
+
+    /**
+     * @param DeclarationInterface[] $declarations
+     * @return \Polygen\Language\Interpretation\Context
+     */
+    public function mergeDeclarations(array $declarations)
+    {
+        $clone = clone $this;
+        $clone->declarationsContext = $this->declarationsContext->mergeDeclarations($declarations);
+        return $clone;
+    }
+
+    /**
+     * @param string $declarationName
+     * @return \Polygen\Grammar\Interfaces\DeclarationInterface|\Polygen\Grammar\Interfaces\Node
+     */
+    public function getDeclaration($declarationName)
+    {
+        return $this->declarationsContext->getDeclaration($declarationName);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->declarationsContext->isEmpty();
     }
 }

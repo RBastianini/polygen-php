@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Errors;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 
 /**
  * Error for grammars missing the start symbol.

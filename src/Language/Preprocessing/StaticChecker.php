@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Preprocessing;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Preprocessing\StaticCheck\InfiniteRecursionCheck;

@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Interpretation;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
 use Polygen\Language\Token\Type;
 use Webmozart\Assert\Assert;
@@ -19,7 +19,7 @@ class Interpreter
     public function interpret(Document $document, Context $context)
     {
         $generator = new TokenSequenceGenerator();
-        $generatedSequence = $generator->generateSequence($document, $context);
+        $generatedSequence = $generator->walkDocument($document, $context);
         return $this->concatenate($generatedSequence);
     }
 

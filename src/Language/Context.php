@@ -10,7 +10,7 @@ use Webmozart\Assert\Assert;
  * This object keeps track of the current context while traversing the tree to generate some output, to perform static
  * checks or to perform a syntax conversion.
  */
-class Context
+class Context implements ContextInterface
 {
     /**
      * @var DeclarationInterface[]|Node[]

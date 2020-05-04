@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e8297ba4e8008c95c404fa1783ed0a98",
+    "content-hash": "23818d215ac94a401255964f4f62e7e5",
     "packages": [
         {
             "name": "drupol/phpermutations",
@@ -119,6 +119,54 @@
             ],
             "abandoned": true,
             "time": "2014-10-12T19:18:40+00:00"
+        },
+        {
+            "name": "savvot/random",
+            "version": "v0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/savvot/random.git",
+                "reference": "8f075d520d75fa90dea8421f6d91176168d150e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/savvot/random/zipball/8f075d520d75fa90dea8421f6d91176168d150e6",
+                "reference": "8f075d520d75fa90dea8421f6d91176168d150e6",
+                "shasum": ""
+            },
+            "require": {
+                "php-64bit": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Savvot\\Random\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SavvoT",
+                    "email": "savvot@ya.ru"
+                }
+            ],
+            "description": "Deterministic pseudo-random generators library with dozens of useful functions and several sources of randomness",
+            "keywords": [
+                "PRNG",
+                "RNG",
+                "php",
+                "pseudo-random",
+                "random",
+                "random number generator",
+                "rnd"
+            ],
+            "time": "2015-09-26T15:48:13+00:00"
         }
     ],
     "packages-dev": [

@@ -31,7 +31,7 @@ trait DocumentUtils
 
     /**
      * @param \GuzzleHttp\Stream\StreamInterface $grammarStream
-     * @return \Polygen\Document
+     * @return \Polygen\Language\Document
      */
     private function given_a_document(StreamInterface $grammarStream)
     {

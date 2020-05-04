@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Preprocessing\StaticCheck;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 
 /**
  * Interface for checks to run on Polygen documents.

@@ -3,7 +3,7 @@
 namespace Tests\Polygen\Unit\Language\Preprocessing;
 
 use Hamcrest\Matchers;
-use Polygen\Document;
+use Polygen\Language\Document;
 use Polygen\Language\Errors\Error;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Preprocessing\StaticCheck\StaticCheckInterface;

@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Interpretation;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom\SimpleAtom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
@@ -15,6 +14,7 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
 
 /**
@@ -23,19 +23,14 @@ use Polygen\Language\Token\Token;
  */
 class TokenSequenceGenerator implements AbstractSyntaxWalker
 {
-    public function generateSequence(Document $document, Context $context)
-    {
-        $context = $context->mergeDeclarations($document->getDeclarations());
-        return $this->walkOne($document->getDeclaration($context->getStartSymbol()), $context);
-    }
-
     /**
      * @param Context $context Any context that should be passed ito the wal function.
      * @return Token[]
      */
     public function walkDocument(Document $document, $context = null)
     {
-        throw new \RuntimeException('This method should never be called.');
+        $context = $context->mergeDeclarations($document->getDeclarations());
+        return $document->getDeclaration($context->getStartSymbol())->traverse($this, $context);
     }
 
     /**
@@ -44,7 +39,8 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkDefinition(Definition $definition, $context = null)
     {
-        return $this->walkOneOf($definition->getProductions(), $context);
+        $nodes = $definition->getProductions();
+        return $nodes[$context->getRandomNumber(0, count($nodes) - 1)]->traverse($this, $context);
     }
 
     /**
@@ -66,7 +62,9 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkSequence(Sequence $sequence, $context = null)
     {
-        return $this->walkAll($sequence->getSequenceContents(), $context);
+        throw new \RuntimeException(
+            'We should be skipping a step when walking sequences, by directly getting their contents from the containing production.'
+        );
     }
 
     public function walkAtomSequence(AtomSequence $atoms, $context = null)
@@ -82,7 +80,11 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkProduction(Production $production, $context = null)
     {
-        return $this->walkAll($production->getSequence()->getSequenceContents(), $context);
+        $results = [];
+        foreach ($production->getSequence()->getSequenceContents() as $node) {
+            $results[] = $node->traverse($this, $context);
+        }
+        return array_merge(... $results);
     }
 
     /**
@@ -92,7 +94,8 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     public function walkSubproduction(Subproduction $subproduction, $context = null)
     {
         $context = $context->mergeDeclarations($subproduction->getDeclarations());
-        return $this->walkOneOf($subproduction->getProductions(), $context);
+        $nodes = $subproduction->getProductions();
+        return $nodes[$context->getRandomNumber(0, count($nodes) - 1)]->traverse($this, $context);
     }
 
     /**
@@ -110,7 +113,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
     {
-        return $this->walkOne($atom->getUnfoldable(), $context);
+        return $atom->getUnfoldable()->traverse($this, $context);
     }
 
     /**
@@ -119,7 +122,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
-        return $this->walkOne($context->getDeclaration($nonTerminatingSymbol->getToken()->getValue()), $context);
+        return $context->getDeclaration($nonTerminatingSymbol->getToken()->getValue())->traverse($this, $context);
     }
 
     /**
@@ -128,15 +131,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null)
     {
-        return $this->walkOne($unfoldable->getSubproduction(), $context);
-    }
-
-    /**
-     * @return Token[]
-     */
-    private function walkOne(Node $node, Context $context)
-    {
-        return $node->traverse($this, $context);
+        return $unfoldable->getSubproduction()->traverse($this, $context);
     }
 
     /**
@@ -145,18 +140,6 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     private function walkOneOf(array $nodes, Context $context)
     {
-        $position = $context->getRandomNumber(0, count($nodes) - 1);
-        return $this->walkOne($nodes[$position], $context);
-    }
-
-    private function walkAll(array $nodes, Context $context)
-    {
-        return array_merge(
-            ...array_map(
-                [$this, 'walkOne'],
-                $nodes,
-                array_fill(0, count($nodes), $context)
-            )
-        );
+        return $nodes[$context->getRandomNumber(0, count($nodes) - 1)]->traverse($this, $context);
     }
 }

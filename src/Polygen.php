@@ -3,6 +3,7 @@
 namespace Polygen;
 
 use GuzzleHttp\Stream\StreamInterface;
+use Polygen\Language\Document;
 use Polygen\Language\Exceptions\StaticCheckException;
 use Polygen\Language\Interpretation\Context;
 use Polygen\Language\Interpretation\Interpreter;
@@ -21,7 +22,7 @@ class Polygen
 {
     /**
      * Reads the stream and returns a validated Polygen document in concrete syntax.
-     * @return \Polygen\Document
+     * @return Document
      */
     public function getDocument(StreamInterface $grammarStream)
     {

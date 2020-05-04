@@ -2,7 +2,6 @@
 
 namespace Polygen\Language;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom\SimpleAtom;
 use Polygen\Grammar\Atom\UnfoldableAtom;

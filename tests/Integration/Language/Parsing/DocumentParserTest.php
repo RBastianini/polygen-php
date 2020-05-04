@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Language\Parsing;
 
-use Polygen\Document;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\FrequencyModifier;
@@ -11,6 +10,7 @@ use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
 use Tests\DocumentUtils;
 use Tests\StreamUtils;

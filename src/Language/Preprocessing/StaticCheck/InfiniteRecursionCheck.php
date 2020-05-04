@@ -2,8 +2,8 @@
 
 namespace Polygen\Language\Preprocessing\StaticCheck;
 
-use Polygen\Document;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
+use Polygen\Language\Document;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Errors\InfiniteRecursion;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;

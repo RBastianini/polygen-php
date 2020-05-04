@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Preprocessing\StaticCheck;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Errors\NoStartSymbol;
 
@@ -12,7 +12,7 @@ use Polygen\Language\Errors\NoStartSymbol;
 class StartSymbolCheck implements StaticCheckInterface
 {
     /**
-     * @param \Polygen\Document $document
+     * @param Document $document
      * @return ErrorCollection
      */
     public function check(Document $document)

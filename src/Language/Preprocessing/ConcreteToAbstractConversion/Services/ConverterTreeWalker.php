@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
@@ -19,6 +18,7 @@ use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Context;
+use Polygen\Language\Document;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 
 /**
@@ -38,8 +38,8 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
     }
 
     /**
-     * @param \Polygen\Document $document
-     * @return \Polygen\Document
+     * @param Document $document
+     * @return Document
      */
     public function convert(Document $document)
     {

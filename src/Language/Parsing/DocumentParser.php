@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Parsing;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\AtomBuilder;
@@ -16,8 +15,9 @@ use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
-use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Grammar\Unfoldable\Unfoldable;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
+use Polygen\Language\Document;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
 use Webmozart\Assert\Assert;

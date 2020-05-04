@@ -1,13 +1,10 @@
 <?php
 
-namespace Polygen;
+namespace Polygen\Language;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\HasDeclarations;
 use Polygen\Grammar\Interfaces\Node;
-use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Interpretation\Context;
-use Polygen\Language\Interpretation\Interpreter;
 use Webmozart\Assert\Assert;
 
 /**

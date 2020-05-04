@@ -2,7 +2,7 @@
 
 namespace Polygen\Language\Preprocessing;
 
-use Polygen\Document;
+use Polygen\Language\Document;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\AtomSequenceToProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\DeepUnfoldingConverter;

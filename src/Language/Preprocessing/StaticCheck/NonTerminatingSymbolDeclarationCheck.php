@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Preprocessing\StaticCheck;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom\SimpleAtom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
@@ -16,6 +15,7 @@ use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Context;
+use Polygen\Language\Document;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Errors\UndeclaredNonTerminatingSymbol;
 
@@ -25,7 +25,7 @@ use Polygen\Language\Errors\UndeclaredNonTerminatingSymbol;
 class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, AbstractSyntaxWalker
 {
     /**
-     * @param \Polygen\Document $document
+     * @param Document $document
      * @return ErrorCollection
      */
     public function check(Document $document)
@@ -35,7 +35,7 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
 
     /**
      * @internal
-     * @param \Polygen\Document $document
+     * @param Document $document
      * @param Context $context
      * @return ErrorCollection
      */

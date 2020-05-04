@@ -2,7 +2,6 @@
 
 namespace Polygen\Language\Preprocessing\StaticCheck\InfiniteRecursionCheck;
 
-use Polygen\Document;
 use Polygen\Grammar\Assignment;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
@@ -17,6 +16,7 @@ use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Context;
+use Polygen\Language\Document;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Webmozart\Assert\Assert;
 
