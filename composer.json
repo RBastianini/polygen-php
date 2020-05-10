@@ -11,11 +11,15 @@
     "guzzlehttp/streams": "^3",
     "php": "^5.6 || ^7.0",
     "drupol/phpermutations": "^1",
-    "savvot/random": "^0.3"
+    "savvot/random": "^0.3",
+    "webmozart/assert": "^1"
   },
   "autoload": {
     "psr-4": {"Polygen\\": "src/"}
   },
+  "bin": [
+    "polygen.php"
+  ],
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/",

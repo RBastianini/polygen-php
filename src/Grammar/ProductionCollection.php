@@ -26,7 +26,12 @@ class ProductionCollection
     {
         Assert::allIsInstanceOf($productions, Production::class);
         $this->productions = array_values($productions);
-        //sort($this->productions);
+        // Currently production results depend on the order in which productions appear. I don't know if this was the
+        // case in the original Polygen, but I don't believe this should be the case.
+        // The issue is that, uncommenting the following line makes a bunch of tests fail (easy) and a bunch of other
+        // tests potentially in need of finding new seeds to still make sure they work (hard).
+        // I will uncomment it soon™.
+        // sort($this->productions);
         foreach ($productions as $production) {
             $label = $production->getSequence()->getLabel()
                 ? $production->getSequence()->getLabel()->getName()

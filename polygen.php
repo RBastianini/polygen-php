@@ -20,7 +20,6 @@ if (file_exists($autoloadFile = __DIR__ . '/vendor/autoload.php')
 
 require_once(__DIR__ . '/includes/cli.php');
 
-
 // Execution starts here
 
 $options = getopt(

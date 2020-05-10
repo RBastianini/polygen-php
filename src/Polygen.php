@@ -25,7 +25,7 @@ class Polygen
      * @param string $startSymbol
      * @return Document
      */
-    public function getDocument(StreamInterface $grammarStream, $startSymbol)
+    public function getDocument(StreamInterface $grammarStream, $startSymbol = Document::START)
     {
         $parser = new DocumentParser(
             new SavePointStream(
