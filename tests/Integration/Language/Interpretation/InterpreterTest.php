@@ -19,7 +19,8 @@ class InterpreterTest extends TestCase
     {
         $polygen = new Polygen();
         $document = $polygen->getDocument(
-            $this->given_a_source_file(__DIR__ . '/../../../files/incredible-commit.grm')
+            $this->given_a_source_file(__DIR__ . '/../../../files/incredible-commit.grm'),
+            Document::START
         );
 
         // Initialize a context with a seed known to make the interpreter use up all stack space and crash.

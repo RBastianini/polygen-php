@@ -18,20 +18,19 @@ class Assignment implements DeclarationInterface, Node
     private $name;
 
     /**
-     * @var Production[]
+     * @var ProductionCollection
      */
-    private $productions;
+    private $productionCollection;
 
     /**
      * Assignment constructor.
      *
      * @param string $name
-     * @param Production[] $productions
      */
-    public function __construct($name, array $productions)
+    public function __construct($name, ProductionCollection $productions)
     {
         $this->name = $name;
-        $this->productions = $productions;
+        $this->productionCollection = $productions;
     }
 
     /**
@@ -54,11 +53,20 @@ class Assignment implements DeclarationInterface, Node
     }
 
     /**
+     * @deprecated
      * @return Production[]
      */
     public function getProductions()
     {
-        return $this->productions;
+        return $this->productionCollection->getProductions();
+    }
+
+    /**
+     * @return \Polygen\Grammar\ProductionCollection
+     */
+    public function getProductionSet()
+    {
+        return $this->productionCollection;
     }
 
     /**
@@ -67,11 +75,8 @@ class Assignment implements DeclarationInterface, Node
      * @param Production[] $productions
      * @return static
      */
-    public function withProductions(array $productions)
+    public function withProductions(ProductionCollection $productions)
     {
-        Assert::allIsInstanceOf($productions, Production::class);
-        $clone = clone $this;
-        $clone->productions = $productions;
-        return $clone;
+        return new static($this->name, $productions);
     }
 }

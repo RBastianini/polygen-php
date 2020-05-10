@@ -8,13 +8,14 @@ use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
-use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
+use Polygen\Utils\DeclarationCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -69,7 +70,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      * @param Atom $node
      * @return Atom
      */
-    public function convert(Node $node, Context $_)
+    public function convert(Node $node, DeclarationCollection $_)
     {
         Assert::isInstanceOf($node, Atom::class);
 
@@ -108,15 +109,17 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
 
         $definition = new Definition(
             $definitionName,
-            [
-                new Production(
-                    new Sequence([
-                        Atom\AtomBuilder::like($node)
-                            ->withLabelSelection(LabelSelection::none())
-                            ->build()
-                    ])
-                )
-            ]
+            new ProductionCollection(
+                [
+                    new Production(
+                        new Sequence([
+                            Atom\AtomBuilder::like($node)
+                                ->withLabelSelection(LabelSelection::none())
+                                ->build()
+                        ])
+                    )
+                ]
+            )
         );
         return Atom\AtomBuilder::get()
             ->withUnfoldable(
@@ -125,7 +128,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
                 ->withSubproduction(
                     new Subproduction(
                         [$definition],
-                        $productions
+                        new ProductionCollection($productions)
                     )
                 )
             ->build()

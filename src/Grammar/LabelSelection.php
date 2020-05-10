@@ -80,4 +80,27 @@ class LabelSelection
     {
         return $this->selectedLabels === null;
     }
+
+    public function merge(LabelSelection $labelSelection)
+    {
+        if ($labelSelection->isLabelResetting()) {
+            return static::none();
+        }
+        /** @var Label[] $labels */
+        $labels = array_merge($this->selectedLabels, $labelSelection->getLabels());
+        $uniqueLabels = [];
+        foreach ($labels as $label) {
+            $uniqueLabels[$label->getName()] = $label;
+        }
+        sort($uniqueLabels);
+        return new static(array_values($uniqueLabels));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->selectedLabels === [];
+    }
 }

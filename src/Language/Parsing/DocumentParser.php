@@ -13,6 +13,7 @@ use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\Unfoldable;
@@ -73,7 +74,7 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return Production[]
+     * @return ProductionCollection
      */
     private function matchProductions()
     {
@@ -81,7 +82,7 @@ class DocumentParser extends Parser
         do {
             $productions[] = $this->matchProduction();
         } while ($this->readTokenIfType(Type::pipe()));
-        return $productions;
+        return new ProductionCollection($productions);
     }
 
     /**

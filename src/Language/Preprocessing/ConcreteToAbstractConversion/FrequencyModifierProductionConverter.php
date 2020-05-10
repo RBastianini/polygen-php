@@ -4,9 +4,9 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 
 use Polygen\Grammar\Interfaces\HasProductions;
 use Polygen\Grammar\Interfaces\Node;
-use Polygen\Grammar\Production;
-use Polygen\Language\Context;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * Converts a production with sequences having modified frequency into an equivalent production with non-frequency
@@ -39,7 +39,7 @@ class FrequencyModifierProductionConverter implements ConverterInterface
      * @param HasProductions $node
      * @return Node
      */
-    public function convert(Node $node, Context $_)
+    public function convert(Node $node, DeclarationCollection $_)
     {
         $frequencyWeightByPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
             $node->getProductions()
@@ -56,7 +56,7 @@ class FrequencyModifierProductionConverter implements ConverterInterface
                 )
             );
         }
-        return $node->withProductions($productions);
+        return $node->withProductions(new ProductionCollection($productions));
     }
 
     /**

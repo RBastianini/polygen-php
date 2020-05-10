@@ -30,6 +30,14 @@ class Label implements FrequencyModifiable
     }
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->label;
+    }
+
+    /**
      * @return static
      */
     public function withoutFrequencyModifier()

@@ -7,10 +7,11 @@ use Polygen\Grammar\Atom\AtomBuilder;
 use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
-use Polygen\Language\Context;
+use Polygen\Utils\DeclarationCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -37,7 +38,7 @@ class AtomSequenceToProductionConverter implements ConverterInterface
      * @param AtomSequence $sequence
      * @return Atom
      */
-    public function convert(Node $sequence, Context $_)
+    public function convert(Node $sequence, DeclarationCollection $_)
     {
         Assert::isInstanceOf($sequence, AtomSequence::class);
 
@@ -78,7 +79,7 @@ class AtomSequenceToProductionConverter implements ConverterInterface
             ->withSubproduction(
                 new Subproduction(
                     [],
-                    $productions
+                    new ProductionCollection($productions)
                 )
             )->build()
         )->build();

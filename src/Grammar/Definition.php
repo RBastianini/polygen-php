@@ -18,17 +18,15 @@ class Definition implements DeclarationInterface, Node
     private $name;
 
     /**
-     * @var Production[]
+     * @var ProductionCollection
      */
     private $productions;
 
     /**
      * @param string $name
-     * @param Production[] $productions
      */
-    public function __construct($name, array $productions)
+    public function __construct($name, ProductionCollection $productions)
     {
-        Assert::allIsInstanceOf($productions, Production::class);
         Assert::string($name);
         $this->name = $name;
         $this->productions = $productions;
@@ -54,25 +52,29 @@ class Definition implements DeclarationInterface, Node
     }
 
     /**
+     * @deprecated
      * @return Production[]
      */
     public function getProductions()
     {
-        return $this->productions;
+        return $this->productions->getProductions();
     }
 
+    /**
+     * @return \Polygen\Grammar\ProductionCollection
+     */
+    public function getProductionSet()
+    {
+        return $this->productions;
+    }
 
     /**
      * Returns a new instance of this object with the same properties, but with the specified productions.
      *
-     * @param Production[] $productions
      * @return static
      */
-    public function withProductions(array $productions)
+    public function withProductions(ProductionCollection $productions)
     {
-        Assert::allIsInstanceOf($productions, Production::class);
-        $clone = clone $this;
-        $clone->productions = $productions;
-        return $clone;
+        return new static($this->name, $productions);
     }
 }

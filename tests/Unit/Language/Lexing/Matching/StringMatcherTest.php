@@ -84,7 +84,7 @@ class StringMatcherTest extends TestCase
         return [
             ['"\""', Token::terminatingSymbol('"')],
             ['"a\ttab"', Token::terminatingSymbol("a\ttab")],
-            ['"a\ncarriage\rreturn"', Token::terminatingSymbol("a\ncarriage\rreturn")],
+            ['"a\ncarriage\rreturn"', Token::terminatingSymbol('a' . PHP_EOL . "carriage\rreturn")],
             ['"backspaces\bare\bskipped"', Token::terminatingSymbol('backspacesareskipped')],
             ['"ascii sequences \123are\125 converted"', Token::terminatingSymbol('ascii sequences {are} converted')],
         ];

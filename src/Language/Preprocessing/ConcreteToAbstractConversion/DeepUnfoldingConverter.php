@@ -9,6 +9,7 @@ use Polygen\Grammar\Definition;
 use Polygen\Grammar\FoldingModifier;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
@@ -17,8 +18,8 @@ use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Context;
 use Polygen\Language\Document;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * Converts unfoldable sub productions having a deep unfolding modifier to simple subproductions where every folded
@@ -43,7 +44,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      * @param SubproductionUnfoldable $subproductionUnfoldable
      * @return SubproductionUnfoldable
      */
-    public function convert(Node $subproductionUnfoldable, Context $_)
+    public function convert(Node $subproductionUnfoldable, DeclarationCollection $_)
     {
         // Convert this non deep unfolding unfoldable into a simple unfoldable, and recursively walk down this
         // unfoldable to
@@ -78,7 +79,13 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      */
     public function walkDefinition(Definition $definition, $_ = null)
     {
-        return new Definition($definition->getName(), $this->convertMany($definition->getProductions()));
+        return new Definition(
+            $definition->getName(),
+            $this->convertOne(
+                $definition->getProductionSet()
+                    ->getProductions()
+            )
+        );
     }
 
     /**
@@ -87,7 +94,13 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      */
     public function walkAssignment(Assignment $assignment, $_ = null)
     {
-        return new Assignment($assignment->getName(), $this->convertMany($assignment->getProductions()));
+        return new Assignment(
+            $assignment->getName(),
+            $this->convertOne(
+                $assignment->getProductionSet()
+                    ->getProductions()
+            )
+        );
     }
 
     /**
@@ -116,7 +129,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     {
         return new Subproduction(
             $this->convertMany($subproduction->getDeclarations()),
-            $this->convertMany($subproduction->getProductions())
+            new ProductionCollection($this->convertMany($subproduction->getProductionSet()->getProductions()))
         );
     }
 

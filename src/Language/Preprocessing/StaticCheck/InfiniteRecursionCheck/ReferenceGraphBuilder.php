@@ -15,9 +15,9 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Context;
 use Polygen\Language\Document;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
+use Polygen\Utils\DeclarationCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -55,11 +55,11 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return void
-     *@internal
+     * @internal
      */
     public function walkDocument(Document $document, $context = null)
     {
-        $context = DeclarationsContext::root(new Context($document->getDeclarations()));
+        $context = DeclarationsContext::root(new DeclarationCollection($document->getDeclarations()));
 
         $this->buildManyReferenceGraphs($document->getDeclarations(), $context);
     }
@@ -67,27 +67,27 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkDefinition(Definition $definition, $context = null)
     {
-       return $this->walkMany($definition->getProductions(), $context);
+       return $this->walkMany($definition->getProductionSet()->getProductions(), $context);
     }
 
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkAssignment(Assignment $assignment, $context = null)
     {
-        return $this->walkMany($assignment->getProductions(), $context);
+        return $this->walkMany($assignment->getProductionSet()->getProductions(), $context);
     }
 
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkSequence(Sequence $sequence, $context = null)
     {
@@ -97,7 +97,7 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkProduction(Production $production, $context = null)
     {
@@ -107,24 +107,24 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkSubproduction(Subproduction $subproduction, $context = null)
     {
         $context = $context->addDeclarations(
-            new Context($subproduction->getDeclarations()),
+            new DeclarationCollection($subproduction->getDeclarations()),
             $this->identifierFactory
         );
 
         $this->buildManyReferenceGraphs($subproduction->getDeclarations(), $context);
 
-        return $this->walkMany($subproduction->getProductions(), $context);
+        return $this->walkMany($subproduction->getProductionSet()->getProductions(), $context);
     }
 
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkSimpleAtom(Atom\SimpleAtom $atom, $context = null)
     {
@@ -134,7 +134,7 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
@@ -145,7 +145,7 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null)
     {
@@ -155,7 +155,7 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkAtomSequence(AtomSequence $atoms, $context = null)
     {
@@ -165,7 +165,7 @@ class ReferenceGraphBuilder implements AbstractSyntaxWalker
     /**
      * @param DeclarationsContext $context
      * @return string[]
-     *@internal
+     * @internal
      */
     public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
     {

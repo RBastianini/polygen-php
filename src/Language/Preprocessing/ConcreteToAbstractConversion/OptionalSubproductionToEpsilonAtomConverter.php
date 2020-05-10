@@ -6,13 +6,14 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
-use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
-use Polygen\Language\Context;
+use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Token\Token;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * The idea is to convert optional subproductions
@@ -37,36 +38,38 @@ class OptionalSubproductionToEpsilonAtomConverter implements ConverterInterface
      * @param SubproductionUnfoldable $node
      * @return Node
      */
-    public function convert(Node $node, Context $_)
+    public function convert(Node $node, DeclarationCollection $_)
     {
         return UnfoldableBuilder::get()
             ->simple()
             ->withSubproduction(
             new Subproduction(
                 [],
-                [
-                    new Production(
-                        new Sequence(
-                            [
-                                new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
-                            ]
+                new ProductionCollection(
+                    [
+                        new Production(
+                            new Sequence(
+                                [
+                                    new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
+                                ]
+                            )
+                        ),
+                        new Production(
+                            new Sequence(
+                                [
+                                    Atom\AtomBuilder::get()
+                                        ->withUnfoldable(
+                                            UnfoldableBuilder::get()
+                                                ->simple()
+                                                ->withSubproduction($node->getSubproduction())
+                                                ->build()
+                                        )
+                                    ->build()
+                                ]
+                            )
                         )
-                    ),
-                    new Production(
-                        new Sequence(
-                            [
-                                Atom\AtomBuilder::get()
-                                    ->withUnfoldable(
-                                        UnfoldableBuilder::get()
-                                            ->simple()
-                                            ->withSubproduction($node->getSubproduction())
-                                            ->build()
-                                    )
-                                ->build()
-                            ]
-                        )
-                    )
-                ]
+                    ]
+                )
             )
         )->build();
     }

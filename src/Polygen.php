@@ -22,9 +22,10 @@ class Polygen
 {
     /**
      * Reads the stream and returns a validated Polygen document in concrete syntax.
+     * @param string $startSymbol
      * @return Document
      */
-    public function getDocument(StreamInterface $grammarStream)
+    public function getDocument(StreamInterface $grammarStream, $startSymbol)
     {
         $parser = new DocumentParser(
             new SavePointStream(
@@ -40,7 +41,7 @@ class Polygen
 
         $rawDocument = $parser->parse();
 
-        $errorCollection = StaticChecker::get()->check($rawDocument);
+        $errorCollection = StaticChecker::get($startSymbol)->check($rawDocument);
 
         if (!$errorCollection->isEmpty()) {
             throw new StaticCheckException($errorCollection);

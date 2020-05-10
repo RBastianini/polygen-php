@@ -3,8 +3,8 @@
 namespace Polygen\Language\Preprocessing\StaticCheck\InfiniteRecursionCheck;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
-use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
+use Polygen\Utils\DeclarationCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -17,21 +17,21 @@ class DeclarationsContext
     const ROOT_CONTEXT = 'root';
 
     /**
-     * @var DeclarationsContext|null
+     * @var static|null
      */
-    private $parentContext;
+    protected $parentContext;
 
     /**
-     * @var \Polygen\Language\Context
+     * @var DeclarationCollection
      */
-    private $currentContext;
+    private $currentDeclarations;
 
     /**
      * @var string
      */
     private $contextName;
 
-    public static function root(Context $context)
+    public static function root(DeclarationCollection $context)
     {
         return new static(self::ROOT_CONTEXT, null, $context);
     }
@@ -39,12 +39,15 @@ class DeclarationsContext
     /**
      * @param string $contextName
      * @param DeclarationsContext|null $parentContext
-     * @param Context|null $currentContext
+     * @param DeclarationCollection|null $currentContext
      */
-    private function __construct($contextName, DeclarationsContext $parentContext = null, Context $currentContext = null)
-    {
+    private function __construct(
+        $contextName,
+        DeclarationsContext $parentContext = null,
+        DeclarationCollection $currentContext = null
+    ) {
         $this->parentContext = $parentContext;
-        $this->currentContext = $currentContext;
+        $this->currentDeclarations = $currentContext;
         $this->contextName = $contextName;
     }
 
@@ -58,10 +61,10 @@ class DeclarationsContext
     public function isDeclared($declarationName)
     {
         if ($this->parentContext === null) {
-            return $this->currentContext->isDeclared($declarationName);
+            return $this->currentDeclarations->isDeclared($declarationName);
         }
 
-        return $this->currentContext->isDeclared($declarationName)
+        return $this->currentDeclarations->isDeclared($declarationName)
             || $this->parentContext->isDeclared($declarationName);
     }
 
@@ -73,20 +76,21 @@ class DeclarationsContext
      */
     public function ownsDeclaration($declarationName)
     {
-        return $this->currentContext->isDeclared($declarationName);
+        return $this->currentDeclarations->isDeclared($declarationName);
     }
 
     /**
      * Creates a new narrower scope, by adding the declarations present in the passed context.
      *
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return $this
      */
-    public function addDeclarations(Context $context, IdentifierFactory $identifierFactory)
+    public function addDeclarations(DeclarationCollection $context, IdentifierFactory $identifierFactory = null)
     {
         if ($context->isEmpty()) {
             return $this;
         }
+        $identifierFactory = $identifierFactory ?: new IdentifierFactory();
         return new static($identifierFactory->getId('context'), $this, $context);
     }
 
@@ -99,7 +103,7 @@ class DeclarationsContext
     public function getDeclaration($declarationName)
     {
         if ($this->ownsDeclaration($declarationName)) {
-            return $this->currentContext->getDeclaration($declarationName);
+            return $this->currentDeclarations->getDeclaration($declarationName);
         } else if ($this->parentContext !== null) {
             $this->parentContext->getDeclaration($declarationName);
         }
@@ -119,5 +123,13 @@ class DeclarationsContext
         return $this->ownsDeclaration($declarationName)
             ? "{$this->contextName}>{$declarationName}"
             : $this->parentContext->getUniqueName($declarationName);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->currentDeclarations->isEmpty() && $this->parentContext->isEmpty();
     }
 }

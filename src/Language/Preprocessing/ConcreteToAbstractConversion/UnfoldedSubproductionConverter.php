@@ -7,8 +7,8 @@ use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\SubproductionUnfoldable;
-use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldingConversion\AbstractUnfoldingConverter;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * Converts unfolded subproductions by expanding them into their parent sequence.
@@ -41,7 +41,7 @@ class UnfoldedSubproductionConverter extends AbstractUnfoldingConverter implemen
      * @param UnfoldableAtom $atom
      * @return DeclarationInterface[]
      */
-    protected function getDeclarationsFromUnfoldable(UnfoldableAtom $atom, Context $_)
+    protected function getDeclarationsFromUnfoldable(UnfoldableAtom $atom, DeclarationCollection $_)
     {
         return $atom->getUnfoldable()
             ->getSubproduction()
@@ -52,7 +52,7 @@ class UnfoldedSubproductionConverter extends AbstractUnfoldingConverter implemen
      * @param UnfoldableAtom $atom
      * @return Production[]
      */
-    protected function getProductionsFromUnfoldable(UnfoldableAtom $atom, Context $_)
+    protected function getProductionsFromUnfoldable(UnfoldableAtom $atom, DeclarationCollection $_)
     {
         return $atom->getUnfoldable()
             ->getSubproduction()

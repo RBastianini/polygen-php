@@ -2,6 +2,7 @@
 
 namespace Tests\Polygen\Integration\Language\Preprocessing\StaticChecking;
 
+use Polygen\Language\Document;
 use Polygen\Language\Errors\NoStartSymbol;
 use Polygen\Language\Preprocessing\StaticCheck\StartSymbolCheck;
 use Tests\DocumentUtils;
@@ -23,12 +24,12 @@ class StartSymbolTest extends TestCase
         $document = $this->given_a_document(
             $this->given_a_source_stream(
                 <<<GRAMMAR
-            S ::= a;
+            Source ::= a;
 GRAMMAR
             )
         );
 
-        $checker = $this->given_a_static_checker_with(new StartSymbolCheck());
+        $checker = $this->given_a_static_checker_with(new StartSymbolCheck('Source'));
 
         $errors = $checker->check($document);
 
@@ -43,17 +44,17 @@ GRAMMAR
         $document = $this->given_a_document(
             $this->given_a_source_stream(
                 <<<GRAMMAR
-            Source ::= test1, test2 and 3, test4, test5, test6;
+            S ::= test1, test2 and 3, test4, test5, test6;
             Expected ::= (test1 | test2) and (3 | test4 | test5 | test6);
 GRAMMAR
             )
         );
 
-        $checker = $checker = $this->given_a_static_checker_with(new StartSymbolCheck());
+        $checker = $checker = $this->given_a_static_checker_with(new StartSymbolCheck($startSymbol = 'Start'));
 
         $errors = $checker->check($document);
 
-        $expectedErrors = [new NoStartSymbol()];
+        $expectedErrors = [new NoStartSymbol($startSymbol)];
 
         $this->assertEquals($expectedErrors, $errors->getErrors());
     }

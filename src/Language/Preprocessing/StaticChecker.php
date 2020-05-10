@@ -24,13 +24,13 @@ class StaticChecker implements StaticCheckInterface
 
     /**
      * Factory method.
-     *
+     * @param string $startSymbol Symbol from which generation should start
      * @return static
      */
-    public static function get()
+    public static function get($startSymbol)
     {
         return new static([
-                new StartSymbolCheck(),
+                new StartSymbolCheck($startSymbol),
                 new NonTerminatingSymbolDeclarationCheck(),
                 new InfiniteRecursionCheck(new IdentifierFactory())
             ]);

@@ -1,16 +1,15 @@
 <?php
 
-namespace Polygen\Language;
+namespace Polygen\Utils;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Webmozart\Assert\Assert;
 
 /**
- * This object keeps track of the current context while traversing the tree to generate some output, to perform static
- * checks or to perform a syntax conversion.
+ * This object holds a collection of declarations.
  */
-class Context implements ContextInterface
+class DeclarationCollection
 {
     /**
      * @var DeclarationInterface[]|Node[]
@@ -18,7 +17,7 @@ class Context implements ContextInterface
     private $declarations = [];
 
     /**
-     * Context constructor.
+     * DeclarationCollection constructor.
      *
      * @param DeclarationInterface[] $declarations
      */

@@ -61,7 +61,7 @@ class StringMatcher extends BaseMatcher
             case '\\':
                 return '\\';
             case 'n':
-                return "\n";
+                return PHP_EOL;
             case 'b':
                 // Quoted backspace character is not supported. Silently ignore that.
                 return '';

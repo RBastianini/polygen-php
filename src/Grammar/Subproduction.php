@@ -17,20 +17,19 @@ class Subproduction implements HasDeclarations, HasProductions, Node
     /**
      * @var DeclarationInterface[]
      */
-    private $declarations = [];
+    private $declarations;
 
     /**
-     * @var Production[]
+     * @var ProductionCollection
      */
-    private $productions;
+    private $productionSet;
 
     /**
      * Subproduction constructor.
      *
      * @param DeclarationInterface[] $declarations
-     * @param Production[] $productions
      */
-    public function __construct(array $declarations, array $productions)
+    public function __construct(array $declarations, ProductionCollection $productions)
     {
         $validDeclarations = [];
         foreach (array_reverse($declarations) as $declaration) {
@@ -38,8 +37,7 @@ class Subproduction implements HasDeclarations, HasProductions, Node
             $validDeclarations[$declaration->getName()] = $declaration;
         }
         $this->declarations = array_reverse($validDeclarations);
-        Assert::allIsInstanceOf($productions, Production::class);
-        $this->productions = $productions;
+        $this->productionSet = $productions;
     }
 
     /**
@@ -62,24 +60,29 @@ class Subproduction implements HasDeclarations, HasProductions, Node
     }
 
     /**
+     * @deprecated
      * @return Production[]
      */
     public function getProductions()
     {
-        return $this->productions;
+        return $this->productionSet->getProductions();
+    }
+
+    /**
+     * @return ProductionCollection
+     */
+    public function getProductionSet()
+    {
+        return $this->productionSet;
     }
 
     /**
      * Returns a new instance of this object with the same properties, but with the specified productions.
      *
-     * @param Production[] $productions
      * @return static
      */
-    public function withProductions(array $productions)
+    public function withProductions(ProductionCollection $productions)
     {
-        Assert::allIsInstanceOf($productions, Production::class);
-        $clone = clone $this;
-        $clone->productions = $productions;
-        return $clone;
+        return new static($this->declarations, $productions);
     }
 }

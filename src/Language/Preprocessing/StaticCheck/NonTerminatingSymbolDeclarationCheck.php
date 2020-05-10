@@ -14,10 +14,10 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
 use Polygen\Language\AbstractSyntaxWalker;
-use Polygen\Language\Context;
 use Polygen\Language\Document;
 use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Errors\UndeclaredNonTerminatingSymbol;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * Walks the tree in search of non terminating symbols, to verify that they have all been declared.
@@ -30,14 +30,14 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
      */
     public function check(Document $document)
     {
-        return $this->walkDocument($document, new Context());
+        return $this->walkDocument($document, new DeclarationCollection());
     }
 
     /**
-     * @internal
      * @param Document $document
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkDocument(Document $document, $context = null)
     {
@@ -47,29 +47,29 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkDefinition(Definition $definition, $context = null)
     {
-        return $this->checkMany($definition->getProductions(), $context);
+        return $this->checkMany($definition->getProductionSet()->getProductions(), $context);
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkAssignment(Assignment $assignment, $context = null)
     {
-        return $this->checkMany($assignment->getProductions(), $context);
+        return $this->checkMany($assignment->getProductionSet()->getProductions(), $context);
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkSequence(Sequence $sequence, $context = null)
     {
@@ -77,9 +77,9 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkProduction(Production $production, $context = null)
     {
@@ -87,21 +87,21 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkSubproduction(Subproduction $subproduction, $context = null)
     {
         $context = $context->mergeDeclarations($subproduction->getDeclarations());
 
-        return $this->checkMany($subproduction->getProductions(), $context);
+        return $this->checkMany($subproduction->getProductionSet()->getProductions(), $context);
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkSimpleAtom(SimpleAtom $atom, $context = null)
     {
@@ -109,9 +109,9 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
@@ -123,9 +123,9 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null)
     {
@@ -133,9 +133,9 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkAtomSequence(AtomSequence $atoms, $context = null)
     {
@@ -143,9 +143,9 @@ class NonTerminatingSymbolDeclarationCheck implements StaticCheckInterface, Abst
     }
 
     /**
-     * @internal
-     * @param Context $context
+     * @param DeclarationCollection $context
      * @return ErrorCollection
+     * @internal
      */
     public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
     {

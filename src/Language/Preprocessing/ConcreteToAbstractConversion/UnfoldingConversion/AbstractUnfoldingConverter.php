@@ -12,11 +12,12 @@ use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Label;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
+use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
-use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
+use Polygen\Utils\DeclarationCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -45,7 +46,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      * @param HasProductions $node
      * @return HasProductions
      */
-    public function convert(Node $node, Context $context)
+    public function convert(Node $node, DeclarationCollection $context)
     {
         /** @var \Polygen\Grammar\Interfaces\DeclarationInterface[] $declarationsToSurface */
         $declarationsToSurface = null;
@@ -76,31 +77,35 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
         );
 
         return $node->withProductions(
-            [
-                new Production(
-                    new Sequence(
-                        [
-                            AtomBuilder::get()
-                                ->withUnfoldable(
-                                    UnfoldableBuilder::get()
-                                        ->simple()
-                                        ->withSubproduction(
-                                            new Subproduction(
-                                                $declarationsToSurface,
-                                                array_merge(
-                                                    $productionsBefore,
-                                                    $generatedProductions,
-                                                    $productionsAfter
+            new ProductionCollection(
+                [
+                    new Production(
+                        new Sequence(
+                            [
+                                AtomBuilder::get()
+                                    ->withUnfoldable(
+                                        UnfoldableBuilder::get()
+                                            ->simple()
+                                            ->withSubproduction(
+                                                new Subproduction(
+                                                    $declarationsToSurface,
+                                                    new ProductionCollection(
+                                                        array_merge(
+                                                            $productionsBefore,
+                                                            $generatedProductions,
+                                                            $productionsAfter
+                                                        )
+                                                    )
                                                 )
                                             )
-                                        )
-                                        ->build()
-                                )
-                                ->build()
-                        ]
+                                            ->build()
+                                    )
+                                    ->build()
+                            ]
+                        )
                     )
-                )
-            ]
+                ]
+            )
         );
     }
 
@@ -140,7 +145,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      * @return Production[]
      */
     protected function convertSequence(
-        Context $context,
+        DeclarationCollection $context,
         Sequence $containingSequence,
         LabelSelection $labelSelection,
         $unfoldedUnfoldableIndex
@@ -175,7 +180,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      * @return Production[]
      */
     private function buildReplacementProductions(
-        Context $context,
+        DeclarationCollection $context,
         array $sequenceBefore,
         UnfoldableAtom $unfoldableToReplace,
         array $sequenceAfter,
@@ -199,9 +204,11 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
                                         ->withSubproduction(
                                             new Subproduction(
                                                 [],
-                                                [
-                                                    $production,
-                                                ]
+                                                new ProductionCollection(
+                                                    [
+                                                        $production,
+                                                    ]
+                                                )
                                             )
                                         )
                                         ->build()
@@ -236,7 +243,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      * @param UnfoldableAtom $unfoldable
      * @return DeclarationInterface[]
      */
-    protected abstract function getDeclarationsFromUnfoldable(UnfoldableAtom $unfoldable, Context $context);
+    protected abstract function getDeclarationsFromUnfoldable(UnfoldableAtom $unfoldable, DeclarationCollection $context);
 
     /**
      * Given the unfoldable to unfold and the current context, return the productions that would be generated by the
@@ -245,5 +252,5 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      * @param UnfoldableAtom $unfoldable
      * @return Production[]
      */
-    protected abstract function getProductionsFromUnfoldable(UnfoldableAtom $unfoldable, Context $context);
+    protected abstract function getProductionsFromUnfoldable(UnfoldableAtom $unfoldable, DeclarationCollection $context);
 }

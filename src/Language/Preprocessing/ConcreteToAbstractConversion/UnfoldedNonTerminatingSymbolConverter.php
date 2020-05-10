@@ -7,8 +7,8 @@ use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\Unfoldable\NonTerminatingSymbol;
-use Polygen\Language\Context;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\UnfoldingConversion\AbstractUnfoldingConverter;
+use Polygen\Utils\DeclarationCollection;
 
 /**
  * This converter replaces unfolded non-terminating symbols with a production generated from their declaration.
@@ -37,7 +37,7 @@ class UnfoldedNonTerminatingSymbolConverter extends AbstractUnfoldingConverter i
     /**
      * @return DeclarationInterface[]
      */
-    protected function getDeclarationsFromUnfoldable(UnfoldableAtom $unfoldable, Context $context)
+    protected function getDeclarationsFromUnfoldable(UnfoldableAtom $unfoldable, DeclarationCollection $context)
     {
         // Although the documentation of the conversion step dictates that any declaration should be surfaced to the
         // containing sequence (and, consequently, returned here), I believe this to be not necessary in practice.
@@ -56,7 +56,7 @@ class UnfoldedNonTerminatingSymbolConverter extends AbstractUnfoldingConverter i
     /**
      * @return Production[]
      */
-    protected function getProductionsFromUnfoldable(UnfoldableAtom $unfoldable, Context $context)
+    protected function getProductionsFromUnfoldable(UnfoldableAtom $unfoldable, DeclarationCollection $context)
     {
         return $context->getDeclaration($unfoldable->getUnfoldable()->getToken()->getValue())->getProductions();
     }
