@@ -24,14 +24,13 @@ There is an example grammar I have been using to test it in the tests folder, an
 that the parser reads it without blowing up and returns something that seems to have some sense.
 
 The static checker is implemented, I know that the infinite loop check is for sure bugged, but at least it exists.
-Also, the start symbol check does not allow to specify a custom start symbol yet.
 And no warnings are recorded, only errors.
 But hey, it's something!
 
 The concrete to abstract syntax conversion has been implemented, and tests have been added for all 9 steps.
 
-Finally, an interpreter has been written (but not tested yet). And it outputs more or less the expected strings, when
-it does not crash. 
+Finally, an interpreter has been written (but not thoroughly tested yet). And it outputs more or less the expected
+strings, when it does not eat up all the stack space and crash.
 
 ## The code is junk!
 
@@ -54,3 +53,10 @@ $polygen = new \Polygen\Polygen();
 $document = $polygen->getDocument($source);
 var_dump($polygen->generate($document));
 ```
+
+### Command line usage
+There is also a CLI tool that you can use. It's not refined at all, but the basics work.
+If you require this package as a dependency of your project (which you should not do yet), Composer must have placed the
+CLI tool in your vendor/bin folder, so you can run it with `./vendor/bin/polygen.php`.
+If you checked out this repository, you can run the CLI tool by just typing `./polygen.php` instead.
+A small usage will be printed if launched with no parameters.
