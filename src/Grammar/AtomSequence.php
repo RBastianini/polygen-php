@@ -2,7 +2,6 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
 use Webmozart\Assert\Assert;
@@ -20,7 +19,7 @@ class AtomSequence implements Node
     public function __construct(array $atoms)
     {
         Assert::allIsInstanceOf($atoms, Atom::class);
-        $this->atoms = $atoms;
+        $this->atoms = array_values($atoms);
     }
 
     /**

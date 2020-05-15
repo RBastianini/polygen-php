@@ -108,22 +108,22 @@ class DocumentParser extends Parser
             $label = null;
         }
 
-        $atomSequence = [];
+        $sequence = [];
         do {
             $atoms = $this->matchAtomSequence();
             if ($atoms) {
-                $atomSequence[] = $atoms;
+                $sequence[] = $atoms;
             }
         } while ($atoms);
 
-        Assert::greaterThan(count($atomSequence), 0, "Expected to match atom sequence, but no atom found. {$this->peek()} found instead.");
-        return new Sequence($atomSequence, $label);
+        Assert::greaterThan(count($sequence), 0, "Expected to match atom sequence, but no atom found. {$this->peek()} found instead.");
+        return new Sequence($sequence, $label);
     }
 
     /**
      * Matches atoms with (optional) implicit positional labels.
      *
-     * @return AtomSequence|null
+     * @return AtomSequence|Atom|null
      */
     private function matchAtomSequence()
     {
@@ -134,9 +134,14 @@ class DocumentParser extends Parser
                 $atoms[] = $atom;
             }
         } while ($atom && $this->readTokenIfType(Type::comma()));
-        return $atoms
-            ? new AtomSequence($atoms)
-            : null;
+        switch (count($atoms)) {
+            case 0:
+                return null;
+            case 1:
+                return $atom;
+            default:
+                return new AtomSequence($atoms);
+        }
     }
 
     /**

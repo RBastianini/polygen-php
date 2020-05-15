@@ -92,7 +92,7 @@ GRAMMAR
             ->getProductions()[4]
             ->getSequence()
             ->getSequenceContents()[0]
-            ->getAtoms()[0]->getUnfoldable();
+            ->getUnfoldable();
 
         $expectedErrors = [
             new InfiniteRecursion(

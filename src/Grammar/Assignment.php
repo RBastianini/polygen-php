@@ -5,7 +5,6 @@ namespace Polygen\Grammar;
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Language\AbstractSyntaxWalker;
-use Webmozart\Assert\Assert;
 
 /**
  * Represents a Polygen assignment.

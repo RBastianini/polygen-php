@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Language\Interpretation\Interpreter;
+namespace Tests\Polygen\Integration\Language\Interpretation\Interpreter;
 
 use Polygen\Language\Document;
 use Polygen\Language\Interpretation\Context;
@@ -11,7 +11,7 @@ use Tests\TestCase;
 /**
  * A few tests involving label selection.
  */
-class LabelTests extends TestCase
+class LabelTest extends TestCase
 {
     use StreamUtils;
 
@@ -254,7 +254,7 @@ GRAMMAR
             Document::START
         );
 
-        $generated = $polygen->generate($document, $context = new Context(Document::START));
+        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
 
         $acceptable = [
             'a',
@@ -272,6 +272,48 @@ GRAMMAR
             ['1'],
             ['3'],
             ['11'],
+        ];
+    }
+
+    /**
+     * This example is taken directly from the Polygen documentation, section 2.0.12 "Generazione posizionale".
+     * @test
+     * @param string $seed
+     * @dataProvider provider_positional_selection
+     */
+    public function it_supports_positional_selection($seed)
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream(
+                'S ::= sei un,una bel,bella ragazz ^ o,a ;'
+            ),
+            Document::START
+        );
+
+        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
+
+        $acceptable = [
+            'sei un bel ragazzo',
+            'sei una bella ragazza',
+        ];
+
+        return $this->assertContains($generated, $acceptable, "Positional selection failed for seed {$context->getSeed()}");
+    }
+
+    public function provider_positional_selection()
+    {
+        return [
+            ['1'],
+            ['2'],
+            ['3'],
+            ['4'],
+            ['5'],
+            ['6'],
+            ['7'],
+            ['8'],
+            ['9'],
+            ['0'],
         ];
     }
 }

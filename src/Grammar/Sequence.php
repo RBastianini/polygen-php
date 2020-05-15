@@ -36,7 +36,7 @@ class Sequence implements Node
             );
         }
         $this->label = $label;
-        $this->atomSequences = $atoms;
+        $this->atomSequences = array_values($atoms);
     }
 
     /**

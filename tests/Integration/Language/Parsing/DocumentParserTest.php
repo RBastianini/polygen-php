@@ -76,21 +76,17 @@ GRAMMAR
         $expectedProductionA = new Production(
             new Sequence(
                 [
-                    new AtomSequence(
-                        [
-                            Atom\AtomBuilder::get()->withUnfoldable(
-                                UnfoldableBuilder::get()
-                                    ->withNonTerminatingToken(Token::nonTerminatingSymbol('C'))
-                                    ->build()
-                            )->withLabelSelection(
-                                LabelSelection::forLabels([
-                                    new Label(Token::terminatingSymbol('label1'), new FrequencyModifier(1,1)),
-                                    new Label(Token::terminatingSymbol('label2'), new FrequencyModifier(0,1)),
-                                    new Label(Token::terminatingSymbol('label3'), new FrequencyModifier(1,0)),
-                                ])
-                            )->build()
-                        ]
-                    )
+                    Atom\AtomBuilder::get()->withUnfoldable(
+                        UnfoldableBuilder::get()
+                            ->withNonTerminatingToken(Token::nonTerminatingSymbol('C'))
+                            ->build()
+                    )->withLabelSelection(
+                        LabelSelection::forLabels([
+                            new Label(Token::terminatingSymbol('label1'), new FrequencyModifier(1,1)),
+                            new Label(Token::terminatingSymbol('label2'), new FrequencyModifier(0,1)),
+                            new Label(Token::terminatingSymbol('label3'), new FrequencyModifier(1,0)),
+                        ])
+                    )->build()
                 ]
             )
         );
@@ -101,11 +97,7 @@ GRAMMAR
             new Production(
                 new Sequence(
                     [
-                        new AtomSequence(
-                            [
-                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term1'))->build(),
-                            ]
-                        ),
+                        Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term1'))->build(),
                     ]
                 ),
                 new FrequencyModifier(1, 1)
@@ -113,11 +105,7 @@ GRAMMAR
             new Production(
                 new Sequence(
                     [
-                        new AtomSequence(
-                            [
-                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term2'))->build(),
-                            ]
-                        ),
+                        Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term2'))->build(),
                     ]
                 ),
                 new FrequencyModifier(0, 1)
@@ -125,11 +113,7 @@ GRAMMAR
             new Production(
                 new Sequence(
                     [
-                        new AtomSequence(
-                            [
-                                Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term3'))->build(),
-                            ]
-                        ),
+                        Atom\AtomBuilder::get()->withToken(Token::terminatingSymbol('term3'))->build(),
                     ]
                 ),
                 new FrequencyModifier(1, 0)

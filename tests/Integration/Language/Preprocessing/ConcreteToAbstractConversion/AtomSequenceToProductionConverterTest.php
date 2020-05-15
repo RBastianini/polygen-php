@@ -23,8 +23,33 @@ class AtomSequenceToProductionConverterTest extends TestCase
         $document = $this->given_a_document(
             $this->given_a_source_stream(
                 <<<GRAMMAR
-            Source ::= test1, test2 and 3, test4, test5, test6;
-            Expected ::= (test1 | test2) and (3 | test4 | test5 | test6);
+            Source ::= reworked test1, test2 and test3, test4 end;
+            Expected ::= reworked (test1 and test3 | test2 and test4) end;
+GRAMMAR
+            )
+        );
+
+        $converter = $this->given_a_converter_with(new AtomSequenceToProductionConverter());
+
+        $convertedDocument = $converter->convert($document);
+
+        $this->assertEquals(
+            $convertedDocument->getDeclaration('Expected')->getProductions(),
+            $convertedDocument->getDeclaration('Source')->getProductions()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_contain_off_by_one_errors()
+    {
+
+        $document = $this->given_a_document(
+            $this->given_a_source_stream(
+                <<<GRAMMAR
+            Source ::= test1, test2 and test3, test4;
+            Expected ::= (test1 and test3 | test2 and test4);
 GRAMMAR
             )
         );

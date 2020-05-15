@@ -127,7 +127,7 @@ GRAMMAR
                 ->getProductions()[4]
                 ->getSequence()
                 ->getSequenceContents()[0]
-                ->getAtoms()[0]->getUnfoldable()->getSubproduction()
+                ->getUnfoldable()->getSubproduction()
                 ->getDeclarations()[0],
         ];
         $this->assertEquals($expectedDeclarationsByUniqueName, $result->getDeclarationsByUniqueName());

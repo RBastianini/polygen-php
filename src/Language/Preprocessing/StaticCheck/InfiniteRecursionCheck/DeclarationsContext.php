@@ -105,7 +105,7 @@ class DeclarationsContext
         if ($this->ownsDeclaration($declarationName)) {
             return $this->currentDeclarations->getDeclaration($declarationName);
         } else if ($this->parentContext !== null) {
-            $this->parentContext->getDeclaration($declarationName);
+           return $this->parentContext->getDeclaration($declarationName);
         }
         return null;
     }
