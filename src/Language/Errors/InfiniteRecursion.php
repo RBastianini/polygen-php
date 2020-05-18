@@ -4,9 +4,6 @@ namespace Polygen\Language\Errors;
 
 use Polygen\Grammar\Interfaces\DeclarationInterface;
 
-/**
- *
- */
 class InfiniteRecursion implements Error
 {
     /**

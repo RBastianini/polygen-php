@@ -17,9 +17,9 @@ class SimpleAtom extends Atom
      */
     private $token;
 
-    public function __construct(Token $token, LabelSelection $labelSelection)
+    public function __construct(Token $token, LabelSelection $labelSelection = null)
     {
-        parent::__construct($labelSelection);
+        parent::__construct($labelSelection ?: LabelSelection::none());
         $this->token = $token;
     }
 

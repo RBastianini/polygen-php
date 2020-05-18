@@ -7,6 +7,7 @@ use Polygen\Language\Errors\ErrorCollection;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Preprocessing\StaticCheck\InfiniteRecursionCheck;
 use Polygen\Language\Preprocessing\StaticCheck\NonTerminatingSymbolDeclarationCheck;
+use Polygen\Language\Preprocessing\StaticCheck\PositionalGeneratorsCardinalityCheck;
 use Polygen\Language\Preprocessing\StaticCheck\StartSymbolCheck;
 use Polygen\Language\Preprocessing\StaticCheck\StaticCheckInterface;
 use Webmozart\Assert\Assert;
@@ -32,6 +33,7 @@ class StaticChecker implements StaticCheckInterface
         return new static([
                 new StartSymbolCheck($startSymbol),
                 new NonTerminatingSymbolDeclarationCheck(),
+                new PositionalGeneratorsCardinalityCheck(),
                 new InfiniteRecursionCheck(new IdentifierFactory())
             ]);
     }
