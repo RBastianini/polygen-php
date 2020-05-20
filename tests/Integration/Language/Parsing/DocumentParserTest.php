@@ -82,9 +82,9 @@ GRAMMAR
                             ->build()
                     )->withLabelSelection(
                         LabelSelection::forLabels([
-                            new Label(Token::terminatingSymbol('label1'), new FrequencyModifier(1,1)),
-                            new Label(Token::terminatingSymbol('label2'), new FrequencyModifier(0,1)),
-                            new Label(Token::terminatingSymbol('label3'), new FrequencyModifier(1,0)),
+                            new Label('label1', new FrequencyModifier(1,1)),
+                            new Label('label2', new FrequencyModifier(0,1)),
+                            new Label('label3', new FrequencyModifier(1,0)),
                         ])
                     )->build()
                 ]

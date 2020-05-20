@@ -4,6 +4,7 @@ namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\FrequencyModifiable;
 use Polygen\Language\Token\Token;
+use Webmozart\Assert\Assert;
 
 /**
  * Represents a label with optional modifiers.
@@ -21,12 +22,15 @@ class Label implements FrequencyModifiable
     private $frequencyModifier;
 
     /**
+     * @param string $label
      * @param FrequencyModifier $modifiers
      */
-    public function __construct(Token $label, FrequencyModifier $modifiers = null)
+    public function __construct($label, FrequencyModifier $modifiers = null)
     {
+        Assert::string($label);
+        Assert::false($label === '', "A label can't be an empty string.");
         $this->frequencyModifier = $modifiers ?: new FrequencyModifier(0, 0);
-        $this->label = $label->getValue();
+        $this->label = $label;
     }
 
     /**

@@ -167,7 +167,7 @@ GRAMMAR
      * This example was lifted directly from the Polygen documentation (section 2.0.5.1 "Etichette e selezione")
      * @test
      */
-    public function it_supports_multiple_label_selection()
+    public function it_supports_multiple_label_selection_groups()
     {
 
         $this->markTestSkipped(
@@ -272,6 +272,49 @@ GRAMMAR
             ['1'],
             ['3'],
             ['11'],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $seed
+     * @dataProvider provider_multiple_label_selection
+     */
+    public function it_supports_multiple_label_selection($seed)
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream(
+                <<<GRAMMAR
+                     S ::= (sei (M: un | F: una) (M: bel | F: bella) ragazz ^ (M: o | F: a)).(M|F) ;
+GRAMMAR
+            ),
+            Document::START
+        );
+
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
+
+        $acceptable = [
+          'sei una bella ragazza',
+          'sei un bel ragazzo',
+        ];
+
+        $this->assertContains($generated, $acceptable, $context->getSeed());
+    }
+
+    public function provider_multiple_label_selection()
+    {
+        return [
+            ['1'],
+            ['2'],
+            ['3'],
+            ['4'],
+            ['5'],
+            ['6'],
+            ['7'],
+            ['8'],
+            ['9'],
+            ['0'],
         ];
     }
 

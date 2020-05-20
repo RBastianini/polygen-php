@@ -49,13 +49,13 @@ class Context
      * @param string $seed The random number generator seed.
      * @return static
      */
-    public static function get($startSymbol = Document::START, $seed = null)
+    public static function get($startSymbol = Document::START, $seed = null, LabelSelection $labelSelection = null)
     {
         return new static(
             DeclarationsContext::root(new DeclarationCollection()),
             $startSymbol,
             new MtRand($seed),
-            LabelSelection::none(),
+            $labelSelection ?: LabelSelection::none(),
             null
         );
     }
@@ -117,7 +117,9 @@ class Context
         Assert::greaterThanEq($min, 0);
         Assert::integer($max);
         Assert::greaterThanEq($max, 0);
-        return $this->randomNumberGenerator->random($min, $max);
+        return $min === $max
+            ? $min
+            : $this->randomNumberGenerator->random($min, $max);
     }
 
     /**
@@ -135,11 +137,18 @@ class Context
      */
     public function select(LabelSelection $labelSelection)
     {
+        if ($labelSelection->isLabelResetting()) {
+            $newSelection = LabelSelection::none();
+        } else if ($labelSelection->isEmpty()) {
+            $newSelection = $this->labelSelection;
+        } else {
+            $newSelection = $this->labelSelection->add($labelSelection->getRandomLabel($this));
+        }
         return new static(
             $this->declarationsContext,
             $this->startSymbol,
             $this->randomNumberGenerator,
-            $this->labelSelection->merge($labelSelection),
+            $newSelection,
             $this
         );
     }

@@ -170,7 +170,7 @@ class DocumentParser extends Parser
         }
 
         if ($dotLabel = $this->readTokenIfType(Type::dotLabel())) {
-            $atomBuilder->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel)));
+            $atomBuilder->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel->getValue())));
         } elseif ($this->readTokenIfType(Type::leftDotBracket())) {
             $labels = $this->matchMultipleLabels();
             $this->readToken(Type::rightBracket());
@@ -251,7 +251,7 @@ class DocumentParser extends Parser
         if (!$label) {
             $this->rollback();
         }
-        return $label ? new Label($label, $modifier) : null;
+        return $label ? new Label($label->getValue(), $modifier) : null;
     }
 
     /**

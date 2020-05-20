@@ -2,6 +2,7 @@
 
 namespace Polygen\Grammar;
 
+use Polygen\Language\Interpretation\Context;
 use Webmozart\Assert\Assert;
 
 /**
@@ -22,8 +23,12 @@ class LabelSelection
      */
     private function __construct(array $selectedLabels = null)
     {
+        // WHen constructing a new LabelSelection, we do not ensure the labels are unique. This is to respect any
+        // eventual label repetition used to influence the probability of a label selection.
         if ($selectedLabels !== null) {
             Assert::allIsInstanceOf($selectedLabels, Label::class);
+            $selectedLabels = array_values($selectedLabels);
+            sort($selectedLabels);
         }
         $this->selectedLabels = $selectedLabels;
     }
@@ -81,19 +86,14 @@ class LabelSelection
         return $this->selectedLabels === null;
     }
 
-    public function merge(LabelSelection $labelSelection)
+    /**
+     * Add a new label to the selection.
+     * @return static
+     */
+    public function add(Label $label)
     {
-        if ($labelSelection->isLabelResetting()) {
-            return static::none();
-        }
-        /** @var Label[] $labels */
-        $labels = array_merge($this->selectedLabels, $labelSelection->getLabels());
-        $uniqueLabels = [];
-        foreach ($labels as $label) {
-            $uniqueLabels[$label->getName()] = $label;
-        }
-        sort($uniqueLabels);
-        return new static(array_values($uniqueLabels));
+        Assert::false($this->isLabelResetting(), "Cannot call 'select' on a label resetting LabelSelection.");
+        return new static(array_merge($this->selectedLabels, [$label]));
     }
 
     /**
@@ -102,5 +102,31 @@ class LabelSelection
     public function isEmpty()
     {
         return $this->selectedLabels === [];
+    }
+
+    /**
+     * @return Label[]
+     */
+    public function getUniqueLabels()
+    {
+        if ($this->isLabelResetting()) {
+            return [];
+        }
+        $labels = [];
+        foreach ($this->selectedLabels as $label) {
+            $labels[$label->getName()] = $label;
+        }
+        sort($labels);
+        return $labels;
+    }
+
+    /**
+     * @return Label
+     */
+    public function getRandomLabel(Context $param)
+    {
+        Assert::false($this->isLabelResetting(), sprintf('Cannot call %s on a label resetting LabelSelection.', __METHOD__));
+        Assert::false($this->isEmpty(), sprintf('Cannot call %s on an empty LabelSelection.', __METHOD__));
+        return $this->selectedLabels[$param->getRandomNumber(0, count($this->selectedLabels) - 1)];
     }
 }

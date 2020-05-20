@@ -54,7 +54,7 @@ class ProductionCollection
             return $this;
         }
         $selectedProductionArrays[] = $this->productionsBySelection[self::NO_LABEL];
-        foreach ($labelSelection->getLabels() as $label) {
+        foreach ($labelSelection->getUniqueLabels() as $label) {
             if (array_key_exists($label->getName(), $this->productionsBySelection)) {
                 $selectedProductionArrays[] = $this->productionsBySelection[$label->getName()];
             }

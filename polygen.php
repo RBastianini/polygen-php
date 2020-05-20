@@ -27,10 +27,14 @@ $options = getopt(
         OPT_LABEL, OPT_REQUIRED_VALUE,
         OPT_DESTINATION, OPT_REQUIRED_VALUE,
         OPT_START_SYMBOL, OPT_REQUIRED_VALUE,
-        OPT_ITERATE, OPT_REQUIRED_VALUE
+        OPT_ITERATE, OPT_REQUIRED_VALUE,
+        OPT_LABEL, OPT_REQUIRED_VALUE,
+        OPT_HELP,
     ]),
     [
         OPT_SEED . OPT_REQUIRED_VALUE,
+        OPT_INFO . OPT_REQUIRED_VALUE,
+        OPT_HELP_LONG,
     ]
 );
 
@@ -38,7 +42,7 @@ $path = $argv[$argc - 1];
 
 $polygen = new Polygen();
 
-if ($argc === 1) {
+if ($argc === 1 || isset($options[OPT_HELP]) || isset($options[OPT_HELP_LONG])) {
     echo $polygen->generate($polygen->getDocument(Stream::factory(HELP_GRAMMAR), 'S'));
     exit(0);
 }
@@ -47,6 +51,8 @@ $options += [
     OPT_START_SYMBOL => Document::START,
     OPT_SEED => null,
     OPT_ITERATE => 1,
+    OPT_LABEL => null,
+    OPT_INFO => null,
 ];
 
 $context = build_context($options);

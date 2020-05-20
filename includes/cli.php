@@ -2,6 +2,9 @@
 
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Stream\StreamInterface;
+use Polygen\Grammar\Label;
+use Polygen\Grammar\LabelSelection;
+use Polygen\Language\Document;
 use Polygen\Language\Interpretation\Context;
 use Webmozart\Assert\Assert;
 
@@ -12,7 +15,10 @@ const OPT_REQUIRED_VALUE = ':';
 const OPT_DESTINATION = 'o';
 const OPT_START_SYMBOL = 'S';
 const OPT_ITERATE = 'X';
+const OPT_INFO = 'info';
 const OPT_SEED = 'seed';
+const OPT_HELP = 'h';
+const OPT_HELP_LONG = 'help';
 
 const HELP_GRAMMAR = <<<'HELP'
 I ::= "polygen-php help text.";
@@ -24,7 +30,10 @@ S ::= "polygen-php" "-" Catchphrase NewLine
         ^ Options BlankLine
         ^ OptionStart NewLine
         ^ OptionTimes NewLine
-        ^ OptionSeed NewLine;
+        ^ OptionSeed NewLine
+        ^ OptionInfo NewLine
+        ^ OptionLabel NewLine
+        ;
 
 BlankLine := NewLine ^ NewLine;
 NewLine := "\n";
@@ -32,7 +41,7 @@ Adj := [silly|funny];
 Catchphrase ::= (
 \a >>(
     ( Adj
-        \p ^ \h ^\p
+        "PHP"
         (
             parser of \polygen grammar files
             | random sentence generator
@@ -49,9 +58,11 @@ Grammar ::= "GRAMMAR: A" Adj "Polygen compatible grammar file.";
 
 Options ::= "OPTIONS:";
 
-OptionStart ::= "-S SYM   Use SYM as Non-terminal starting symbol (default: S).";
-OptionTimes ::= "-X N     Iterate generation for N times (default: N = 1).";
-OptionSeed ::= "--seed s Pass arbitrary string 's' as random number generator seed.";
+OptionStart ::= "-S SYM    Use SYM as Non-terminal starting symbol (default: S).";
+OptionTimes ::= "-X N      Iterate generation for N times (default: N = 1).";
+OptionSeed ::= "--seed s  Pass arbitrary string 's' as random number generator seed.";
+OptionInfo ::= "--info    Print information about the selected grammar (alias for -S I).";
+OptionLabel ::= "-l LABEL Add LABEL to the initial select label set.";
 HELP;
 
 /**
@@ -64,7 +75,15 @@ function build_context(array $options)
 {
     Assert::integerish($options[OPT_ITERATE], sprintf('-%s option expects an integer.', OPT_ITERATE));
     Assert::greaterThan($options[OPT_ITERATE], 0, sprintf('-%s option expects a value greater than zero.', OPT_ITERATE));
-    return Context::get($options[OPT_START_SYMBOL], $options[OPT_SEED]);
+    return Context::get(
+        $options[OPT_INFO]
+            ? Document::INFORMATION
+            : $options[OPT_START_SYMBOL],
+        $options[OPT_SEED],
+        $options[OPT_LABEL]
+            ? LabelSelection::forLabel(new Label($options[OPT_LABEL]))
+            : null
+    );
 }
 
 /**
