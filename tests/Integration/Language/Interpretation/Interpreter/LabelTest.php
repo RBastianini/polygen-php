@@ -33,7 +33,7 @@ GRAMMAR
             ),
             Document::START
         );
-        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
 
         $acceptable = [
             'il lupo mangia i lupi',
@@ -92,7 +92,7 @@ GRAMMAR
             ),
             Document::START
         );
-        $generated = $polygen->generate($document, $context = new Context(Document::START));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START));
 
         $this->assertEquals('a b and', $generated);
     }
@@ -128,7 +128,7 @@ GRAMMAR
             ),
             Document::START
         );
-        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
 
         $acceptable = [
             'il lupo',
@@ -196,7 +196,7 @@ GRAMMAR
             ),
             Document::START
         );
-        $generated = $polygen->generate($document, $context = new Context(Document::START));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START));
 
         $acceptable = [
             'il lupo',
@@ -232,9 +232,9 @@ GRAMMAR
         );
 
         // This seed caused an invalid generation at the time of writing
-        $generated = $polygen->generate($document, $context = new Context(Document::START));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START));
 
-        return $this->assertRegExp('{(0|[1-9][0-9]*)}', $generated, $context->getSeed());
+        $this->assertRegExp('{(0|[1-9][0-9]*)}', $generated, $context->getSeed());
     }
 
     /**
@@ -254,7 +254,7 @@ GRAMMAR
             Document::START
         );
 
-        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
 
         $acceptable = [
             'a',
@@ -262,7 +262,7 @@ GRAMMAR
             'c'
         ];
 
-        return $this->assertContains($generated, $acceptable, $context->getSeed());
+        $this->assertContains($generated, $acceptable, $context->getSeed());
     }
 
     public function provider_no_label_selection()
@@ -291,14 +291,14 @@ GRAMMAR
             Document::START
         );
 
-        $generated = $polygen->generate($document, $context = new Context(Document::START, $seed));
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
 
         $acceptable = [
             'sei un bel ragazzo',
             'sei una bella ragazza',
         ];
 
-        return $this->assertContains($generated, $acceptable, "Positional selection failed for seed {$context->getSeed()}");
+        $this->assertContains($generated, $acceptable, "Positional selection failed for seed {$context->getSeed()}");
     }
 
     public function provider_positional_selection()

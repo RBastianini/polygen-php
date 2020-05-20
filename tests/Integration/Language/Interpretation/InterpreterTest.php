@@ -24,7 +24,7 @@ class InterpreterTest extends TestCase
         );
 
         // Initialize a context with a seed known to make the interpreter use up all stack space and crash.
-        $context = new Context(Document::START, '188900443');
+        $context = Context::get(Document::START, '188900443');
 
         $result = $polygen->generate($document, $context);
 

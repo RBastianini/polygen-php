@@ -64,7 +64,7 @@ function build_context(array $options)
 {
     Assert::integerish($options[OPT_ITERATE], sprintf('-%s option expects an integer.', OPT_ITERATE));
     Assert::greaterThan($options[OPT_ITERATE], 0, sprintf('-%s option expects a value greater than zero.', OPT_ITERATE));
-    return new Context($options[OPT_START_SYMBOL], $options[OPT_SEED]);
+    return Context::get($options[OPT_START_SYMBOL], $options[OPT_SEED]);
 }
 
 /**

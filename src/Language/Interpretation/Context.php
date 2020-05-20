@@ -9,6 +9,7 @@ use Polygen\Grammar\LabelSelection;
 use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
 use Polygen\Utils\DeclarationCollection;
+use Savvot\Random\AbstractRand;
 use Savvot\Random\MtRand;
 use Webmozart\Assert\Assert;
 
@@ -29,24 +30,52 @@ class Context
     private $labelSelection;
 
     /**
-     * @var MtRand
+     * @var AbstractRand
      */
     private $randomNumberGenerator;
+
     /**
      * @var DeclarationsContext
      */
     private $declarationsContext;
 
     /**
+     * @var static
+     */
+    private $parentContext;
+
+    /**
+     * @param string $startSymbol The declaration from which the production should start.
+     * @param string $seed The random number generator seed.
+     * @return static
+     */
+    public static function get($startSymbol = Document::START, $seed = null)
+    {
+        return new static(
+            DeclarationsContext::root(new DeclarationCollection()),
+            $startSymbol,
+            new MtRand($seed),
+            LabelSelection::none(),
+            null
+        );
+    }
+
+    /**
      * @param string $startSymbol The declaration from which the production should start.
      * @param string $seed The random number generator seed.
      */
-    public function __construct($startSymbol = Document::START, $seed = null)
-    {
-        $this->declarationsContext = DeclarationsContext::root(new DeclarationCollection());
-        $this->randomNumberGenerator = new MtRand($seed);
+    private function __construct(
+        DeclarationsContext $declarationContext,
+        $startSymbol,
+        AbstractRand $randomNumberGenerator,
+        LabelSelection $labelSelection,
+        Context $parentContext = null
+    ) {
+        $this->declarationsContext = $declarationContext;
+        $this->randomNumberGenerator = $randomNumberGenerator;
         $this->startSymbol = $startSymbol;
-        $this->labelSelection = LabelSelection::none();
+        $this->parentContext = $parentContext;
+        $this->labelSelection = $labelSelection;
     }
 
     /**
@@ -102,13 +131,30 @@ class Context
     }
 
     /**
-     * @return Context
+     * @return static
      */
     public function select(LabelSelection $labelSelection)
     {
-        $clone = clone $this;
-        $clone->labelSelection = $this->labelSelection->merge($labelSelection);
-        return $clone;
+        return new static(
+            $this->declarationsContext,
+            $this->startSymbol,
+            $this->randomNumberGenerator,
+            $this->labelSelection->merge($labelSelection),
+            $this
+        );
+    }
+
+    /**
+     * @return static
+     */
+    public function getContextForDeclaration(DeclarationInterface $declaration)
+    {
+        if ($this->declarationsContext->ownsDeclaration($declaration->getName())) {
+            return $this;
+        } else if ($this->parentContext !== null) {
+            return $this->parentContext->getContextForDeclaration($declaration);
+        }
+        throw new \RuntimeException("No suitable context found for declaration {$declaration->getName()}.");
     }
 
     /**

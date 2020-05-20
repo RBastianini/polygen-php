@@ -60,6 +60,6 @@ class Polygen
      */
     public function generate(Document $document, $context = null)
     {
-        return (new Interpreter())->interpret($document, $context ?: new Context());
+        return (new Interpreter())->interpret($document, $context ?: Context::get());
     }
 }

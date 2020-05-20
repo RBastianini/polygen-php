@@ -132,7 +132,9 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
     {
-        return $context->getDeclaration($nonTerminatingSymbol->getToken()->getValue())->traverse($this, $context);
+        $declaration = $context->getDeclaration($nonTerminatingSymbol->getToken()->getValue());
+        $scopedContext = $context->getContextForDeclaration($declaration);
+        return $scopedContext->getDeclaration($nonTerminatingSymbol->getToken()->getValue())->traverse($this, $scopedContext);
     }
 
     /**

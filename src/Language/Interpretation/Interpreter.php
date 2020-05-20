@@ -37,7 +37,7 @@ class Interpreter
         // read.
         $strings = [];
         // We need to consider the concatenation toggle "^" to be ON for the first round, in order for the implode()
-        // trick to work.
+        // trick to work, or else the string would start with an unwanted empty space.
         $concatenationToggle = true;
         $capslockToggle = false;
         foreach ($tokens as $token) {
