@@ -37,7 +37,7 @@ S ::= "polygen-php" "-" Catchphrase NewLine
 
 BlankLine := NewLine ^ NewLine;
 NewLine := "\n";
-Adj := [silly|funny];
+Adj := [silly|funny|famous];
 Catchphrase ::= (
 \a >>(
     ( Adj

@@ -7,6 +7,7 @@
       "email": "RBastianini@users.noreply.github.com"
     }
   ],
+  "license": "LGPL-3.0-only",
   "require": {
     "guzzlehttp/streams": "^3",
     "php": "^5.6 || ^7.0",
