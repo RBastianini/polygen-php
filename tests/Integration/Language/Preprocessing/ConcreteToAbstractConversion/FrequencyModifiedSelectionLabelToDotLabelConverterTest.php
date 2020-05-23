@@ -60,8 +60,8 @@ GRAMMAR
         $convertedDocument = $this->subject->convert($document);
 
         $this->assertEquals(
-            $convertedDocument->getDeclaration('Expected')->getProductions(),
-            $convertedDocument->getDeclaration('Original')->getProductions()
+            $convertedDocument->getDeclaration('Expected')->getProductionSet()->getProductions(),
+            $convertedDocument->getDeclaration('Original')->getProductionSet()->getProductions()
         );
     }
 
@@ -86,8 +86,8 @@ GRAMMAR
         $convertedDocument = $this->subject->convert($document);
 
         $this->assertEquals(
-            $convertedDocument->getDeclaration('Expected')->getProductions(),
-            $convertedDocument->getDeclaration('Original')->getProductions()
+            $convertedDocument->getDeclaration('Expected')->getProductionSet()->getProductions(),
+            $convertedDocument->getDeclaration('Original')->getProductionSet()->getProductions()
         );
     }
 
@@ -112,8 +112,8 @@ GRAMMAR
         $convertedDocument = $this->subject->convert($document);
 
         $this->assertEquals(
-            $convertedDocument->getDeclaration('Expected')->getProductions(),
-            $convertedDocument->getDeclaration('Original')->getProductions()
+            $convertedDocument->getDeclaration('Expected')->getProductionSet()->getProductions(),
+            $convertedDocument->getDeclaration('Original')->getProductionSet()->getProductions()
         );
     }
 

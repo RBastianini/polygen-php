@@ -6,6 +6,7 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Language\Token\Token;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -24,18 +25,18 @@ class AtomBuilder
     private $unfoldable;
 
     /**
-     * @var LabelSelection|null
+     * @var LabelSelectionCollection
      */
-    private $labelSelection;
+    private $labelSelectionCollection;
 
     private function __construct(
         Token $token = null,
         Unfoldable $unfoldable = null,
-        LabelSelection $labelSelection = null
+        LabelSelectionCollection $labelSelection = null
     ) {
         $this->token = $token;
         $this->unfoldable = $unfoldable;
-        $this->labelSelection = $labelSelection ?: LabelSelection::none();
+        $this->labelSelectionCollection = $labelSelection ?: new LabelSelectionCollection();
     }
 
     /**
@@ -57,7 +58,7 @@ class AtomBuilder
         return new static(
             $atom instanceof SimpleAtom ? $atom->getToken() : null,
             $atom instanceof UnfoldableAtom ? $atom->getUnfoldable() : null,
-            $atom->getLabelSelection()
+            $atom->getLabelSelections()
         );
     }
 
@@ -84,7 +85,16 @@ class AtomBuilder
      */
     public function withLabelSelection(LabelSelection $labelSelection)
     {
-        $this->labelSelection = $labelSelection;
+        $this->labelSelectionCollection = new LabelSelectionCollection([$labelSelection]);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withLabelSelections(LabelSelectionCollection $labelSelectionCollection)
+    {
+        $this->labelSelectionCollection = $labelSelectionCollection;
         return $this;
     }
 
@@ -99,8 +109,8 @@ class AtomBuilder
         );
 
         if ($this->token) {
-            return new SimpleAtom($this->token, $this->labelSelection);
+            return new SimpleAtom($this->token, $this->labelSelectionCollection);
         }
-        return new UnfoldableAtom($this->unfoldable, $this->labelSelection);
+        return new UnfoldableAtom($this->unfoldable, $this->labelSelectionCollection);
     }
 }

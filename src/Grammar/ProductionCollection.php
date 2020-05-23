@@ -6,6 +6,7 @@ use Polygen\Grammar\Atom\SimpleAtom;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Interpretation\Context;
 use Polygen\Language\Token\Token;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -70,7 +71,7 @@ class ProductionCollection
         // Return an epsilon-generating production if there's nothing to produce.
         // This can happen when combining multiple label selections, ending up in no possible production to select.
         if (empty($this->productions)) {
-            return new Production(new Sequence([new SimpleAtom(Token::underscore(), LabelSelection::none())]));
+            return new Production(new Sequence([new SimpleAtom(Token::underscore(), new LabelSelectionCollection())]));
         }
         return $this->productions[$context->getRandomNumber(0, count($this->productions) - 1)];
     }

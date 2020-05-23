@@ -21,6 +21,7 @@ use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Document;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -169,15 +170,20 @@ class DocumentParser extends Parser
             return null;
         }
 
-        if ($dotLabel = $this->readTokenIfType(Type::dotLabel())) {
-            $atomBuilder->withLabelSelection(LabelSelection::forLabel(new Label($dotLabel->getValue())));
-        } elseif ($this->readTokenIfType(Type::leftDotBracket())) {
-            $labels = $this->matchMultipleLabels();
-            $this->readToken(Type::rightBracket());
-            $atomBuilder->withLabelSelection(LabelSelection::forLabels($labels));
-        } elseif ($this->readTokenIfType(Type::dot())) {
-            $atomBuilder->withLabelSelection(LabelSelection::reset());
+        $labelSelections = [];
+        while ($this->isNextTokenOfType(Type::dotLabel(), Type::leftDotBracket(), Type::dot())) {
+            if ($dotLabel = $this->readTokenIfType(Type::dotLabel())) {
+                $labelSelections[] = LabelSelection::forLabel(new Label($dotLabel->getValue()));
+            } elseif ($this->readTokenIfType(Type::leftDotBracket())) {
+                $labels = $this->matchMultipleLabels();
+                $this->readToken(Type::rightBracket());
+                $atomBuilder->withLabelSelections(new LabelSelectionCollection($labelSelections));
+                $labelSelections[] = LabelSelection::forLabels($labels);
+            } elseif ($this->readTokenIfType(Type::dot())) {
+                $labelSelections[] = LabelSelection::reset();
+            }
         }
+        $atomBuilder->withLabelSelections(new LabelSelectionCollection($labelSelections));
         return $atomBuilder->build();
     }
 

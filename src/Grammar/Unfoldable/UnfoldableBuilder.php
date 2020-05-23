@@ -155,6 +155,23 @@ class UnfoldableBuilder
     }
 
     /**
+     * @param Subproduction|\Polygen\Grammar\Atom\UnfoldableAtom
+     * @return $this
+     */
+    public function withContents($content)
+    {
+        Assert::object($content);
+        if ($content instanceof Token && $content->getType() === Type::nonTerminatingSymbol()) {
+            return $this->withNonTerminatingToken($content);
+        } else if ($content instanceof Subproduction) {
+            return $this->withSubproduction($content);
+        }
+        throw new \InvalidArgumentException(
+            sprintf("Unfoldable token or Subproduction expected, instance of '%s' given instead.", get_class($content))
+        );
+    }
+
+    /**
      * @return SubproductionUnfoldable|NonTerminatingSymbol
      */
     public function build()

@@ -48,14 +48,6 @@ strings.
 * A CLI tool.
 
 ### What does not work?
-#### Multiple label selection groups
-Grammars containing multiple label selection groups like
-```
-S ::= Something.(A|B).(C|D);
-```
-will result in a parsing error. The reason is that, despite the syntax being supported by the original Polygen, it is
-not represented in the [Concrete Syntax](https://polygen.org/it/manuale#4.1.1_Sintassi_concreta) section of the
-documentation that I have tried to implement as accurately as possible.
 #### Static checking
 * I believe that the static infinite recursion check is broken, but I have not proved this yet.
 * Only errors are reported by the static check, no warnings have been implemented.

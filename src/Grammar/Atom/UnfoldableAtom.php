@@ -6,6 +6,7 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Language\AbstractSyntaxWalker;
+use Polygen\Utils\LabelSelectionCollection;
 
 /**
  * An atom containing an unfoldable.
@@ -17,7 +18,7 @@ class UnfoldableAtom extends Atom
      */
     private $unfoldable;
 
-    public function __construct(Unfoldable $unfoldable, LabelSelection $labelSelection)
+    public function __construct(Unfoldable $unfoldable, LabelSelectionCollection $labelSelection)
     {
         $this->unfoldable = $unfoldable;
         parent::__construct($labelSelection);

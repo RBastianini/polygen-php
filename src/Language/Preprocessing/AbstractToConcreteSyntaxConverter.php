@@ -9,6 +9,7 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\DeepUnfoldingCon
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifiedSelectionLabelToDotLabelConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\FrequencyModifierProductionConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\IterationUnfoldableConverter;
+use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\MultipleLabelSelectionGroupConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\OptionalSubproductionToEpsilonAtomConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\PermutationConverter;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\ConverterTreeWalker;
@@ -65,7 +66,8 @@ class AbstractToConcreteSyntaxConverter
             new DeepUnfoldingConverter(),
             new PermutationConverter(),
             new UnfoldedSubproductionConverter(),
-            new UnfoldedNonTerminatingSymbolConverter()
+            new UnfoldedNonTerminatingSymbolConverter(),
+            new MultipleLabelSelectionGroupConverter(),
         ]);
     }
 

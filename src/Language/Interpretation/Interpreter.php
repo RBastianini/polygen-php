@@ -65,7 +65,7 @@ class Interpreter
                         break;
                     default:
                         throw new \RuntimeException(
-                            "Unexpected token of type {$token->getType()} ({$token->getValue()}) found while concatenating."
+                            "Unexpected token {$token} found while concatenating."
                         );
                 }
             }

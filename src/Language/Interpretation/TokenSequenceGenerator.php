@@ -122,7 +122,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
      */
     public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
     {
-        $context = $context->select($atom->getLabelSelection());
+        $context = $context->select($atom->getLabelSelections());
         return $atom->getUnfoldable()->traverse($this, $context);
     }
 

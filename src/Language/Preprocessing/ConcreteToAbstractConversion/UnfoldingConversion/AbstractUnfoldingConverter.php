@@ -18,6 +18,7 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\ConverterInterface;
 use Polygen\Utils\DeclarationCollection;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -36,7 +37,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
         return $node instanceof HasProductions
             && count(
                 array_filter(
-                    $node->getProductions(),
+                    $node->getProductionSet()->getProductions(),
                     [$this, 'doesProductionContainUnfoldedUnfoldable']
                 )
             ) > 0;
@@ -64,15 +65,15 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
 
         // Get all productions before and all productions after the atom to unfold.
         /** @var Production[] $productionsBefore */
-        $productionsBefore = array_slice($node->getProductions(), 0, $productionIndex);
+        $productionsBefore = array_slice($node->getProductionSet()->getProductions(), 0, $productionIndex);
         /** @var Production[] $productionsAfter */
-        $productionsAfter = array_slice($node->getProductions(), $productionIndex + 1);
+        $productionsAfter = array_slice($node->getProductionSet()->getProductions(), $productionIndex + 1);
 
         // Explode the sequence of the unfolding subproduction into productions.
         $generatedProductions = $this->convertSequence(
             $context,
-            $node->getProductions()[$productionIndex]->getSequence(),
-            $atom->getLabelSelection(),
+            $node->getProductionSet()->getProductions()[$productionIndex]->getSequence(),
+            $atom->getLabelSelections(),
             $sequenceIndex
         );
 
@@ -139,7 +140,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      *     | Label: AtomBefore (three).selectedLabel AtomAfter
      *
      * @param Sequence $containingSequence The sequence that contains the unfoldable to unfold.
-     * @param LabelSelection $labelSelection The label selection to apply to all generated unfoldable atoms
+     * @param LabelSelectionCollection $labelSelectionCollection The label selection to apply to all generated unfoldable atoms
      * @param int $unfoldedUnfoldableIndex The position in the production's sequence where the unfolded unfoldable to
      *        convert can be found.
      * @return Production[]
@@ -147,7 +148,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
     protected function convertSequence(
         DeclarationCollection $context,
         Sequence $containingSequence,
-        LabelSelection $labelSelection,
+        LabelSelectionCollection $labelSelectionCollection,
         $unfoldedUnfoldableIndex
     ) {
         /** @var Atom[] $sequenceBefore */
@@ -163,7 +164,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
             $sequenceBefore,
             $unfoldableAtom,
             $sequenceAfter,
-            $labelSelection,
+            $labelSelectionCollection,
             $containingSequence->getLabel()
         );
     }
@@ -184,7 +185,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
         array $sequenceBefore,
         UnfoldableAtom $unfoldableToReplace,
         array $sequenceAfter,
-        LabelSelection $labelSelection,
+        LabelSelectionCollection $labelSelectionCollection,
         Label $label = null
     ) {
         Assert::allIsInstanceOf($sequenceBefore, Atom::class);
@@ -213,7 +214,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
                                         )
                                         ->build()
                                 )
-                                ->withLabelSelection($labelSelection)
+                                ->withLabelSelections($labelSelectionCollection)
                                 ->build()
                         ],
                         $sequenceAfter

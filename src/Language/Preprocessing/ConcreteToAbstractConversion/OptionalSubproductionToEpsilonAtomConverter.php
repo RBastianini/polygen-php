@@ -14,6 +14,7 @@ use Polygen\Grammar\Unfoldable\SubproductionUnfoldableType;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Token\Token;
 use Polygen\Utils\DeclarationCollection;
+use Polygen\Utils\LabelSelectionCollection;
 
 /**
  * The idea is to convert optional subproductions
@@ -50,7 +51,7 @@ class OptionalSubproductionToEpsilonAtomConverter implements ConverterInterface
                         new Production(
                             new Sequence(
                                 [
-                                    new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
+                                    new Atom\SimpleAtom(Token::underscore(), new LabelSelectionCollection()),
                                 ]
                             )
                         ),

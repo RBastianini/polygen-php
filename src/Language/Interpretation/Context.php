@@ -9,6 +9,7 @@ use Polygen\Grammar\LabelSelection;
 use Polygen\Language\Document;
 use Polygen\Language\Token\Token;
 use Polygen\Utils\DeclarationCollection;
+use Polygen\Utils\LabelSelectionCollection;
 use Savvot\Random\AbstractRand;
 use Savvot\Random\MtRand;
 use Webmozart\Assert\Assert;
@@ -135,12 +136,23 @@ class Context
     /**
      * @return static
      */
-    public function select(LabelSelection $labelSelection)
+    public function select(LabelSelectionCollection $labelSelectionCollection)
     {
-        if ($labelSelection->isLabelResetting()) {
-            $newSelection = LabelSelection::none();
-        } else if ($labelSelection->isEmpty()) {
+        $result = $this;
+        foreach ($labelSelectionCollection->getLabelSelections() as $labelSelection) {
+            $result = $result
+                ? $result->doSelect($labelSelection)
+                : $this->doSelect($labelSelection);
+        }
+        return $result;
+    }
+
+    private function doSelect(LabelSelection $labelSelection)
+    {
+        if ($labelSelection->isEmpty()) {
             $newSelection = $this->labelSelection;
+        } elseif ($labelSelection->isLabelResetting()) {
+            $newSelection = LabelSelection::none();
         } else {
             $newSelection = $this->labelSelection->add($labelSelection->getRandomLabel($this));
         }

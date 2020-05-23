@@ -2,18 +2,18 @@
 
 namespace Polygen\Grammar;
 
-use Polygen\Grammar\Interfaces\HasLabelSelection;
 use Polygen\Grammar\Interfaces\Node;
+use Polygen\Utils\LabelSelectionCollection;
 
 /**
  * Atom Polygen node.
  */
-abstract class Atom implements HasLabelSelection, Node
+abstract class Atom implements Node
 {
     /**
      * @var LabelSelection
      */
-    private $labelSelection;
+    private $labelSelections;
 
     /**
      * Atom constructor.
@@ -21,16 +21,24 @@ abstract class Atom implements HasLabelSelection, Node
      * @param Label[] $labels
      * @param null $foldingModifier
      */
-    protected function __construct(LabelSelection $labelSelection)
+    protected function __construct(LabelSelectionCollection $labelSelection)
     {
-        $this->labelSelection = $labelSelection;
+        $this->labelSelections = $labelSelection;
     }
 
     /**
-     * @return \Polygen\Grammar\LabelSelection
+     * @return LabelSelection
      */
     public function getLabelSelection()
     {
-        return $this->labelSelection;
+        return $this->labelSelections;
+    }
+
+    /**
+     * @return LabelSelectionCollection
+     */
+    public function getLabelSelections()
+    {
+        return $this->labelSelections;
     }
 }

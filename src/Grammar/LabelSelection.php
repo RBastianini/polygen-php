@@ -16,14 +16,14 @@ class LabelSelection
      *
      * @var Label[]|null
      */
-    private $selectedLabels = [];
+    private $selectedLabels;
 
     /**
      * @param Label[]|null $selectedLabels
      */
     private function __construct(array $selectedLabels = null)
     {
-        // WHen constructing a new LabelSelection, we do not ensure the labels are unique. This is to respect any
+        // When constructing a new LabelSelection, we do not ensure the labels are unique. This is to respect any
         // eventual label repetition used to influence the probability of a label selection.
         if ($selectedLabels !== null) {
             Assert::allIsInstanceOf($selectedLabels, Label::class);
@@ -92,7 +92,10 @@ class LabelSelection
      */
     public function add(Label $label)
     {
-        Assert::false($this->isLabelResetting(), "Cannot call 'select' on a label resetting LabelSelection.");
+        Assert::false(
+            $this->isLabelResetting(),
+            sprintf("Cannot call %s on a label resetting LabelSelection.", __METHOD__)
+        );
         return new static(array_merge($this->selectedLabels, [$label]));
     }
 

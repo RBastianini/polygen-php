@@ -16,6 +16,7 @@ use Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\Frequen
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
 use Polygen\Utils\DeclarationCollection;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -38,7 +39,6 @@ use Webmozart\Assert\Assert;
  */
 class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInterface
 {
-
     /**
      * @var IdentifierFactory
      */
@@ -73,15 +73,21 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
     public function convert(Node $node, DeclarationCollection $_)
     {
         Assert::isInstanceOf($node, Atom::class);
+        Assert::eq(
+            $node->getLabelSelections()->count(),
+            1,
+            "Expected just one LabelSelection to be present in a group by this point, "
+            . "{$node->getLabelSelections()->count()} found instead."
+        );
 
         $frequencyModificationWeightByLabelPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
-            $node->getLabelSelection()->getLabels()
+            $node->getLabelSelections()->first()->getLabels()
         );
 
         $definitionName = $this->identifierFactory->getId('Definition');
 
         $productions = [];
-        foreach ($node->getLabelSelection()->getLabels() as $labelIndex => $label) {
+        foreach ($node->getLabelSelections()->first()->getLabels() as $labelIndex => $label) {
             $productions = array_merge(
                 $productions,
                 array_fill(
@@ -114,7 +120,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
                     new Production(
                         new Sequence([
                             Atom\AtomBuilder::like($node)
-                                ->withLabelSelection(LabelSelection::none())
+                                ->withLabelSelections(new LabelSelectionCollection())
                                 ->build()
                         ])
                     )
@@ -142,8 +148,10 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof Atom
-            && count(array_filter($node->getLabelSelection()->getLabels(), [$this, 'filterLabels'])) > 0;
+        if (!$node instanceof Atom) {
+            return false;
+        }
+        return count(array_filter($node->getLabelSelections()->getAllLabels(), [$this, 'filterLabels'])) > 0;
     }
 
     private function filterLabels(Label $label) {

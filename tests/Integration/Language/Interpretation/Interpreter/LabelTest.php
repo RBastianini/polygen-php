@@ -169,12 +169,6 @@ GRAMMAR
      */
     public function it_supports_multiple_label_selection_groups()
     {
-
-        $this->markTestSkipped(
-            'Well this syntax is apparently valid, but not represented in the formal specification of the language, ' .
-            'so it has not been implemented (yet). :('
-        );
-
         $polygen = new Polygen();
         $document = $polygen->getDocument(
             $this->given_a_source_stream(
@@ -214,6 +208,121 @@ GRAMMAR
         $this->assertContains($generated, $acceptable, $context->getSeed());
     }
 
+    /**
+     * Even though this is not advertised in the documentation, it is possible to enforce multiple label selections
+     * by consecutively adding a dot and then a label name, concatenating the selections.
+     * @test
+     */
+    public function it_supports_multiple_consecutive_label_selections()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream(
+                <<<GRAMMAR
+                S ::= Ogg.F.P ;
+                
+                Ogg ::= M: ((Art Sost).il | (Art Sost).lo)
+                     |  F: Art Sost ;
+                
+                Art ::= M: (il: (S: il | P: i) | lo: (S: lo | P: gli))
+                     |  F: (S: la | P: le) ;
+                
+                Sost ::= M: ( il: (lup ^ Decl.2 | can ^ Decl.3) (* ) *)
+                            | lo: (gnom ^ Decl.2 | zabaion ^ Decl.3))
+                      |  F: pecor ^ Decl.1 ;
+                
+                Decl ::= 1: (S: a | P: e) | 2: (S: o | P: i) | 3: (S: e | P: i) ;
+GRAMMAR
+            ),
+            Document::START
+        );
+        $generated = $polygen->generate($document, $context = Context::get(Document::START));
+
+        $this->assertEquals($generated, 'le pecore', $context->getSeed());
+    }
+
+    /**
+     * @test
+     * @dataProvider provider_label_selection_processing_order
+     * This test verifies that since the dot is the rightmost character in the label selection, and being processed
+     * first, the one and b label selections are still applied, thus only generating 'b'.
+     */
+    public function it_processes_label_selections_from_right_to_left_1($seed)
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream(
+                <<<GRAMMAR
+                S ::= Generate.one.b.;
+                Generate ::= a: A | b: B;
+                A ::= one: a | two: aa;
+                B ::= one: b | two: bb;
+GRAMMAR
+            ),
+            Document::START
+        );
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
+
+        $this->assertEquals($generated, 'b', $context->getSeed());
+    }
+
+    public function provider_label_selection_processing_order()
+    {
+        return [
+            ['1'],
+            ['2'],
+            ['3'],
+            ['4'],
+            ['5'],
+            ['6'],
+            ['7'],
+            ['8'],
+            ['9'],
+            ['0'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provider_left_to_right_selection_2
+     * This test checks that the labels selected after the double dot are ignored.
+     * @param string $seed
+     */
+    public function it_processes_label_selections_from_right_to_left_2($seed)
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream(
+                <<<GRAMMAR
+                S ::= Generate.one.a..two.b Generate.two.a..one.b Generate.one.b..two.a Generate.two.b..one.a;
+                Generate ::= a: A | b: B;
+                A ::= one: a | two: aa;
+                B ::= one: b | two: bb;
+GRAMMAR
+            ),
+            Document::START
+        );
+        $generated = $polygen->generate($document, $context = Context::get(Document::START, $seed));
+
+
+        $this->assertEquals($generated, 'a aa b bb');
+    }
+
+    public function provider_left_to_right_selection_2()
+    {
+        return [
+            ['1'],
+            ['2'],
+            ['3'],
+            ['4'],
+            ['5'],
+            ['6'],
+            ['7'],
+            ['8'],
+            ['9'],
+            ['0'],
+        ];
+    }
     /**
      * This example was lifted directly from the Polygen documentation (section 2.0.5.1 "Etichette e selezione")
      * @test

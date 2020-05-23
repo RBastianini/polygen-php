@@ -17,6 +17,7 @@ use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Preprocessing\Services\IdentifierFactory;
 use Polygen\Language\Token\Token;
 use Polygen\Utils\DeclarationCollection;
+use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -92,7 +93,7 @@ class IterationUnfoldableConverter implements ConverterInterface
                                                                         new Production(
                                                                             new Sequence(
                                                                                 [
-                                                                                    new Atom\SimpleAtom(Token::underscore(), LabelSelection::none()),
+                                                                                    new Atom\SimpleAtom(Token::underscore(), new LabelSelectionCollection()),
                                                                                 ]
                                                                             )
                                                                         ),

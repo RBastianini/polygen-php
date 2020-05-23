@@ -3,9 +3,9 @@
 namespace Polygen\Grammar\Atom;
 
 use Polygen\Grammar\Atom;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Language\Token\Token;
+use Polygen\Utils\LabelSelectionCollection;
 
 /**
  * An atom containing a terminating symbol of some sorts.
@@ -17,9 +17,9 @@ class SimpleAtom extends Atom
      */
     private $token;
 
-    public function __construct(Token $token, LabelSelection $labelSelection = null)
+    public function __construct(Token $token, LabelSelectionCollection $labelSelection = null)
     {
-        parent::__construct($labelSelection ?: LabelSelection::none());
+        parent::__construct($labelSelection ?: new LabelSelectionCollection());
         $this->token = $token;
     }
 

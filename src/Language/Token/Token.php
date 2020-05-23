@@ -88,7 +88,10 @@ final class Token
      */
     public function __toString()
     {
-        return "<$this->type, $this->value>";
+        return sprintf(
+            "<%s>",
+            implode(', ', array_filter([$this->getType(), $this->getValue()]))
+        );
     }
 
     /**
@@ -103,7 +106,6 @@ final class Token
      * @return null|string
      */
     public function getValue()
-    {
-        return $this->value;
+    {return $this->value;
     }
 }
