@@ -2,6 +2,8 @@
 
 namespace Polygen\Language\Token;
 
+use Polygen\Utils\Unserializable;
+
 /**
  * Class Token
  *
@@ -37,6 +39,8 @@ namespace Polygen\Language\Token;
  */
 final class Token
 {
+    use Unserializable;
+
 	/**
 	 * @var Type
 	 */
@@ -69,6 +73,17 @@ final class Token
     public static function __callStatic($method, array $params = [])
     {
         return new static(Type::$method(), reset($params));
+    }
+
+    /**
+     * Rebuilds a Token from a serializable array.
+     * @param array $serializableArray The result of a call to $token->toSerializableArray()
+     * @see Token::toSerializableArray()
+     * @return static
+     */
+    public static function fromSerializableArray(array $serializableArray)
+    {
+        return Token::ofType(... $serializableArray);
     }
 
     /**
@@ -107,5 +122,15 @@ final class Token
      */
     public function getValue()
     {return $this->value;
+    }
+
+    /**
+     * Returns an array that can be used to unserialize a token in a way that preserve it being a singleton.
+     * @see Token::fromSerializableArray()
+     * @return array
+     */
+    public function toSerializableArray()
+    {
+        return [(string) $this->getType(), $this->getValue()];
     }
 }

@@ -27,4 +27,18 @@ abstract class Unfoldable implements Node
     {
         return $this->foldingModifier;
     }
+
+    public function __sleep()
+    {
+        $this->foldingModifier = $this->foldingModifier ? $this->foldingModifier->getValue() : null;
+        return ['foldingModifier'];
+    }
+
+    public function __wakeup()
+    {
+        if ($this->foldingModifier === null) {
+            return;
+        }
+        $this->foldingModifier = FoldingModifier::fromValue($this->foldingModifier);
+    }
 }

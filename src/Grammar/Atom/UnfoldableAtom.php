@@ -3,7 +3,6 @@
 namespace Polygen\Grammar\Atom;
 
 use Polygen\Grammar\Atom;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Language\AbstractSyntaxWalker;
 use Polygen\Utils\LabelSelectionCollection;

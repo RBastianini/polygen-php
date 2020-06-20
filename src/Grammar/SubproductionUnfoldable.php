@@ -60,4 +60,15 @@ class SubproductionUnfoldable extends Unfoldable
     {
         return $this->subproduction;
     }
+
+    public function __sleep()
+    {
+        $this->type = $this->type->getValue();
+        return ['subproduction', 'type'];
+    }
+
+    public function __wakeup()
+    {
+        $this->type = SubproductionUnfoldableType::fromValue($this->type);
+    }
 }

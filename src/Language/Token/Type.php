@@ -2,6 +2,8 @@
 
 namespace Polygen\Language\Token;
 
+use Polygen\Utils\Unserializable;
+
 /**
  * @method static Type assignment()
  * @method static Type backslash()
@@ -37,6 +39,8 @@ namespace Polygen\Language\Token;
   */
 final class Type
 {
+    use Unserializable;
+
     const ASSIGNMENT = 'ASSIGNMENT';
     const BACKSLASH = 'BACKSLASH';
     const CAP = 'CAP';

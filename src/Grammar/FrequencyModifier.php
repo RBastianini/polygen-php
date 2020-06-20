@@ -9,9 +9,9 @@ use Webmozart\Assert\Assert;
  */
 class FrequencyModifier
 {
-    private $decreaseFrequencyIntensity = 0;
+    private $decreaseFrequencyIntensity;
 
-    private $increaseFrequencyIntensity = 0;
+    private $increaseFrequencyIntensity;
 
     public function __construct($increaseFrequencyIntensity, $decreaseFrequencyIntensity)
     {

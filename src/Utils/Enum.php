@@ -7,6 +7,8 @@ namespace Polygen\Utils;
  */
 abstract class Enum
 {
+    use Unserializable;
+
     /**
      * @var string
      */
@@ -96,5 +98,13 @@ abstract class Enum
     private static function ownsValue($value)
     {
         return array_key_exists($value, static::values());
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 }

@@ -49,4 +49,16 @@ class NonTerminatingSymbol extends Unfoldable implements Node
     {
         return $walker->walkNonTerminating($this, $context);
     }
+
+    public function __sleep()
+    {
+        $this->nonTerminatingSymbol = $this->nonTerminatingSymbol->toSerializableArray();
+        return ['nonTerminatingSymbol'];
+    }
+
+    public function __wakeup()
+    {
+        /** @noinspection PhpParamsInspection */
+        $this->nonTerminatingSymbol = Token::fromSerializableArray($this->nonTerminatingSymbol);
+    }
 }

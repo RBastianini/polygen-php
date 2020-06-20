@@ -3,7 +3,6 @@
 namespace Polygen\Grammar;
 
 use Polygen\Grammar\Interfaces\FrequencyModifiable;
-use Polygen\Language\Token\Token;
 use Webmozart\Assert\Assert;
 
 /**

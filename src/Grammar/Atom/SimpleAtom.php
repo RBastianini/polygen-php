@@ -41,4 +41,16 @@ class SimpleAtom extends Atom
     {
         return $walker->walkSimpleAtom($this, $context);
     }
+
+    public function __sleep()
+    {
+        $this->token = $this->token->toSerializableArray();
+        return ['token'];
+    }
+
+    public function __wakeup()
+    {
+        /** @noinspection PhpParamsInspection */
+        $this->token = Token::fromSerializableArray($this->token);
+    }
 }
