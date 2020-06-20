@@ -36,6 +36,12 @@ $document = $polygen->getDocument($your_grammar);
 var_dump($polygen->generate($document)); // Will print "hello world".
 ```
 
+### Parse once, produce many (POPM)
+It's not necessary to parse the source grammar every time a production is wanted: once a Polygen document is obtained, it
+can be `serialize()`d to a string and stored as a string constant. This way, the parsing can be done only once at
+"compile time", then at runtime, it's sufficient to `unserialize()` the string back to a Polygen document, and it can be
+used as usual to obtain a production.
+
 ### Command line usage
 There is also a CLI tool that you can use. It's not refined at all, since it is intended for debugging only, but the
 basics work.
@@ -50,11 +56,6 @@ A small usage will be printed if launched with no parameters (or with `-h` or `-
 * I believe that the static infinite recursion check is broken, but I have not proved this yet. Just try to avoid
 grammars with circular references between declarations and everything will be fine.
 * Only errors are reported by the static check, no warnings have been implemented.
-
-### Serializing / unserializing
-
-Attempting to serialize/unserialize a document (to save the parsing phase) unfortunately does not work due to the use of
-identity checks to compare enum objects.
 
 ## The code is junk!
 
