@@ -8,7 +8,7 @@ use Polygen\Language\Token\Type;
 /**
  * Matcher for one-char long symbols.
  */
-class ShortSymbolMatcher extends BaseMatcher
+class ShortSymbolMatcher implements MatcherInterface
 {
     const MATCHING_RULES = [
         Type::LEFT_BRACKET => '(',
@@ -34,17 +34,17 @@ class ShortSymbolMatcher extends BaseMatcher
     ];
 
     /**
-     * {@inheritdoc}
+     * @return MatchedToken|null
      */
-    protected function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
-        $char = $this->read();
+        $char = $streamWrapper->read();
         if ($char === null) {
             return null;
         }
         foreach (self::MATCHING_RULES as $tokenName => $match) {
             if ($char === $match) {
-                return Token::ofType($tokenName);
+                return new MatchedToken(Token::ofType($tokenName), $streamWrapper->getPosition());
             }
         }
     }

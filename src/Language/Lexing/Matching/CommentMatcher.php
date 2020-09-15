@@ -2,33 +2,36 @@
 
 namespace Polygen\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\Lexing\UnterminatedCommentException;
+use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Token\Token;
 
 /**
  * Matcher for comment strings.
  */
-class CommentMatcher extends BaseMatcher
+class CommentMatcher implements MatcherInterface
 {
     const COMMENT_START = '(*';
     const COMMENT_END = '*)';
 
     /**
-     * @return Token
+     * @return MatchedToken|null
      */
-    public function doMatch()
+    public function match(MatcherInput $input)
     {
-        if ($this->read(2) != self::COMMENT_START) {
+        if ($input->read(2) != self::COMMENT_START) {
             return null;
         }
         $comment = '';
         do {
-            $lastChar = $this->read();
+            $lastChar = $input->read();
             if ($lastChar === null) {
-                throw new UnterminatedCommentException($this->tell());
+                throw SyntaxErrorException::unterminatedComment($input->getPosition());
             }
             $comment .= $lastChar;
         } while (substr($comment, -2) !== self::COMMENT_END);
-        return Token::comment(substr($comment, 0, -2));
+        return new MatchedToken(
+            Token::comment(substr($comment, 0, -2)),
+            $input->getPosition()
+        );
     }
 }

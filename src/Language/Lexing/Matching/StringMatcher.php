@@ -2,28 +2,27 @@
 
 namespace Polygen\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\Lexing\InvalidEscapeSequenceException;
-use Polygen\Language\Exceptions\Lexing\UnterminatedStringException;
+use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Token\Token;
 
 /**
  * Matches strings and converts them to terminating symbols.
  */
-class StringMatcher extends BaseMatcher
+class StringMatcher implements MatcherInterface
 {
     const DELIMITER = '"';
     const ESCAPE_CHAR = '\\';
 
     /**
-     * @return Token
+     * @return MatchedToken|null
      */
-    public function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
         $text = '';
-        if ($this->read() !== self::DELIMITER) {
+        if ($streamWrapper->read() !== self::DELIMITER) {
             return null;
         }
-        $stringStart = $this->tell();
+        $stringStart = $streamWrapper->getPosition();
         $escapeNext = false;
         do {
             $isEscaped = false;
@@ -31,12 +30,12 @@ class StringMatcher extends BaseMatcher
                 $isEscaped = true;
                 $escapeNext = false;
             }
-            $char = $this->read();
+            $char = $streamWrapper->read();
             if ($char === null) {
-                throw new UnterminatedStringException($stringStart);
+                throw SyntaxErrorException::unterminatedString($stringStart);
             }
             if ($isEscaped) {
-                $text .= $this->escape($char);
+                $text .= $this->escape($char, $streamWrapper);
             } elseif ($char !== self::ESCAPE_CHAR) {
                 $text .= $char;
             }
@@ -44,7 +43,10 @@ class StringMatcher extends BaseMatcher
                 $escapeNext = true;
             }
         } while ($isEscaped || $char !== self::DELIMITER);
-        return Token::terminatingSymbol(substr($text, 0, -1));
+        return new MatchedToken(
+            Token::terminatingSymbol(substr($text, 0, -1)),
+            $streamWrapper->getPosition()
+        );
     }
 
     /**
@@ -55,7 +57,7 @@ class StringMatcher extends BaseMatcher
      * @param string $char
      * @return string
      */
-    private function escape($char)
+    private function escape($char, MatcherInput $streamWrapper)
     {
         switch ($char) {
             case '\\':
@@ -74,15 +76,15 @@ class StringMatcher extends BaseMatcher
         }
         if ((string)(int) $char === $char) {
             // Numbers might have more than one digit, try to eat as many as we can find
-            while (($nextChar = $this->peek()) && (string)(int) $nextChar === $nextChar) {
-                $char .= $this->read();
+            while (($nextChar = $streamWrapper->peek()) && (string)(int) $nextChar === $nextChar) {
+                $char .= $streamWrapper->read();
             }
             $char = (int) $char;
             if ($char > 255 || $char < 0) {
-                throw new InvalidEscapeSequenceException("\\$char", $this->tell());
+                throw SyntaxErrorException::invalidEscapeSequence("\\$char", $streamWrapper->getPosition());
             }
             return chr($char);
         }
-        throw new InvalidEscapeSequenceException("\\$char", $this->tell());
+        throw SyntaxErrorException::invalidEscapeSequence("\\$char", $streamWrapper->getPosition());
     }
 }

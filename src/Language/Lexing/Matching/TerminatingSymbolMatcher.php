@@ -7,23 +7,27 @@ use Polygen\Language\Token\Token;
 /**
  * Matches terminating symbols.
  */
-class TerminatingSymbolMatcher extends BaseMatcher
+class TerminatingSymbolMatcher implements MatcherInterface
 {
+    use RegexMatcherTrait;
+
     const REGEX = "{^[a-z0-9'][a-zA-Z0-9']*$}D";
 
     /**
-     * @return Token
+     * @return MatchedToken|null
      */
-    public function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
         $symbol = '';
-        while ($this->matchesRegex($symbol . $this->peek())) {
-            $lastChar = $this->read();
+        while ($this->matchesRegex($symbol . $streamWrapper->peek())) {
+            $lastChar = $streamWrapper->read();
             if ($lastChar === null) {
                 break;
             }
             $symbol .= $lastChar;
         };
-        return strlen($symbol) ? Token::terminatingSymbol($symbol) : null;
+        return strlen($symbol)
+            ? new MatchedToken(Token::terminatingSymbol($symbol), $streamWrapper->getPosition())
+            : null;
     }
 }

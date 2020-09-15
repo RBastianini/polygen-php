@@ -2,6 +2,7 @@
 
 namespace Polygen\Stream;
 
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Webmozart\Assert\Assert;
 
 /**
@@ -36,7 +37,7 @@ class SavePointStream implements TokenStreamInterface
     }
 
     /**
-     * @return \Polygen\Language\Token\Token
+     * @return MatchedToken
      */
     public function nextToken()
     {

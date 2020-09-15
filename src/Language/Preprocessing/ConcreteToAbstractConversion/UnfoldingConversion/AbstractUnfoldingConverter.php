@@ -10,7 +10,6 @@ use Polygen\Grammar\Interfaces\DeclarationInterface;
 use Polygen\Grammar\Interfaces\HasProductions;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Label;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;
@@ -53,7 +52,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
         $declarationsToSurface = null;
 
         // Find the unfoldable to unfold.
-        foreach ($node->getProductions() as $productionIndex => $production) {
+        foreach ($node->getProductionSet()->getProductions() as $productionIndex => $production) {
             foreach ($production->getSequence()->getSequenceContents() as $sequenceIndex => $atom) {
                 if ($this->isUnfoldedUnfoldable($atom)) {
                     /** @var UnfoldableAtom $atom */

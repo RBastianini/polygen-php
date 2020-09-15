@@ -7,19 +7,21 @@ use Polygen\Language\Token\Token;
 /**
  * Matches spaces, tabs, carriage returns and "empty strings".
  */
-class WhitespaceMatcher extends BaseMatcher
+class WhitespaceMatcher implements MatcherInterface
 {
     /**
-     * {@inheritdoc}
+     * @return MatchedToken|null
      */
-    public function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
         $hasMatched = false;
-        while (($char = $this->peek()) !== null && $this->isBlank($char)) {
+        while (($char = $streamWrapper->peek()) !== null && $this->isBlank($char)) {
             $hasMatched = true;
-            $this->read();
+            $streamWrapper->read();
         }
-        return $hasMatched ? Token::whitespace() : null;
+        return $hasMatched
+            ? new MatchedToken(Token::whitespace(), $streamWrapper->getPosition())
+            : null;
     }
 
     /**

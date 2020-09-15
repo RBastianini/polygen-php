@@ -38,7 +38,7 @@ class DocumentParserTest extends TestCase
     /**
      * @test
      */
-    public function it_parses_differently_atoms_interlevead_by_a_space_and_interleaved_by_a_comma()
+    public function it_parses_differently_atoms_interleaved_by_a_space_and_interleaved_by_a_comma()
     {
         $subject = $this->given_a_parser(
             $this->given_a_source_stream(

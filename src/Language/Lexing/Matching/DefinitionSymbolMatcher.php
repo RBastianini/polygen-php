@@ -10,19 +10,21 @@ use Polygen\Language\Token\Token;
  * This is the only three character symbol, that's why it has a dedicated matcher instead of using one of the
  * Short or Long SymbolMatcher.
  */
-class DefinitionSymbolMatcher extends BaseMatcher
+class DefinitionSymbolMatcher implements MatcherInterface
 {
-    const REGEX = '{::=}';
+    const DEFINITION_SYMBOL = '::=';
 
     /**
-     * {@inheritdoc}
+     * @return MatchedToken|null
      */
-    protected function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
-        $string = $this->read(3);
+        $string = $streamWrapper->read(3);
         if (strlen($string) < 3) {
             return null;
         }
-        return $this->matchesRegex($string) ? Token::definition() : null;
+        return $string === self::DEFINITION_SYMBOL
+            ? new MatchedToken(Token::definition(), $streamWrapper->getPosition())
+            : null;
     }
 }

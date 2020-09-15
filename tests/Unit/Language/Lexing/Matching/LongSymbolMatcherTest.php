@@ -4,13 +4,11 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
 use Polygen\Language\Lexing\Matching\LongSymbolMatcher;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class LongSymbolMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      * @dataProvider long_symbols_matcher_provider
@@ -19,9 +17,9 @@ class LongSymbolMatcherTest extends TestCase
      */
     public function it_can_match_long_symbols($source, $expectedMatch)
     {
-        $SUT = new LongSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
-        $this->assertEquals($expectedMatch, $result);
+        $SUT = new LongSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals($expectedMatch, $result->getToken());
     }
 
     /**
@@ -44,8 +42,8 @@ class LongSymbolMatcherTest extends TestCase
      */
     public function it_does_not_match_other_symbols($source)
     {
-        $SUT = new LongSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
+        $SUT = new LongSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
         $this->assertNull($result);
     }
 

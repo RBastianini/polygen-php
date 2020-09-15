@@ -19,10 +19,10 @@ use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\Unfoldable\Unfoldable;
 use Polygen\Grammar\Unfoldable\UnfoldableBuilder;
 use Polygen\Language\Document;
+use Polygen\Language\Exceptions\Parsing\NoAtomFoundException;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
 use Polygen\Utils\LabelSelectionCollection;
-use Webmozart\Assert\Assert;
 
 /**
  * Parser for a Polygen document in abstract syntax.
@@ -66,10 +66,8 @@ class DocumentParser extends Parser
         switch ($declaration->getType()) {
             case Type::definition():
                 return new Definition($name->getValue(), $productions);
-                break;
             case Type::assignment():
                 return new Assignment($name->getValue(), $productions);
-                break;
         }
         throw new \LogicException('How did you get here?');
     }
@@ -117,7 +115,9 @@ class DocumentParser extends Parser
             }
         } while ($atoms);
 
-        Assert::greaterThan(count($sequence), 0, "Expected to match atom sequence, but no atom found. {$this->peek()} found instead.");
+        if (count($sequence) === 0) {
+            throw new NoAtomFoundException($this->peek());
+        }
         return new Sequence($sequence, $label);
     }
 
@@ -146,7 +146,7 @@ class DocumentParser extends Parser
     }
 
     /**
-     * @return Atom
+     * @return Atom|null
      */
     private function tryMatchAtom()
     {
@@ -257,7 +257,9 @@ class DocumentParser extends Parser
         if (!$label) {
             $this->rollback();
         }
-        return $label ? new Label($label->getValue(), $modifier) : null;
+        return $label
+            ? new Label($label->getValue(), $modifier)
+            : null;
     }
 
     /**
@@ -279,9 +281,11 @@ class DocumentParser extends Parser
     {
         $label = $this->tryMatchLabelWithModifiers();
         if (!$label) {
+            $nextToken = $this->peek();
             throw new UnexpectedTokenException(
                 [Type::plus(), Type::minus(), Type::nonTerminatingSymbol(), Type::terminatingSymbol()],
-                $this->peek()
+                $nextToken->getToken(),
+                $nextToken->getPosition()
             );
         }
         return $label;
@@ -293,8 +297,8 @@ class DocumentParser extends Parser
     private function tryMatchFrequencyModifiers()
     {
         $modifiersByType = [
-            Type::plus()->__toString() => 0,
-            Type::minus()->__toString() => 0
+            (string) Type::plus() => 0,
+            (string) Type::minus() => 0
         ];
 
         $found = false;

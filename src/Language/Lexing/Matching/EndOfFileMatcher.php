@@ -7,18 +7,16 @@ use Polygen\Language\Token\Token;
 /**
  * Matches the empty string that is read when the file ends.
  */
-class EndOfFileMatcher extends BaseMatcher
+class EndOfFileMatcher implements MatcherInterface
 {
     /**
-     * Actually does the matching.
-     *
-     * @return Token|null
+     * @return MatchedToken|null
      */
-    protected function doMatch()
+    public function match(MatcherInput $streamWrapper)
     {
-        if ($this->peek() === '') {
-            $this->read();
-            return Token::endOfFile();
+        if ($streamWrapper->peek() === '') {
+            $streamWrapper->read();
+            return new MatchedToken(Token::endOfFile(), $streamWrapper->getPosition());
         }
         return null;
     }

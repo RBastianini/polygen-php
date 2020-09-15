@@ -2,10 +2,16 @@
 
 namespace Polygen\Language\Exceptions\Lexing;
 
-class InvalidEscapeSequenceException extends \RuntimeException
+use Polygen\Language\Exceptions\SyntaxErrorException;
+use Polygen\Language\Lexing\Position;
+
+class InvalidEscapeSequenceException extends SyntaxErrorException
 {
-    public function __construct($escape, $offset)
+    /**
+     * @param string $escape
+     */
+    public function __construct($escape, Position $position)
     {
-        parent::__construct("Unknown escape sequence '$escape' at offset $offset.");
+        parent::__construct($position, "Unknown escape sequence '$escape'");
     }
 }

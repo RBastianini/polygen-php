@@ -4,18 +4,19 @@ namespace Polygen\Language\Lexing;
 
 use GuzzleHttp\Stream\StreamInterface;
 use Polygen\Language\Exceptions\SyntaxErrorException;
-use Polygen\Language\Lexing\Matching\BaseMatcher;
 use Polygen\Language\Lexing\Matching\CommentMatcher;
 use Polygen\Language\Lexing\Matching\DefinitionSymbolMatcher;
 use Polygen\Language\Lexing\Matching\DotLabelMatcher;
 use Polygen\Language\Lexing\Matching\EndOfFileMatcher;
 use Polygen\Language\Lexing\Matching\LongSymbolMatcher;
+use Polygen\Language\Lexing\Matching\MatcherInterface;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Polygen\Language\Lexing\Matching\NonTerminatingSymbolMatcher;
 use Polygen\Language\Lexing\Matching\ShortSymbolMatcher;
 use Polygen\Language\Lexing\Matching\StringMatcher;
+use Polygen\Language\Lexing\Matching\TokenMatcher;
 use Polygen\Language\Lexing\Matching\TerminatingSymbolMatcher;
 use Polygen\Language\Lexing\Matching\WhitespaceMatcher;
-use Polygen\Language\Token\Token;
 
 /**
  * Lexer class.
@@ -24,41 +25,40 @@ use Polygen\Language\Token\Token;
 class Lexer
 {
     /**
-     * @var StreamInterface
+     * @var TokenMatcher
      */
-    private $source;
+    private $tentativeMatcher;
 
     /**
      * Lexer constructor.
      *
-     * @param StreamInterface $source
+     * @param StreamInterface $tentativeMatcher
      */
-    public function __construct(StreamInterface $source)
+    public function __construct(TokenMatcher $tentativeMatcher)
     {
-        $this->source = $source;
+        $this->tentativeMatcher = $tentativeMatcher;
     }
 
     /**
      * Reads and returns the next token.
      *
-     * @return Token|\Generator
+     * @return MatchedToken|\Generator
      */
     public function getTokens()
     {
         $matchers = $this->initMatchers();
-        while (!$this->source->eof()) {
+        while (!$this->tentativeMatcher->isDoneMatching()) {
             $matched = false;
             foreach ($matchers as $matcher) {
-                $token = $matcher->next();
-                if ($token) {
+                $matchingResult = $this->tentativeMatcher->tryMatchWith($matcher);
+                if ($matchingResult) {
                     $matched = true;
-                    yield $token;
+                    yield $matchingResult;
                     break;
                 }
             }
-            if (!$matched && !$this->source->eof()) {
-                $t = $this->source->tell();
-                throw new SyntaxErrorException($t);
+            if (!$matched && !$this->tentativeMatcher->isDoneMatching()) {
+                throw SyntaxErrorException::atPosition($this->tentativeMatcher->getPosition());
             }
         }
     }
@@ -66,13 +66,13 @@ class Lexer
     /**
      * Creates matchers for the stream that is being read.
      *
-     * @return BaseMatcher[]
+     * @return MatcherInterface[]
      */
     private function initMatchers()
     {
         return array_map(
             function ($matcherName)  {
-                return new $matcherName($this->source);
+                return new $matcherName();
             },
             [
                 WhitespaceMatcher::class,

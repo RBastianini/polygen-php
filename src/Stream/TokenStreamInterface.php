@@ -2,6 +2,8 @@
 
 namespace Polygen\Stream;
 
+use Polygen\Language\Lexing\Matching\MatchedToken;
+
 interface TokenStreamInterface
 {
     /**
@@ -14,7 +16,7 @@ interface TokenStreamInterface
     /**
      * Reads the token at the current stream position.
      *
-     * @return \Polygen\Language\Token\Token
+     * @return MatchedToken
      */
     public function nextToken();
 

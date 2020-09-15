@@ -6,7 +6,7 @@ use Polygen\Grammar\Interfaces\FrequencyModifiable;
 use Webmozart\Assert\Assert;
 
 /**
- * Given an array of items whose generation frequency can be influenced, computes the weight of such
+ * Given an array of items whose generation frequency can be influenced, computes the weight of such items.
  */
 class FrequencyModificationWeightCalculator
 {

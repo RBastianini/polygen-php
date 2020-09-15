@@ -2,7 +2,7 @@
 
 namespace Polygen\Stream;
 
-use Polygen\Language\Token\Token;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Webmozart\Assert\Assert;
 
 /**
@@ -17,7 +17,7 @@ class CachingStream implements TokenStreamInterface
     private $tokenStream;
 
     /**
-     * @var Token[]
+     * @var MatchedToken[]
      */
     private $buffer = [];
 
@@ -41,7 +41,7 @@ class CachingStream implements TokenStreamInterface
     }
 
     /**
-     * @return Token
+     * @return MatchedToken
      */
     public function nextToken()
     {

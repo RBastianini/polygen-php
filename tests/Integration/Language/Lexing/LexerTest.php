@@ -4,6 +4,7 @@ namespace Tests\Polygen\Integration\Language\Lexing;
 
 use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Lexing\Lexer;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Polygen\Language\Token\Token;
 use Tests\StreamUtils;
 use Tests\TestCase;
@@ -20,10 +21,17 @@ class LexerTest extends TestCase
      */
     public function it_can_lex_valid_files($source, array $expectedTokens)
     {
-        $SUT = new Lexer($this->given_a_source_stream($source));
-        $this->assertEquals(
-            array_merge($expectedTokens, [Token::endOfFile()]),
+        $SUT = new Lexer($this->given_a_token_matcher($source));
+        $tokens = array_map(
+            function (MatchedToken  $matchedToken)
+            {
+                return $matchedToken->getToken();
+            },
             iterator_to_array($SUT->getTokens())
+        );
+        $this->assertEquals(
+            array_merge($expectedTokens, []),
+            $tokens
         );
     }
 
@@ -35,13 +43,17 @@ class LexerTest extends TestCase
         return [
             [
                 '(*just a comment*)',
-                [Token::comment('just a comment')]
+                [
+                    Token::comment('just a comment'),
+                    Token::endOfFile(),
+                ]
             ],
             [
                 '(*a comment*)::=',
                 [
                     Token::comment('a comment'),
                     Token::definition(),
+                    Token::endOfFile(),
                 ]
             ],
             [
@@ -72,6 +84,7 @@ class LexerTest extends TestCase
                     Token::underscore(),
                     Token::rightBracket(),
                     Token::semicolon(),
+                    Token::endOfFile(),
                 ]
             ],
         ];
@@ -83,8 +96,8 @@ class LexerTest extends TestCase
     public function it_explodes_on_invalid_files()
     {
         $this->expectException(SyntaxErrorException::class);
-        $this->expectExceptionMessage('Syntax error at offset 41.');
-        $SUT = new Lexer($this->given_a_source_stream('This looked promising until THAT HAPPENED!'));
+        $this->expectExceptionMessage('Syntax error at line 1 and column 42.');
+        $SUT = new Lexer($this->given_a_token_matcher('This looked promising until THAT HAPPENED!'));
         // Consume all the stream (or at least try)
         iterator_to_array($SUT->getTokens());
     }

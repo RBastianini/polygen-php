@@ -50,7 +50,7 @@ class ConverterTreeWalker implements AbstractSyntaxWalker
     /**
      * @param DeclarationCollection $context
      * @return Document
-     *@internal
+     * @internal
      */
     public function walkDocument(Document $document, $context = null)
     {

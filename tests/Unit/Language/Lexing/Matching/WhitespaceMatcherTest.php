@@ -4,13 +4,11 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
 use Polygen\Language\Lexing\Matching\WhitespaceMatcher;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class WhitespaceMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      * @dataProvider whitespace_provider
@@ -18,10 +16,9 @@ class WhitespaceMatcherTest extends TestCase
      */
     public function it_can_match_whitespace_like_chars($source)
     {
-        $stream = $this->given_a_source_stream($source);
-        $SUT = new WhitespaceMatcher($stream);
-        $result = $SUT->next();
-        $this->assertEquals(Token::whitespace(), $result);
+        $SUT = new WhitespaceMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals(Token::whitespace(), $result->getToken());
     }
 
     /**
@@ -45,8 +42,8 @@ class WhitespaceMatcherTest extends TestCase
      */
     public function it_does_not_match_other_symbols($source)
     {
-        $SUT = new WhitespaceMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
+        $SUT = new WhitespaceMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
         $this->assertNull($result);
     }
 
