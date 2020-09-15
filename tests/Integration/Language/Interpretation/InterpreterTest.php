@@ -30,4 +30,76 @@ class InterpreterTest extends TestCase
 
         $this->assertNotEmpty($result);
     }
+
+    /**
+     * @test
+     */
+    public function it_supports_epsilon_productions()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream('S ::= _ this _ is _ a _ weird _ looking _ grammar;')
+        );
+
+        $result = $polygen->generate($document);
+
+        $this->assertEquals('this is a weird looking grammar', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_empty_productions()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream('S ::= _;')
+        );
+
+        $result = $polygen->generate($document);
+
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_capitalization()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream('S ::= this is a \polygen grammar;')
+        );
+
+        $result = $polygen->generate($document);
+
+        $this->assertEquals('this is a Polygen grammar', $result);
+    }
+
+    public function it_supports_string_concatenation()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream('S ::= this is a standard "P" ^ olygen grammar;')
+        );
+
+        $result = $polygen->generate($document);
+
+        $this->assertEquals('this is a standard Polygen grammar', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_capitalizes_only_the_first_terminating_symbol_it_finds()
+    {
+        $polygen = new Polygen();
+        $document = $polygen->getDocument(
+            $this->given_a_source_stream('S ::= a ^_ a ^_\ a \^_a _^\a;')
+        );
+
+        $result = $polygen->generate($document);
+
+        $this->assertEquals('aaAAA', $result);
+    }
 }
