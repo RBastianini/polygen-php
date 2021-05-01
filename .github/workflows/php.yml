@@ -23,3 +23,5 @@ jobs:
     - name: Run test suite
       run: composer run-tests
 
+      with:
+        php_version: 7.4

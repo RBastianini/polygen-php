@@ -57,11 +57,6 @@ A small usage will be printed if launched with no parameters (or with `-h` or `-
 grammars with circular references between declarations and everything will be fine.
 * Only errors are reported by the static check, no warnings have been implemented.
 
-## The code is junk!
-
-I have this feeling too, but I have never written an interpreter, and I don't think the Compiler courses I've taken at
-the university have done a good job at teaching me how I should write one, so I'm improvising.
-
 ## Running tests
 
 There are two test suites, **Unit** and **Integration** you can run both with `vendor/bin/phpunit`.
