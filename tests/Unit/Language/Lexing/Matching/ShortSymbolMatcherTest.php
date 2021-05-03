@@ -4,13 +4,11 @@ namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
 use Polygen\Language\Lexing\Matching\ShortSymbolMatcher;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class ShortSymbolMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      * @dataProvider short_symbols_matcher_provider
@@ -19,9 +17,9 @@ class ShortSymbolMatcherTest extends TestCase
      */
     public function it_can_match_short_symbols($source, $expectedMatch)
     {
-        $SUT = new ShortSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
-        $this->assertEquals($expectedMatch, $result);
+        $SUT = new ShortSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals($expectedMatch, $result->getToken());
     }
 
     /**
@@ -58,8 +56,8 @@ class ShortSymbolMatcherTest extends TestCase
      */
     public function it_does_not_match_other_symbols($source)
     {
-        $SUT = new ShortSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
+        $SUT = new ShortSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
         $this->assertNull($result);
     }
 

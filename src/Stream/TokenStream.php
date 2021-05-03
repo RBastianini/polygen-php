@@ -3,7 +3,7 @@
 namespace Polygen\Stream;
 
 use Polygen\Language\Lexing\Lexer;
-use Polygen\Language\Token\Token;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Polygen\Language\Token\Type;
 
 class TokenStream implements TokenStreamInterface
@@ -11,18 +11,22 @@ class TokenStream implements TokenStreamInterface
     /**
      * @var \Generator
      */
-    private $tokenIterator;
+    private $matchingResultIterator;
 
     /**
-     * @var Token
+     * @var MatchedToken
      */
-    private $currentToken;
+    private $currentMatchingResult;
 
     /**
      * @var boolean
      */
     private $isEof = false;
 
+    /**
+     * @var Lexer
+     */
+    private $lexer;
 
     /**
      * Constructor.
@@ -31,7 +35,8 @@ class TokenStream implements TokenStreamInterface
      */
     public function __construct(Lexer $lexer)
     {
-        $this->tokenIterator = $lexer->getTokens();
+        $this->matchingResultIterator = $lexer->getTokens();
+        $this->lexer = $lexer;
         $this->advance();
     }
 
@@ -43,30 +48,30 @@ class TokenStream implements TokenStreamInterface
         if ($this->isEOF()) {
             throw new \RuntimeException("Trying to read past the end of file.");
         }
-        $this->currentToken = $this->readStream();
+        $this->currentMatchingResult = $this->readStream();
     }
 
     public function nextToken()
     {
-        return $this->isEOF() ? null : $this->currentToken;
+        return $this->isEOF() ? null : $this->currentMatchingResult;
     }
 
     /**
-     * @return Token|null
+     * @return MatchedToken|null
      */
     private function readStream()
     {
-        while ($this->tokenIterator->valid()) {
-            $token = $this->tokenIterator->current();
-            /** @var Token $token */
-            $this->tokenIterator->next();
+        while ($this->matchingResultIterator->valid()) {
+            $matchingResult = $this->matchingResultIterator->current();
+            /** @var MatchedToken $matchingResult */
+            $this->matchingResultIterator->next();
             if (
-                $token->getType() === Type::whitespace()
-                || $token->getType() === Type::comment()
+                $matchingResult->getToken()->getType() === Type::whitespace()
+                || $matchingResult->getToken()->getType() === Type::comment()
             ) {
                 continue;
             }
-            return $this->currentToken = $token;
+            return $this->currentMatchingResult = $matchingResult;
         }
         $this->isEof = true;
         return null;

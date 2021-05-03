@@ -3,6 +3,7 @@
 namespace Tests\Integration\Language\Interpretation;
 
 use Polygen\Language\Document;
+use Polygen\Language\Exceptions\StaticCheckException;
 use Polygen\Language\Interpretation\Context;
 use Polygen\Polygen;
 use Tests\StreamUtils;
@@ -34,6 +35,7 @@ class InterpreterTest extends TestCase
     /**
      * @test
      */
+
     public function it_supports_epsilon_productions()
     {
         $polygen = new Polygen();
@@ -101,5 +103,20 @@ class InterpreterTest extends TestCase
         $result = $polygen->generate($document);
 
         $this->assertEquals('aaAAA', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_static_check_exceptions()
+    {
+        $polygen = new Polygen();
+
+        $this->expectException(StaticCheckException::class);
+
+        $polygen->getDocument(
+            $this->given_a_source_stream('I := "where is the S symbol!?";'),
+            Document::START
+        );
     }
 }

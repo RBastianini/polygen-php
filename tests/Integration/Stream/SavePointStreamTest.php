@@ -2,8 +2,11 @@
 
 namespace Tests\Polygen\Integration\Stream;
 
+use ArrayIterator;
 use Mockery;
 use Polygen\Language\Lexing\Lexer;
+use Polygen\Language\Lexing\Matching\MatchedToken;
+use Polygen\Language\Lexing\Position;
 use Polygen\Language\Token\Token;
 use Polygen\Stream\CachingStream;
 use Polygen\Stream\SavePointStream;
@@ -84,11 +87,11 @@ class SavePointStreamTest extends TestCase
         $this->assertTrue($subject->isEof());
         $subject->rollback();
         $this->assertFalse($subject->isEof());
-        $this->assertEquals(Token::leftBracket(), $subject->nextToken());
+        $this->assertEquals(Token::leftBracket(), $subject->nextToken()->getToken());
         $subject->advance();
-        $this->assertEquals(Token::pipe(), $subject->nextToken());
+        $this->assertEquals(Token::pipe(), $subject->nextToken()->getToken());
         $subject->advance();
-        $this->assertEquals(Token::rightBracket(), $subject->nextToken());
+        $this->assertEquals(Token::rightBracket(), $subject->nextToken()->getToken());
         $subject->advance();
         $this->assertTrue($subject->isEof());
     }
@@ -141,7 +144,20 @@ class SavePointStreamTest extends TestCase
         return new SavePointStream(
             new CachingStream(
                 new TokenStream(
-                    Mockery::mock(Lexer::class, ['getTokens' => new \ArrayIterator($tokens)])
+                    Mockery::mock(
+                        Lexer::class,
+                        [
+                            'getTokens' => new ArrayIterator(
+                                array_map(
+                                    function ($token)
+                                    {
+                                        return new MatchedToken($token, new Position(1, 1));
+                                    },
+                                    $tokens
+                                )
+                            ),
+                        ]
+                    )
                 )
             )
         );

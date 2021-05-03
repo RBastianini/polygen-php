@@ -3,9 +3,11 @@
 namespace Tests;
 
 use GuzzleHttp\Stream\StreamInterface;
+use Polygen\Language\Document;
 use Polygen\Language\Lexing\Lexer;
 use Polygen\Language\Parsing\DocumentParser;
 use Polygen\Stream\CachingStream;
+use Polygen\Stream\LexingStreamWrapper;
 use Polygen\Stream\SavePointStream;
 use Polygen\Stream\TokenStream;
 
@@ -21,7 +23,9 @@ trait DocumentUtils
                 new CachingStream(
                     new TokenStream(
                         new Lexer(
-                            $grammarStream
+                            new LexingStreamWrapper(
+                                $grammarStream
+                            )
                         )
                     )
                 )
@@ -30,8 +34,8 @@ trait DocumentUtils
     }
 
     /**
-     * @param \GuzzleHttp\Stream\StreamInterface $grammarStream
-     * @return \Polygen\Language\Document
+     * @param StreamInterface $grammarStream
+     * @return Document
      */
     private function given_a_document(StreamInterface $grammarStream)
     {

@@ -2,17 +2,14 @@
 
 namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\Lexing\InvalidEscapeSequenceException;
-use Polygen\Language\Exceptions\Lexing\UnterminatedStringException;
+use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Lexing\Matching\StringMatcher;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class StringMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      * @dataProvider string_provider
@@ -21,9 +18,9 @@ class StringMatcherTest extends TestCase
      */
     public function it_can_match_strings($source, $expectedMatch)
     {
-        $SUT = new StringMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
-        $this->assertEquals($expectedMatch, $result);
+        $SUT = new StringMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals($expectedMatch, $result->getToken());
     }
 
     /**
@@ -46,8 +43,8 @@ class StringMatcherTest extends TestCase
      */
     public function it_does_not_match_other_symbols($source)
     {
-        $SUT = new StringMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
+        $SUT = new StringMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
         $this->assertNull($result);
     }
 
@@ -71,9 +68,9 @@ class StringMatcherTest extends TestCase
      */
     public function it_escapes_characters($source, $expected)
     {
-        $SUT = new StringMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
-        $this->assertEquals($expected, $result);
+        $SUT = new StringMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals($expected, $result->getToken());
     }
 
     /**
@@ -95,10 +92,10 @@ class StringMatcherTest extends TestCase
      */
     public function it_throws_exceptions_on_unterminated_strings()
     {
-        $this->expectException(UnterminatedStringException::class);
-        $this->expectExceptionMessage("Syntax error at offset 1.");
-        $SUT = new StringMatcher($this->given_a_source_stream('"look! What\'s tha'));
-        $SUT->next();
+        $this->expectException(SyntaxErrorException::class);
+        $this->expectExceptionMessage("Unterminated string at line 1 and column 1.");
+        $SUT = new StringMatcher();
+        $SUT->match(MatcherInputHelper::get('"look! What\'s tha'));
     }
 
     /**
@@ -106,10 +103,10 @@ class StringMatcherTest extends TestCase
      */
     public function it_throws_exceptions_on_unknown_escape_sequences()
     {
-        $this->expectException(InvalidEscapeSequenceException::class);
-        $this->expectExceptionMessage("Unknown escape sequence '\\g' at offset 17.");
-        $SUT = new StringMatcher($this->given_a_source_stream('"I wonder what \g is?"'));
-        $SUT->next();
+        $this->expectException(SyntaxErrorException::class);
+        $this->expectExceptionMessage("Invalid escape sequence '\\g' at line 1 and column 17.");
+        $SUT = new StringMatcher();
+        $SUT->match(MatcherInputHelper::get('"I wonder what \g is?"'));
     }
 
     /**
@@ -117,9 +114,9 @@ class StringMatcherTest extends TestCase
      */
     public function it_throws_exceptions_on_unknown_ascii_codes()
     {
-        $this->expectException(InvalidEscapeSequenceException::class);
-        $this->expectExceptionMessage("Unknown escape sequence '\\256' at offset 19.");
-        $SUT = new StringMatcher($this->given_a_source_stream("\"I wonder what \\256 is?\""));
-        $SUT->next();
+        $this->expectException(SyntaxErrorException::class);
+        $this->expectExceptionMessage("Invalid escape sequence '\\256' at line 1 and column 19.");
+        $SUT = new StringMatcher();
+        $SUT->match(MatcherInputHelper::get("\"I wonder what \\256 is?\""));
     }
 }

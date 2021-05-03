@@ -7,26 +7,30 @@ use Polygen\Language\Token\Token;
 /**
  * Matches dot labels.
  */
-class DotLabelMatcher extends BaseMatcher
+class DotLabelMatcher implements MatcherInterface
 {
+    use RegexMatcherTrait;
+
     const REGEX = '{^[A-Za-z0-9]*$}D';
 
     /**
-     * @return Token
+     * @return MatchedToken|null
      */
-    public function doMatch()
+    public function match(MatcherInput $lexingStreamWrapper)
     {
-        if ($this->read() != '.') {
+        if ($lexingStreamWrapper->read() != '.') {
             return null;
         }
         $label = '';
-        while ($this->matchesRegex($label . $this->peek())) {
-            $lastChar = $this->read();
+        while ($this->matchesRegex($label . $lexingStreamWrapper->peek())) {
+            $lastChar = $lexingStreamWrapper->read();
             if ($lastChar === null) {
                 break;
             }
             $label .= $lastChar;
         }
-        return strlen($label) ? Token::dotLabel($label) : null;
+        return strlen($label)
+            ? new MatchedToken(Token::dotLabel($label), $lexingStreamWrapper->getPosition())
+            : null;
     }
 }

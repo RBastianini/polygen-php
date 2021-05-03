@@ -3,22 +3,22 @@
 namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
 use Polygen\Language\Lexing\Matching\DefinitionSymbolMatcher;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class DefinitionSymbolMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      */
     public function it_matches_the_definition_symbol()
     {
-        $SUT = new DefinitionSymbolMatcher($this->given_a_source_stream('::='));
-        $result = $SUT->next();
-        $this->assertEquals(Token::definition(), $result);
+        $SUT = new DefinitionSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get('::='));
+        $this->assertInstanceOf(MatchedToken::class, $result);
+        $this->assertEquals(Token::definition(), $result->getToken());
     }
 
     /**
@@ -28,8 +28,8 @@ class DefinitionSymbolMatcherTest extends TestCase
      */
     public function it_does_not_match_other_strings($string)
     {
-        $SUT = new DefinitionSymbolMatcher($this->given_a_source_stream($string));
-        $result = $SUT->next();
+        $SUT = new DefinitionSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($string));
         $this->assertNull($result);
     }
 

@@ -18,6 +18,6 @@ class InfiniteRecursion implements Error
 
     public function getMessage()
     {
-        return "Infinite recursion detected for ndeclaration '{$this->declaration->getName()}'.";
+        return "Infinite recursion detected for declaration '{$this->declaration->getName()}'.";
     }
 }

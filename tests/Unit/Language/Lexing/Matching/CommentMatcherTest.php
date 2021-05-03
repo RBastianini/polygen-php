@@ -2,16 +2,15 @@
 
 namespace Tests\Unit\Language\Lexing\Matching;
 
-use Polygen\Language\Exceptions\Lexing\UnterminatedCommentException;
+use Polygen\Language\Exceptions\SyntaxErrorException;
 use Polygen\Language\Lexing\Matching\CommentMatcher;
+use Polygen\Language\Lexing\Matching\MatchedToken;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class CommentMatcherTest extends TestCase
 {
-    use StreamUtils;
-
     /**
      * @test
      * @dataProvider valid_comment_string_provider
@@ -20,10 +19,10 @@ class CommentMatcherTest extends TestCase
      */
     public function it_can_parse_a_comment_string($commentString, $expectedValue)
     {
-        $SUT = new CommentMatcher($this->given_a_source_stream($commentString));
-        $result = $SUT->next();
-        $this->assertInstanceOf(Token::class, $result);
-        $this->assertEquals(Token::comment($expectedValue), $result);
+        $SUT = new CommentMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($commentString));
+        $this->assertInstanceOf(MatchedToken::class, $result);
+        $this->assertEquals(Token::comment($expectedValue), $result->getToken());
     }
 
     /**
@@ -46,8 +45,8 @@ class CommentMatcherTest extends TestCase
      */
     public function it_does_not_parse_other_tokens($nonCommentString)
     {
-        $SUT = new CommentMatcher($this->given_a_source_stream($nonCommentString));
-        $result = $SUT->next();
+        $SUT = new CommentMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($nonCommentString));
         $this->assertNull($result);
     }
 
@@ -68,9 +67,9 @@ class CommentMatcherTest extends TestCase
      */
     public function it_throws_an_exception_on_unterminated_comments()
     {
-        $SUT = new CommentMatcher($this->given_a_source_stream('(*'));
-        $this->expectException(UnterminatedCommentException::class);
-        $this->expectExceptionMessage("Syntax error at offset 2.");
-        $SUT->next();
+        $SUT = new CommentMatcher();
+        $this->expectException(SyntaxErrorException::class);
+        $this->expectExceptionMessage("Unterminated comment at line 1 and column 2.");
+        $SUT->match(MatcherInputHelper::get('(*'));
     }
 }

@@ -12,6 +12,7 @@ use Polygen\Language\Parsing\DocumentParser;
 use Polygen\Language\Preprocessing\AbstractToConcreteSyntaxConverter;
 use Polygen\Language\Preprocessing\StaticChecker;
 use Polygen\Stream\CachingStream;
+use Polygen\Stream\LexingStreamWrapper;
 use Polygen\Stream\SavePointStream;
 use Polygen\Stream\TokenStream;
 
@@ -32,7 +33,9 @@ class Polygen
                 new CachingStream(
                     new TokenStream(
                         new Lexer(
-                            $grammarStream
+                            new LexingStreamWrapper(
+                                $grammarStream
+                            )
                         )
                     )
                 )

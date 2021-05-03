@@ -4,12 +4,11 @@ namespace Tests\Unit\Language\Lexing\Matching;
 
 use Polygen\Language\Lexing\Matching\NonTerminatingSymbolMatcher;
 use Polygen\Language\Token\Token;
-use Tests\StreamUtils;
 use Tests\TestCase;
+use Tests\Utils\MatcherInputHelper;
 
 class NonTerminatingSymbolMatcherTest extends TestCase
 {
-    use StreamUtils;
     /**
      * @test
      * @dataProvider valid_non_terminating_symbol_provider
@@ -18,9 +17,9 @@ class NonTerminatingSymbolMatcherTest extends TestCase
      */
     public function it_can_parse_a_comment_string($source, $expectedValue)
     {
-        $SUT = new NonTerminatingSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
-        $this->assertEquals($expectedValue, $result);
+        $SUT = new NonTerminatingSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertEquals($expectedValue, $result->getToken());
     }
 
     /**
@@ -45,8 +44,8 @@ class NonTerminatingSymbolMatcherTest extends TestCase
      */
     public function it_does_not_parse_other_tokens($source)
     {
-        $SUT = new NonTerminatingSymbolMatcher($this->given_a_source_stream($source));
-        $result = $SUT->next();
+        $SUT = new NonTerminatingSymbolMatcher();
+        $result = $SUT->match(MatcherInputHelper::get($source));
         $this->assertNull($result);
     }
 

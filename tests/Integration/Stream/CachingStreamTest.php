@@ -2,8 +2,11 @@
 
 namespace Tests\Polygen\Integration\Stream;
 
+use ArrayIterator;
 use Mockery;
 use Polygen\Language\Lexing\Lexer;
+use Polygen\Language\Lexing\Matching\MatchedToken;
+use Polygen\Language\Lexing\Position;
 use Polygen\Language\Token\Token;
 use Polygen\Stream\CachingStream;
 use Polygen\Stream\TokenStream;
@@ -67,11 +70,35 @@ class CachingStreamTest extends TestCase
                 ]
             )
         );
-        $this->assertEquals(Token::terminatingSymbol('1'), $subject->nextToken());
-        $this->assertEquals(Token::terminatingSymbol('1'), $subject->nextToken());
-        $this->assertEquals(Token::terminatingSymbol('1'), $subject->nextToken());
+        $this->assertEquals(
+            new MatchedToken(
+                Token::terminatingSymbol('1'),
+                $this->given_a_position()
+            ),
+            $subject->nextToken()
+        );
+        $this->assertEquals(
+            new MatchedToken(
+                Token::terminatingSymbol('1'),
+                $this->given_a_position()
+            ),
+            $subject->nextToken()
+        );
+        $this->assertEquals(
+            new MatchedToken(
+                Token::terminatingSymbol('1'),
+                $this->given_a_position()
+            ),
+            $subject->nextToken()
+        );
         $subject->advance();
-        $this->assertEquals(Token::terminatingSymbol('2'), $subject->nextToken());
+        $this->assertEquals(
+            new MatchedToken(
+                Token::terminatingSymbol('2'),
+                $this->given_a_position()
+            ),
+            $subject->nextToken()
+        );
 
     }
 
@@ -114,7 +141,13 @@ class CachingStreamTest extends TestCase
         $subject->advance();
         $this->assertFalse($subject->isEOF());
         $subject->advance();
-        $this->assertEquals(Token::terminatingSymbol('3'), $subject->nextToken());
+        $this->assertEquals(
+            new MatchedToken(
+                Token::terminatingSymbol('3'),
+                $this->given_a_position()
+            ),
+            $subject->nextToken()
+        );
         $this->assertTrue($subject->isEOF());
     }
 
@@ -205,7 +238,29 @@ class CachingStreamTest extends TestCase
     private function given_a_token_stream(array $tokens)
     {
         return new TokenStream(
-            Mockery::mock(Lexer::class, ['getTokens' => new \ArrayIterator($tokens)])
+            Mockery::mock(
+                Lexer::class,
+                [
+                    'getTokens' => new ArrayIterator(
+                        array_map(
+                            function ($token)
+                            {
+                                return new MatchedToken($token, $this->given_a_position());
+                            },
+                            $tokens
+                        )
+                    ),
+                ]
+            )
         );
+    }
+
+    /**
+     * Returns a position that is used various times in these tests.
+     * @return Position
+     */
+    private function given_a_position()
+    {
+        return new Position(1, 1);
     }
 }

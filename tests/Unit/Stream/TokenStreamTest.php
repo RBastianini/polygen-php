@@ -4,6 +4,8 @@ namespace Tests\Polygen\Unit\Stream;
 
 use Mockery;
 use Polygen\Language\Lexing\Lexer;
+use Polygen\Language\Lexing\Matching\MatchedToken;
+use Polygen\Language\Lexing\Position;
 use Polygen\Language\Token\Token;
 use Polygen\Stream\TokenStream;
 use Tests\TestCase;
@@ -26,9 +28,9 @@ class TokenStreamTest extends TestCase
         ];
         $subject = new TokenStream($this->given_a_lexer($tokens));
 
-        $this->assertEquals($firstToken, $subject->nextToken());
+        $this->assertEquals($firstToken, $subject->nextToken()->getToken());
         $subject->advance();
-        $this->assertEquals($secondToken, $subject->nextToken());
+        $this->assertEquals($secondToken, $subject->nextToken()->getToken());
     }
 
     /**
@@ -75,6 +77,18 @@ class TokenStreamTest extends TestCase
      */
     private function given_a_lexer(array $tokens)
     {
-        return Mockery::mock(Lexer::class, ['getTokens' => new \ArrayIterator($tokens)]);
+        return Mockery::mock(
+            Lexer::class,
+            [
+                'getTokens' => new \ArrayIterator(
+                    array_map(
+                        function (Token $token) {
+                            return new MatchedToken($token, Mockery::mock(Position::class));
+                        },
+                        $tokens
+                    )
+                )
+            ]
+        );
     }
 }

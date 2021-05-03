@@ -56,14 +56,6 @@ abstract class Enum
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->value;
-    }
-
-    /**
      * Utility method to get an enum from a constant.
      *
      * @param string $type One of this class constants.

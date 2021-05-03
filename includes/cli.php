@@ -94,7 +94,7 @@ function build_context(array $options)
 function validate_file_path($path)
 {
     if (!file_exists($path)) {
-        throw new \RuntimeException("$path is not readable");
+        throw new \RuntimeException("$path does not exist.");
     }
     if (!is_readable($path)) {
         throw new \RuntimeException("$path is not readable.");
