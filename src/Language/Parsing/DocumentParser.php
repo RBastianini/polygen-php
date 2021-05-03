@@ -69,7 +69,7 @@ class DocumentParser extends Parser
             case Type::assignment():
                 return new Assignment($name->getValue(), $productions);
         }
-        throw new \LogicException('How did you get here?');
+        throw new \LogicException('How did you get here?'); // @codeCoverageIgnore
     }
 
     /**
@@ -225,7 +225,7 @@ class DocumentParser extends Parser
             case Type::leftDeepUnfolding():
                 return $unfoldableBuilder->deepUnfold()->build();
         }
-        throw new \LogicException('How did you get here?');
+        throw new \LogicException('How did you get here?'); // @codeCoverageIgnore
     }
 
     /**
