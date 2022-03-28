@@ -6,7 +6,6 @@ use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\UnfoldableAtom;
 use Polygen\Grammar\Definition;
 use Polygen\Grammar\Interfaces\Node;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\ProductionCollection;
 use Polygen\Grammar\Sequence;

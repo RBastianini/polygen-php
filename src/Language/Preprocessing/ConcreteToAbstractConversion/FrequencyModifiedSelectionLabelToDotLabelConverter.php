@@ -43,6 +43,7 @@ class FrequencyModifiedSelectionLabelToDotLabelConverter implements ConverterInt
      * @var IdentifierFactory
      */
     private $identifierFactory;
+
     /**
      * @var FrequencyModificationWeightCalculator
      */

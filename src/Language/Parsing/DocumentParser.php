@@ -23,9 +23,10 @@ use Polygen\Language\Exceptions\Parsing\NoAtomFoundException;
 use Polygen\Language\Exceptions\Parsing\UnexpectedTokenException;
 use Polygen\Language\Token\Type;
 use Polygen\Utils\LabelSelectionCollection;
+use Webmozart\Assert\Assert;
 
 /**
- * Parser for a Polygen document in abstract syntax.
+ * Parser for a Polygen document in concrete syntax.
  */
 class DocumentParser extends Parser
 {
@@ -51,7 +52,9 @@ class DocumentParser extends Parser
         $this->readTokenIfType(Type::nonTerminatingSymbol());
         $declaration = $this->readTokenIfType(Type::definition(), Type::assignment());
         $this->rollback();
-        return $declaration ? $this->matchDeclaration() : null;
+        return $declaration
+            ? $this->matchDeclaration()
+            : null;
     }
 
     /**
@@ -107,42 +110,54 @@ class DocumentParser extends Parser
             $label = null;
         }
 
-        $sequence = [];
-        do {
-            $atoms = $this->matchAtomSequence();
-            if ($atoms) {
-                $sequence[] = $atoms;
-            }
-        } while ($atoms);
+        $sequence = [$this->matchAtomSequence()];
 
-        if (count($sequence) === 0) {
-            throw new NoAtomFoundException($this->peek());
+        while ($atoms = $this->tryMatchAtomSequence()) {
+                $sequence[] = $atoms;
         }
+
         return new Sequence($sequence, $label);
     }
 
     /**
-     * Matches atoms with (optional) implicit positional labels.
-     *
-     * @return AtomSequence|Atom|null
+     * @return Atom|AtomSequence
      */
     private function matchAtomSequence()
     {
-        $atoms = [];
-        do {
-            $atom = $this->tryMatchAtom();
-            if ($atom) {
-                $atoms[] = $atom;
-            }
-        } while ($atom && $this->readTokenIfType(Type::comma()));
-        switch (count($atoms)) {
-            case 0:
-                return null;
-            case 1:
-                return $atom;
-            default:
-                return new AtomSequence($atoms);
+        $atom = $this->tryMatchAtomSequence();
+        if ($atom === null) {
+            throw new NoAtomFoundException($this->peek());
         }
+        return $atom;
+    }
+
+    /**
+     * Tentatively matches atoms with (optional) implicit positional labels.
+     *
+     * @return AtomSequence|Atom|null
+     */
+    private function tryMatchAtomSequence()
+    {
+        $atoms = [$this->tryMatchAtom()];
+        while ($this->readTokenIfType(Type::comma())) {
+            $atoms[] = $this->matchAtom();
+        }
+        return count($atoms) === 1
+            ? reset($atoms)
+            : new AtomSequence($atoms);
+    }
+
+    /**
+     * @return Atom
+     * @throws NoAtomFoundException
+     */
+    private function matchAtom()
+    {
+        $atom = $this->tryMatchAtom();
+        if ($atom === null) {
+            throw new NoAtomFoundException($this->peek());
+        }
+        return $atom;
     }
 
     /**
@@ -210,9 +225,8 @@ class DocumentParser extends Parser
         $mid = $this->matchSubproduction();
         $unfoldableBuilder = UnfoldableBuilder::get()->withSubproduction($mid);
         $leftBracketType = (string) $leftBracket->getType();
-        $rightBracketType = str_replace('LEFT', 'RIGHT', $leftBracketType);
-        $this->readToken(Type::ofKind($rightBracketType));
-        switch($leftBracketType) {
+        $this->readToken($this->flipBracket($leftBracket->getType()));
+        switch ($leftBracketType) {
             case Type::leftBracket():
                 if ($this->readTokenIfType(Type::plus())) {
                     return $unfoldableBuilder->iteration()->build();
@@ -226,6 +240,22 @@ class DocumentParser extends Parser
                 return $unfoldableBuilder->deepUnfold()->build();
         }
         throw new \LogicException('How did you get here?'); // @codeCoverageIgnore
+    }
+
+    /**
+     * Utility method to get the closing bracket from an opening one.
+     *
+     * @param Type $leftBracketType
+     * @return Type
+     */
+    private function flipBracket(Type $leftBracketType)
+    {
+        Assert::oneOf(
+            $leftBracketType,
+            [Type::leftBracket(), Type::leftCurlyBracket(), Type::leftSquareBracket(), Type::leftDeepUnfolding()]
+        );
+        $rightBracketType = str_replace('LEFT', 'RIGHT', $leftBracketType);
+        return Type::ofKind($rightBracketType);
     }
 
     /**
@@ -303,15 +333,12 @@ class DocumentParser extends Parser
 
         $found = false;
         while ($modifierToken = $this->readTokenIfType(Type::plus(), Type::minus())) {
-            $modifiersByType[$modifierToken->getType()->__toString()]++;
+            $modifiersByType[(string) $modifierToken->getType()]++;
             $found = true;
         }
 
         return $found
-            ? new FrequencyModifier(
-                $modifiersByType[Type::plus()->__toString()],
-                $modifiersByType[Type::minus()->__toString()]
-            )
+            ? new FrequencyModifier($modifiersByType[(string) Type::plus()], $modifiersByType[(string) Type::minus()])
             : null;
     }
 }

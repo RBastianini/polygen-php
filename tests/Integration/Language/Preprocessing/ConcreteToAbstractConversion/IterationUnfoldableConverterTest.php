@@ -57,8 +57,8 @@ GRAMMAR
         $convertedDocument = $this->subject->convert($document);
 
         $this->assertEquals(
-            $convertedDocument->getDeclaration('Expected')->getProductions(),
-            $convertedDocument->getDeclaration('Original')->getProductions()
+            $convertedDocument->getDeclaration('Expected')->getProductionSet(),
+            $convertedDocument->getDeclaration('Original')->getProductionSet()
         );
     }
 }

@@ -23,7 +23,8 @@ use Polygen\Utils\DeclarationCollection;
 
 /**
  * Converts unfoldable sub productions having a deep unfolding modifier to simple subproductions where every folded
- * unfoldable into a simple unfoldable, and where every simple unfoldable is turned into an unfolding unfoldable.
+ * unfoldable is converted into a simple unfoldable, and where every simple unfoldable is turned into an unfolding
+ * unfoldable.
  *
  * Since this class needs to recursively walk the tree, it also implements AbstractSyntaxWalker.
  */
@@ -47,7 +48,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     public function convert(Node $subproductionUnfoldable, DeclarationCollection $_)
     {
         // Convert this non deep unfolding unfoldable into a simple unfoldable, and recursively walk down this
-        // unfoldable to
+        // unfoldable.
         return UnfoldableBuilder::like($subproductionUnfoldable)
             ->simple()
             ->withSubproduction($subproductionUnfoldable->getSubproduction()->traverse($this))
@@ -81,9 +82,12 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     {
         return new Definition(
             $definition->getName(),
-            $this->convertOne(
-                $definition->getProductionSet()
-                    ->getProductions()
+            new ProductionCollection(
+                array_map(
+                    [$this, 'walkProduction'],
+                    $definition->getProductionSet()
+                        ->getProductions()
+                )
             )
         );
     }
@@ -96,9 +100,12 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     {
         return new Assignment(
             $assignment->getName(),
-            $this->convertOne(
-                $assignment->getProductionSet()
-                    ->getProductions()
+            new ProductionCollection(
+                array_map(
+                    [$this, 'walkProduction'],
+                    $assignment->getProductionSet()
+                        ->getProductions()
+                )
             )
         );
     }
@@ -109,7 +116,15 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      */
     public function walkSequence(Sequence $sequence, $_ = null)
     {
-        return new Sequence($this->convertMany($sequence->getSequenceContents()), $sequence->getLabel());
+        return new Sequence(
+            array_map(
+                function (Node $node) {
+                    return $node->traverse($this);
+                },
+                $sequence->getSequenceContents()
+            ),
+            $sequence->getLabel()
+        );
     }
 
     /**
@@ -118,7 +133,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
      */
     public function walkProduction(Production $production, $_ = null)
     {
-        return new Production($this->convertOne($production->getSequence()), $production->getFrequencyModifier());
+        return new Production($production->getSequence()->traverse($this), $production->getFrequencyModifier());
     }
 
     /**
@@ -128,8 +143,21 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     public function walkSubproduction(Subproduction $subproduction, $_ = null)
     {
         return new Subproduction(
-            $this->convertMany($subproduction->getDeclarations()),
-            new ProductionCollection($this->convertMany($subproduction->getProductionSet()->getProductions()))
+            array_map(
+                function (Node $node) {
+                    return $node->traverse($this);
+                },
+                $subproduction->getDeclarations()
+            ),
+            new ProductionCollection(
+                array_map(
+                    function (Node $node) {
+                        return $node->traverse($this);
+                    },
+                    $subproduction->getProductionSet()
+                        ->getProductions()
+                )
+            )
         );
     }
 
@@ -167,7 +195,6 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     public function walkAtomSequence(AtomSequence $atoms, $_ = null)
     {
         throw new \RuntimeException('There should be no atom sequences at this point.');
-        return new AtomSequence($this->convertMany($atoms->getAtoms()));
     }
 
     /**
@@ -178,7 +205,7 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
     {
         return Atom\AtomBuilder::like($atom)
             ->withUnfoldable(
-                $this->convertOne($atom->getUnfoldable())
+                $atom->getUnfoldable()->traverse($this)
             )->build();
     }
 
@@ -198,31 +225,5 @@ class DeepUnfoldingConverter implements ConverterInterface, AbstractSyntaxWalker
                 ->build()
             : $factory->withFoldingModifier(FoldingModifier::unfold())
                 ->build();
-    }
-
-    /**
-     * Traverses and converts multiple nodes.
-     *
-     * @param Node[]
-     * @return Node[]
-     */
-    private function convertMany(array $nodes)
-    {
-        return array_map(
-            function (Node $node) {
-                return $node->traverse($this);
-            },
-            $nodes
-        );
-    }
-
-    /**
-     * Alias of the node traverse method.
-     *
-     * @return Node
-     */
-    private function convertOne(Node $node)
-    {
-        return $node->traverse($this);
     }
 }

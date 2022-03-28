@@ -2,7 +2,6 @@
 
 namespace Polygen\Grammar\Interfaces;
 
-use Polygen\Grammar\Production;
 use Polygen\Grammar\ProductionCollection;
 
 /**
@@ -10,12 +9,6 @@ use Polygen\Grammar\ProductionCollection;
  */
 interface HasProductions
 {
-    /**
-     * @deprecated
-     * @return Production[]
-     */
-    public function getProductions();
-
     /**
      * Returns a new instance of this object with the same properties, but with the specified productions.
      *

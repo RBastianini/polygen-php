@@ -58,6 +58,6 @@ class UnfoldedNonTerminatingSymbolConverter extends AbstractUnfoldingConverter i
      */
     protected function getProductionsFromUnfoldable(UnfoldableAtom $unfoldable, DeclarationCollection $context)
     {
-        return $context->getDeclaration($unfoldable->getUnfoldable()->getToken()->getValue())->getProductions();
+        return $context->getDeclaration($unfoldable->getUnfoldable()->getToken()->getValue())->getProductionSet()->getProductions();
     }
 }

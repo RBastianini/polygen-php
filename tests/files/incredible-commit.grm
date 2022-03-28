@@ -4,9 +4,9 @@ S ::= Hash CaseNumber (HigherIsBetter | LowerIsBetter);
 Hash ::= HashChar ^ HashChar ^ HashChar ^ HashChar ^ HashChar ^ HashChar ^ HashChar;
 HashChar ::= (a | b | c | d | e | f | > Digit);
 CaseNumber ::= "ELD-" ^ ((1|2|3|4|5|6|7|8|9)^)+ ^Digit ^":";
-HigherIsBetter ::= \VerbHi SubjectHi Improvement Benchmark Sboronata ^".";
-LowerIsBetter ::= \VerbLo SubjectLo Improvement Benchmark Sboronata ^".";
-VerbHi ::= (increased | enhanced | imroved);
+HigherIsBetter ::= \VerbHi SubjectHi Improvement Benchmark [Sboronata] ^".";
+LowerIsBetter ::= \VerbLo SubjectLo Improvement Benchmark [Sboronata] ^".";
+VerbHi ::= (increased | enhanced | improved);
 VerbLo ::= (decreased | lowered | reduced);
 SubjectHi ::= (connection speed | computation speed | >SubjectAny | blank lines | understading of universe);
 SubjectLo ::= (memory consumption | writes to storage | memory limit | >SubjectAny | method length);
@@ -22,16 +22,13 @@ CharacteristicBefore ::= (
 	"multi-core" | advanced | colorful | overclocked | modded | "custom-built" | ancient
 	| futuristic | imaginary | auxiliary | "solar-powered" | backup | "1337 933|<"
 );
-CharacteristicAfter ::= ( _ | with (three dead keys | "2x cd-rom drive" | >CharacteristicBefore logic processor) );
-Sboronata ::= (
-	_
-	| ^"," (
+CharacteristicAfter ::= [ with (three dead keys | "2x cd-rom drive" | >CharacteristicBefore logic processor) ];
+Sboronata ::= ^"," (
 		while being drunk | blindfolded | with one hand | with my bare hands
 		| by staring at it long enough | by asking kindly | in Number seconds
 		| through deep packet inspection | "and keep in mind that it's just my 6th language"
 		| while riding my motorcycle
-		)
-	);
-Number ::= ( NonDecimalNumber ^"." ^ | _ ) NonDecimalNumber;
+    );
+Number ::= [ NonDecimalNumber ^"." ^ ] NonDecimalNumber;
 NonDecimalNumber ::= Digit [^ NonDecimalNumber];
 Digit ::= (0|1|2|3|4|5|6|7|8|9);

@@ -130,7 +130,7 @@ class AtomSequenceToProductionConverter implements ConverterInterface
             // Ignore anything before the first AtomSequence
             $previousPosition = $firstPosition;
             foreach ($atomSequencePositions as $position) {
-                // Don't care if this array_slice operation returns null, I'òò filter out the unwanted values before
+                // Don't care if this array_slice operation returns null, we'll filter out the unwanted values before
                 // returning from this method.
                 $currentSequence[] = array_slice($sequenceContents, $previousPosition, max(0, $position - $previousPosition));
                 // Take the nth element of this AtomSequence.

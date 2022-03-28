@@ -52,8 +52,8 @@ GRAMMAR
         $document = $subject->parse();
 
         $this->assertNotEquals(
-            $document->getDeclaration('A')->getProductions(),
-            $document->getDeclaration('B')->getProductions()
+            $document->getDeclaration('A')->getProductionSet(),
+            $document->getDeclaration('B')->getProductionSet()
         );
     }
 
@@ -92,7 +92,7 @@ GRAMMAR
             )
         );
 
-        $this->assertEquals($expectedProductionA, $document->getDeclaration('A')->getProductions()[0]);
+        $this->assertEquals($expectedProductionA, iterator_to_array($document->getDeclaration('A')->getProductionSet())[0]);
 
         $expectedProductionB = [
             new Production(
@@ -164,10 +164,25 @@ GRAMMAR
         $this->expectExceptionMessage("Expected to match atom sequence, but no atom found. <SEMICOLON> found instead (Line 1 offset 20).");
 
         $subject->parse();
-
-        $this->fail('this should not happen');
     }
 
+    /**
+     * @test
+     */
+    public function it_does_not_support_dangling_commas_in_positional_generators()
+    {
+        $subject = $this->given_a_parser(
+            $this->given_a_source_stream(
+                <<< GRAMMAR
+            A ::= a b,;
+GRAMMAR
 
-    // TODO: for every new parsing bug, remember to add a dedicated test.
+            )
+        );
+
+        $this->expectException(NoAtomFoundException::class);
+        $this->expectExceptionMessage("Expected to match atom sequence, but no atom found. <SEMICOLON> found instead (Line 1 offset 24).");
+
+        $subject->parse();
+    }
 }

@@ -3,7 +3,6 @@
 namespace Polygen\Grammar\Unfoldable;
 
 use Polygen\Grammar\FoldingModifier;
-use Polygen\Grammar\LabelSelection;
 use Polygen\Grammar\Subproduction;
 use Polygen\Grammar\SubproductionUnfoldable;
 use Polygen\Language\Token\Token;

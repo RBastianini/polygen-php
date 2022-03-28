@@ -11,7 +11,7 @@ use Webmozart\Assert\Assert;
 /**
  * Collection class handy for filtering and selecting productions.
  */
-class ProductionCollection
+class ProductionCollection implements \IteratorAggregate
 {
     const NO_LABEL = '#no label#';
 
@@ -40,6 +40,9 @@ class ProductionCollection
         }
     }
 
+    /**
+     * @return Production[]
+     */
     public function getProductions()
     {
         return $this->productions;
@@ -74,4 +77,10 @@ class ProductionCollection
         }
         return $this->productions[$context->getRandomNumber(0, count($this->productions) - 1)];
     }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->getProductions());
+    }
 }
+

@@ -5,14 +5,24 @@ namespace Polygen\Grammar;
 use Webmozart\Assert\Assert;
 
 /**
- * Represents the number of plus or minus sign used to influence the ferquency of terms during generation.
+ * Represents the number of plus or minus sign used to influence the frequency of terms during generation.
  */
 class FrequencyModifier
 {
+    /**
+     * @var int
+     */
     private $decreaseFrequencyIntensity;
 
+    /**
+     * @var int
+     */
     private $increaseFrequencyIntensity;
 
+    /**
+     * @param int $increaseFrequencyIntensity
+     * @param int $decreaseFrequencyIntensity
+     */
     public function __construct($increaseFrequencyIntensity, $decreaseFrequencyIntensity)
     {
         Assert::integer($increaseFrequencyIntensity);
