@@ -21,7 +21,7 @@ use Polygen\Utils\LabelSelectionCollection;
 use Webmozart\Assert\Assert;
 
 /**
- * Abstract class where the procedures to convert an unfolded unfoldable are shared.
+ * Abstract class where the procedures to convert an unfolded unfoldables are shared.
  * This is used by both the UnfoldingSubproductionConverted and the UnfoldedNonTerminatingSymbolConverter, as they
  * both do the same thing, the only part that is different is how determine if they can convert a given unfolded
  * unfoldable and how get the declarations and productions from their unfoldable.
@@ -33,13 +33,15 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
      */
     public function canConvert(Node $node)
     {
-        return $node instanceof HasProductions
-            && count(
-                array_filter(
-                    $node->getProductionSet()->getProductions(),
-                    [$this, 'doesProductionContainUnfoldedUnfoldable']
-                )
-            ) > 0;
+        if (!$node instanceof HasProductions) {
+            return false;
+        }
+        foreach ($node->getProductionSet()->getProductions() as $production) {
+            if ($this->doesProductionContainUnfoldedUnfoldable($production)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -52,7 +54,7 @@ abstract class AbstractUnfoldingConverter implements ConverterInterface
         $declarationsToSurface = null;
 
         // Find the unfoldable to unfold.
-        foreach ($node->getProductionSet()->getProductions() as $productionIndex => $production) {
+        foreach ($node->getProductionSet() as $productionIndex => $production) {
             foreach ($production->getSequence()->getSequenceContents() as $sequenceIndex => $atom) {
                 if ($this->isUnfoldedUnfoldable($atom)) {
                     /** @var UnfoldableAtom $atom */

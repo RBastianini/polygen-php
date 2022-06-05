@@ -5,6 +5,8 @@ namespace Polygen\Language\Preprocessing\ConcreteToAbstractConversion;
 use drupol\phpermutations\Generators\Permutations;
 use Polygen\Grammar\Atom;
 use Polygen\Grammar\Atom\AtomBuilder;
+use Polygen\Grammar\Atom\UnfoldableAtom;
+use Polygen\Grammar\AtomSequence;
 use Polygen\Grammar\Interfaces\Node;
 use Polygen\Grammar\Production;
 use Polygen\Grammar\ProductionCollection;
@@ -58,10 +60,7 @@ class PermutationConverter implements ConverterInterface
         $originalSequence = array_values($node->getSequenceContents());
 
         foreach ($originalSequence as $position => $originalSequenceContent) {
-            $isPermutation = $originalSequenceContent instanceof Atom\UnfoldableAtom
-                && ($unfoldable = $originalSequenceContent->getUnfoldable()) instanceof SubproductionUnfoldable
-                && /** @var SubproductionUnfoldable $unfoldable*/ $unfoldable->getType() === SubproductionUnfoldableType::permutation();
-            if (!$isPermutation) {
+            if (!$this->isPermutation($originalSequenceContent)) {
                 continue;
             }
             $permutationPositions[] = $position;
@@ -120,7 +119,18 @@ class PermutationConverter implements ConverterInterface
     }
 
     /**
-     * @param \Polygen\Grammar\Atom\UnfoldableAtom[] $sequenceToPermutate
+     * @param Atom|AtomSequence $originalSequenceContent
+     * @return bool
+     */
+    private function isPermutation($originalSequenceContent)
+    {
+        return $originalSequenceContent instanceof Atom\UnfoldableAtom
+            && ($unfoldable = $originalSequenceContent->getUnfoldable()) instanceof SubproductionUnfoldable
+            && /** @var SubproductionUnfoldable $unfoldable*/ $unfoldable->getType() === SubproductionUnfoldableType::permutation();
+    }
+
+    /**
+     * @param UnfoldableAtom[] $sequenceToPermutate
      * @return Permutations
      */
     private function buildPermutations(array $sequenceToPermutate)
@@ -130,10 +140,10 @@ class PermutationConverter implements ConverterInterface
     }
 
     /**
-     * @param \Polygen\Grammar\Atom\UnfoldableAtom $atom
-     * @return \Polygen\Grammar\Atom\UnfoldableAtom
+     * @param UnfoldableAtom $atom
+     * @return UnfoldableAtom
      */
-    private function toSimpleUnfoldable(Atom\UnfoldableAtom $atom)
+    private function toSimpleUnfoldable(UnfoldableAtom $atom)
     {
         return Atom\AtomBuilder::like($atom)
             ->withUnfoldable(

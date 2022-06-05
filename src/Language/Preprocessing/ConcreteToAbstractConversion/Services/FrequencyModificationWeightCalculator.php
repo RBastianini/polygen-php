@@ -7,6 +7,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * Given an array of items whose generation frequency can be influenced, computes the weight of such items.
+ * @see FrequencyModifiedSelectionLabelToDotLabelConverter for details on the implemented algorithm,
  */
 class FrequencyModificationWeightCalculator
 {
@@ -16,10 +17,10 @@ class FrequencyModificationWeightCalculator
      */
     public function getFrequencyModificationWeightByPosition(array $frequencyModifiables)
     {
-        Assert::allIsInstanceOf($frequencyModifiables, FrequencyModifiable::class);
         $minimumFrequencyModificationWeight = PHP_INT_MAX;
         $frequencyModificationWeightByPosition = [];
         foreach ($frequencyModifiables as $frequencyModifiable) {
+            Assert::isInstanceOf($frequencyModifiable, FrequencyModifiable::class);
             $frequencyModificationWeight = $frequencyModifiable->getFrequencyModifier()->getNetFrequencyChange();
             $frequencyModificationWeightByPosition[] = $frequencyModificationWeight;
             if ($frequencyModificationWeight < $minimumFrequencyModificationWeight) {

@@ -2,6 +2,8 @@
 
 namespace Tests\Polygen\Unit\Language\Lexing\Matching;
 
+use Mockery;
+use Mockery\Mock;
 use Polygen\Language\Lexing\Matching\ShortSymbolMatcher;
 use Polygen\Language\Token\Token;
 use Tests\TestCase;
@@ -58,6 +60,19 @@ class ShortSymbolMatcherTest extends TestCase
     {
         $SUT = new ShortSymbolMatcher();
         $result = $SUT->match(MatcherInputHelper::get($source));
+        $this->assertNull($result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_null_if_the_input_is_null() {
+        $SUT = new ShortSymbolMatcher();
+        $matcherMock = Mockery::mock(MatcherInputHelper::class);
+        $matcherMock->expects('read')
+            ->once()
+            ->andReturn(null);
+        $result = $SUT->match($matcherMock);
         $this->assertNull($result);
     }
 

@@ -218,14 +218,6 @@ class Context
     }
 
     /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return $this->declarationsContext->isEmpty();
-    }
-
-    /**
      * @return string
      */
     public function getSeed()

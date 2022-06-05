@@ -75,44 +75,6 @@ final class Type
     const WHITESPACE = 'WHITESPACE';
 
     /**
-     * @var
-     */
-    const TOKENS = [
-        self::LEFT_BRACKET,
-        self::RIGHT_BRACKET,
-        self::LEFT_SQUARE_BRACKET,
-        self::RIGHT_SQUARE_BRACKET,
-        self::LEFT_CURLY_BRACKET,
-        self::RIGHT_CURLY_BRACKET,
-        self::UNDERSCORE,
-        self::NON_TERMINATING_SYMBOL,
-        self::TERMINATING_SYMBOL,
-        self::COMMENT,
-        self::SEMICOLON,
-        self::DEFINITION,
-        self::ASSIGNMENT,
-        self::PIPE,
-        self::UNFOLDING,
-        self::FOLDING,
-        self::LEFT_DEEP_UNFOLDING,
-        self::RIGHT_DEEP_UNFOLDING,
-        self::STAR,
-        self::PLUS,
-        self::MINUS,
-        self::CAP,
-        self::DOT,
-        self::COMMA,
-        self::LEFT_DOT_BRACKET,
-        self::QUOTE,
-        self::BACKSLASH,
-        self::SLASH,
-        self::DOT_LABEL,
-        self::WHITESPACE,
-        self::END_OF_FILE,
-        self::COLON,
-    ];
-
-    /**
      * @var string
      */
     private $type;
@@ -125,6 +87,15 @@ final class Type
      */
     private static $flyWeight = [];
 
+    private static $SUPPORTED_TOKENS = [];
+
+    private static function GET_SUPPORTED_TOKENS() {
+        if (empty(self::$SUPPORTED_TOKENS)) {
+            self::$SUPPORTED_TOKENS = (new \ReflectionClass(__CLASS__))->getConstants();
+        }
+        return array_values(self::$SUPPORTED_TOKENS);
+    }
+
     /**
      * Type constructor.
      *
@@ -133,7 +104,7 @@ final class Type
      */
     private function __construct($kind)
     {
-        if (!in_array($kind, self::TOKENS)) {
+        if (!in_array($kind, self::GET_SUPPORTED_TOKENS())) {
             throw new \InvalidArgumentException("Unknown token type '$kind'.");
         }
         $this->type = $kind;

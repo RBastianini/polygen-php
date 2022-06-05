@@ -52,16 +52,7 @@ class Definition implements DeclarationInterface, Node
     }
 
     /**
-     * @deprecated
-     * @return Production[]
-     */
-    public function getProductions()
-    {
-        return $this->productions->getProductions();
-    }
-
-    /**
-     * @return \Polygen\Grammar\ProductionCollection
+     * @return ProductionCollection
      */
     public function getProductionSet()
     {

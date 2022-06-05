@@ -89,6 +89,7 @@ GRAMMAR
         // It takes some effort to extract the inner definition of E for the error message.
         /** @var \Polygen\Grammar\SubproductionUnfoldable $unfoldable */
         $unfoldable = $document->getDeclaration('S')
+            ->getProductionSet()
             ->getProductions()[4]
             ->getSequence()
             ->getSequenceContents()[0]

@@ -61,41 +61,6 @@ class ReferenceGraph
     }
 
     /**
-     * @return DeclarationInterface[]
-     */
-    public function findInfiniteLoops()
-    {
-        $declarations = $this->referencedDeclarationsByUniqueName;
-        do {
-            $previousDeclarations = $declarations;
-            foreach ($declarations as $declaration => $references) {
-                if (array_key_exists(self::TERMINATING_SYMBOL, $references)) {
-                    $declarations[$declaration] = [self::TERMINATING_SYMBOL => self::TERMINATING_SYMBOL];
-                    continue;
-                }
-                foreach ($references as $referenceName => $reference) {
-                    if ($declarations[$referenceName] === [self::TERMINATING_SYMBOL => self::TERMINATING_SYMBOL]) {
-                        $declarations[$declaration] = [self::TERMINATING_SYMBOL => self::TERMINATING_SYMBOL];
-                        continue(2);
-                    }
-                }
-            }
-        } while ($previousDeclarations != $declarations);
-
-        $nonTerminatingDeclarationReferences = array_filter(
-            $declarations,
-            function (array $references) {
-                return $references != [self::TERMINATING_SYMBOL => self::TERMINATING_SYMBOL];
-            }
-        );
-        $nonTerminatingDeclarations = [];
-        foreach ($nonTerminatingDeclarationReferences as $nonTerminatingDeclarationReference => $_) {
-            $nonTerminatingDeclarations[] = $this->declarationsByUniqueName[$nonTerminatingDeclarationReference];
-        }
-        return $nonTerminatingDeclarations;
-    }
-
-    /**
      * @param string $nonTerminatingDeclarationReference
      * @return DeclarationInterface
      */

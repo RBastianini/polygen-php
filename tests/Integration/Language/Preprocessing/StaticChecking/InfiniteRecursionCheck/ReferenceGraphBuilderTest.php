@@ -124,6 +124,7 @@ GRAMMAR
             'root>E' => $document->getDeclaration('E'),
             // The nested E declaration takes some effort to be accessed from the document root.
             "$innerContextName>E" => $document->getDeclaration('S')
+                ->getProductionSet()
                 ->getProductions()[4]
                 ->getSequence()
                 ->getSequenceContents()[0]

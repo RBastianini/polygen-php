@@ -23,7 +23,7 @@ use Polygen\Language\Token\Token;
 class TokenSequenceGenerator implements AbstractSyntaxWalker
 {
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkDocument(Document $document, $context = null)
@@ -33,7 +33,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkDefinition(Definition $definition, $context = null)
@@ -45,7 +45,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkAssignment(Assignment $assignment, $context = null)
@@ -64,7 +64,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkSequence(Sequence $sequence, $context = null)
@@ -82,7 +82,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkProduction(Production $production, $context = null)
@@ -95,7 +95,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkSubproduction(Subproduction $subproduction, $context = null)
@@ -108,7 +108,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkSimpleAtom(SimpleAtom $atom, $context = null)
@@ -117,7 +117,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkUnfoldableAtom(UnfoldableAtom $atom, $context = null)
@@ -127,7 +127,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkNonTerminating(NonTerminatingSymbol $nonTerminatingSymbol, $context = null)
@@ -138,7 +138,7 @@ class TokenSequenceGenerator implements AbstractSyntaxWalker
     }
 
     /**
-     * @param Context $context Any context that should be passed ito the wal function.
+     * @param Context $context Any context that should be passed into the walk function.
      * @return Token[]
      */
     public function walkSubproductionUnfoldable(SubproductionUnfoldable $unfoldable, $context = null)

@@ -124,12 +124,4 @@ class DeclarationsContext
             ? "{$this->contextName}>{$declarationName}"
             : $this->parentContext->getUniqueName($declarationName);
     }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return $this->currentDeclarations->isEmpty() && $this->parentContext->isEmpty();
-    }
 }

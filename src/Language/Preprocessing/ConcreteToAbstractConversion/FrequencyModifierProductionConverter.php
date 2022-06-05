@@ -16,7 +16,7 @@ class FrequencyModifierProductionConverter implements ConverterInterface
 {
 
     /**
-     * @var \Polygen\Language\Preprocessing\ConcreteToAbstractConversion\Services\FrequencyModificationWeightCalculator
+     * @var FrequencyModificationWeightCalculator
      */
     private $frequencyModificationWeightCalculator;
 
@@ -42,11 +42,11 @@ class FrequencyModifierProductionConverter implements ConverterInterface
     public function convert(Node $node, DeclarationCollection $_)
     {
         $frequencyWeightByPosition = $this->frequencyModificationWeightCalculator->getFrequencyModificationWeightByPosition(
-            $node->getProductions()
+            $node->getProductionSet()->getProductions()
         );
 
         $productions = [];
-        foreach ($node->getProductions() as $productionIndex => $production) {
+        foreach ($node->getProductionSet()->getProductions() as $productionIndex => $production) {
             $productions = array_merge(
                 $productions,
                 array_fill(

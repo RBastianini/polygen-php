@@ -61,7 +61,7 @@ class Assignment implements DeclarationInterface, Node
     }
 
     /**
-     * @return \Polygen\Grammar\ProductionCollection
+     * @return ProductionCollection
      */
     public function getProductionSet()
     {
